@@ -10,12 +10,14 @@ int main() {
     std::vector<std::unique_ptr<Link>> links;
     while (std::cin >> s) {
         int strength;
-        std::cin >> strength;
-
         if (s == 'v') {
-            links.push_back(std::make_unique<Virus>(strength));
+            std::cin >> strength;
+            links.emplace_back(std::make_unique<Virus>(strength));
+        } else if (s == 'd') {
+            std::cin >> strength;
+            links.emplace_back(std::make_unique<Data>(strength));
         } else {
-            links.push_back(std::make_unique<Data>(strength));
+            break;
         }
     }
     for (const auto& link : links) {
