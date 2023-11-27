@@ -1,1 +1,1 @@
-link.o: link.cc link.h
+link.o: link.cc link.h boardpiece.h coords.h

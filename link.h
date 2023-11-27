@@ -1,17 +1,17 @@
 #ifndef LINK_H
 #define LINK_H
 
-// #include "BoardPiece.h"
+#include "boardpiece.h"
 enum LinkType {data, virus};
 
-class Link { //public BoardPiece -> add later
+class Link: public BoardPiece{
     protected:
     int strength;  
     LinkType type;
     bool identityRevealed;
     Link(int strength, LinkType type);
-    // returns the strength of the link
     public:
+    // returns the strength of the link
     virtual int getStrength() = 0;
     // returns the type of the link
     virtual LinkType getType() = 0;
