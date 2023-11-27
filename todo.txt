@@ -1,0 +1,3 @@
+[ ]:  implement the constructors/destrcutors if needed for the new base classes 
+[ ]:  move checking for movepiece function
+[ ]:  activate ability for download, polarize, etc
