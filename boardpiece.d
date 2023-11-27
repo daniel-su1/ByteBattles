@@ -1,0 +1,1 @@
+boardpiece.o: boardpiece.cc

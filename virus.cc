@@ -15,3 +15,30 @@ bool Virus::isIdentityRevealed() {
     return identityRevealed;
 }
 
+void Virus::setStepSize(int newStepSize) {
+    stepSize = newStepSize;
+}
+void Virus::movePiece(Direction direction) {
+    prevCords = currCoords;
+    if (direction == Left) { // TODO: implement checking for moves
+        int newX = currCoords.getX() - stepSize;
+        currCoords.setX(newX);
+    } else if (direction == Right) {
+        int newX = currCoords.getX() + stepSize;
+        currCoords.setX(newX);
+    } else if (direction == Up) {
+        int newY = currCoords.getY() + stepSize;
+        currCoords.setY(newY);
+    } else if (direction == Down) {
+        int newY = currCoords.getY() - stepSize;
+        currCoords.setY(newY);
+    }
+}
+
+Coords Virus::getPreviousCoords() {
+    return prevCords;  
+}
+
+Coords Virus:: getCurrCoords() {
+    return currCoords;
+}

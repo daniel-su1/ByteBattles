@@ -8,6 +8,10 @@ class Virus: public Link {
     int getStrength() override;
     LinkType getType() override;
     bool isIdentityRevealed() override;
+    void setStepSize(int newStepSize) override;
+    void movePiece(Direction direction) override;
+    Coords getPreviousCoords() override;
+    Coords getCurrCoords() override;
 };
 
 #endif
