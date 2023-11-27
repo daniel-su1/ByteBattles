@@ -1,7 +1,7 @@
 #include "data.h"
 using namespace std;
 
-Data::Data(int strength) : Link{strength, data} {}
+Data::Data(int strength) : Link{strength, LinkType::data} {}
 
 int Data::getStrength() {
     return strength;
@@ -42,4 +42,20 @@ Coords Data::getPreviousCoords() {
 
 Coords Data::getCurrCoords() {
     return currCoords;
+}
+
+void Data::attachPlayer(Player *p) {
+    owner = p;
+}
+
+Player& Data::getOwner() {
+    return *owner;
+}
+
+string Data::getDisplayName() {
+    return displayName;
+}
+
+vector<AbilityCard*>& Data::getAppliedAbilities() {
+    return appliedAbilites;
 }

@@ -1,0 +1,1 @@
+gamepiece.o: gamepiece.cc
