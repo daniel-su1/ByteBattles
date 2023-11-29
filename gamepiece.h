@@ -4,9 +4,9 @@
 #include <iostream>
 #include <vector>
 #include "player.h"
-#include "abilitycard.h"
 #include "subject.h"
 
+class AbilityCard;
 using namespace std;
 class GamePiece: public Subject {
     protected:
@@ -26,8 +26,6 @@ class GamePiece: public Subject {
     virtual vector<AbilityCard*>& getAppliedAbilities() = 0;
     // subject functions 
     void notifyObservers();
-    void attach(Observer* ob);
-    void detach(Observer* ob);
 };
 
 #endif

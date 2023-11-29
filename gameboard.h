@@ -13,7 +13,7 @@
 #include "textdisplay.h"
 using namespace std;
 class TextDisplay; 
-class GameBoard {
+class GameBoard: public Subject {
     TextDisplay *td;
     vector<Player> players;
     vector<unique_ptr<Link>> allBoardPieces;

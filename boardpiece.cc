@@ -1,4 +1,4 @@
-#include "boardpiece.h";
+#include "boardpiece.h"
 
 BoardPiece::BoardPiece(int stepSize, Coords currCoords, Player& owner, string displayName): 
     GamePiece(owner, displayName), 

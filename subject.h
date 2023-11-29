@@ -10,8 +10,8 @@ class Subject {
  protected:
     vector<Observer*> observers;
  public:
-    virtual void attach(Observer *ob) = 0;
-    virtual void detach(Observer *ob) = 0;
+    void attach(Observer *ob);
+    void detach(Observer *ob);
     virtual void notifyObservers() = 0;
 };
 
