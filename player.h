@@ -3,17 +3,18 @@
 #include <string>
 using namespace std;
 class Player {
-    string playerName;
-    int numVirusDownloaded;
-    int numDataDownloaded;
-    int abilityCount;
-    bool won;
+        string playerName;
+        int numVirusDownloaded;
+        int numDataDownloaded;
+        int abilityCount;
+        bool won;
     public:
-    // gettor/accessor functions
-    string getPlayerName();
-    int getNumVirusDownloads();
-    int getNumDataDownloads();
-    int getAbilityCount();
-    bool isWon();
+        Player(string playerName, int numVirusDownloaded, int numDataDownloaded, int abilityCount, bool won);
+        // gettor/accessor functions
+        string getPlayerName();
+        int getNumVirusDownloads();
+        int getNumDataDownloads();
+        int getAbilityCount();
+        bool isWon();
 };
 #endif

@@ -1,5 +1,9 @@
 #include "player.h"
 
+Player::Player(string playerName, int numVirusDownloaded, int numDataDownloaded, int abilityCount, bool won): 
+    playerName{playerName}, numVirusDownloaded{numVirusDownloaded}, numDataDownloaded{numDataDownloaded}, 
+    abilityCount{abilityCount}, won{won} {}
+
 string Player::getPlayerName() {
     return playerName;
 }
