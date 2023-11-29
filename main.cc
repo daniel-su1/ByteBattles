@@ -4,10 +4,11 @@
 #include "link.h"
 #include "data.h"
 #include "virus.h"
-
+#include "gameboard.h"
+using namespace std;
 int main() {
     char s;
-    std::vector<std::unique_ptr<Link>> links;
+    std::vector<unique_ptr<Link>> links;
     while (std::cin >> s) {
         int strength;
         if (s == 'v') {
@@ -28,4 +29,7 @@ int main() {
         }
         std::cout << link->getStrength() << std::endl;
     }
+        unique_ptr<GameBoard> gb = std::make_unique<GameBoard>();
+        gb->init();
+        cout << *gb;
 }
