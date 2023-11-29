@@ -1,0 +1,6 @@
+[ ]:  implement the constructors/destrcutors if needed for the new base classes
+[ ]:  fill out the observer pattern functions 
+[ ]:  write functions for initial board set up
+[ ]:  implement basic movement
+[ ]:  move checking for movepiece function
+[ ]:  activate ability for download, polarize, etc

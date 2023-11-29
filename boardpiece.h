@@ -1,10 +1,9 @@
 #ifndef BOARDPIECE_H
 #define BOARDPIECE_H
-
-enum Direction {Up, Down, Left, Right}; 
-
+#include "gamepiece.h"
 #include "coords.h"
-class BoardPiece { // add public: GamePiece later
+enum Direction {Up, Down, Left, Right}; 
+class BoardPiece: public GamePiece { // add public: GamePiece later
     protected:
     int stepSize;
     Coords prevCords;

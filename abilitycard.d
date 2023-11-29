@@ -1,0 +1,1 @@
+abilitycard.o: abilitycard.cc

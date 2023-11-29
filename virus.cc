@@ -1,7 +1,7 @@
 #include "virus.h"
 using namespace std;
 
-Virus::Virus(int strength) : Link{strength, virus} {}
+Virus::Virus(int strength) : Link{strength, LinkType::virus} {}
 
 int Virus::getStrength() {
     return strength;
@@ -42,3 +42,20 @@ Coords Virus::getPreviousCoords() {
 Coords Virus:: getCurrCoords() {
     return currCoords;
 }
+
+void Virus::attachPlayer(Player *p) {
+    owner = p;
+}
+
+Player& Virus::getOwner() {
+    return *owner;
+}
+
+string Virus::getDisplayName() {
+    return displayName;
+}
+
+vector<AbilityCard*>& Virus::getAppliedAbilities() {
+    return appliedAbilites;
+}
+
