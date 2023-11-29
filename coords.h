@@ -9,6 +9,7 @@ class Coords {
     int getX();
      // accessor/gettor function that returns y
     int getY();
+    Coords(int x, int y);
     // setter functions 
     void setX(int newX);
     void setY(int newY);

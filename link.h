@@ -9,7 +9,7 @@ class Link: public BoardPiece{
     int strength;  
     LinkType type;
     bool identityRevealed;
-    Link(int strength, LinkType type);
+    Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type);
     public:
     // returns the strength of the link
     virtual int getStrength() = 0;

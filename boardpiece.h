@@ -9,6 +9,7 @@ class BoardPiece: public GamePiece { // add public: GamePiece later
     Coords prevCords;
     Coords currCoords;
     public:
+    BoardPiece(int stepSize, Coords currCoords, Player& owner, string displayName);
     // sets new stepsize for the piece's movement
     virtual void setStepSize(int newStepSize) = 0;
     // moves the piece stepsize amount of steps in given direction

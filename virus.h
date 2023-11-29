@@ -4,7 +4,7 @@
 #include "link.h"
 class Virus: public Link {
     public:
-    Virus(int strength);
+    Virus(int strength, Coords currCoords, string displayName, Player &owner);
     int getStrength() override;
     LinkType getType() override;
     bool isIdentityRevealed() override;
