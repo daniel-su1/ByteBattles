@@ -35,16 +35,14 @@ void GameBoard::init() {
         bool won = false;
         players.emplace_back(Player(playerName, numVirusDownloaded, numDataDownloaded, abilityCount, won));
     }
-    currPlayer = make_unique<Player>(players[0]);
+    currPlayer = &(players[0]);
 
-    for (int i = 0; i < BOARD_SIZE; i++) {
-        // waiting on boardpiece.cc ctor implementation
-        // allBoardPieces.emplace_back();
-    }
-
-    for (int i = 0; i < ABILITY_COUNT; i++) {
-        // waiting on abilitycards.cc ctor
-        // allAbilityCards.emplace_back();
+    for (int playerNum = 1; playerNum <= PLAYER_COUNT; playerNum++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            // waiting on abilitycards.cc ctor
+            // owner: players[playerNum - 1]
+            // allBoardPieces.emplace_back();
+        }
     }
 
     for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {

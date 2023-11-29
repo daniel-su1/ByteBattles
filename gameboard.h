@@ -18,8 +18,8 @@ class GameBoard {
     vector<Player> players;
     vector<unique_ptr<Link>> allBoardPieces;
     vector<unique_ptr<AbilityCard>> allAbilityCards;
-    unique_ptr<Player> currPlayer;
-    unique_ptr<Player> winner;
+    Player* currPlayer;
+    Player* winner;
     vector<Coords> boardBoundaries;
     vector<EdgeCoord> edgeCoords;
     vector<ServerPort> serverPorts;
