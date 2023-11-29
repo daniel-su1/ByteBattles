@@ -4,6 +4,7 @@
 
 class EdgeCoord: public SpecialCoord {
     public:
+    EdgeCoord(Coords coords);
     Coords getCoords() override;
 };
 

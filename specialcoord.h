@@ -1,10 +1,11 @@
 #ifndef SPECIALCOORD_H
 #define SPECIALCOORD_H
 #include "coords.h"
-class SpecialCoord: public Coords {
+class SpecialCoord {
     protected:
     Coords coords;
     public:
+    SpecialCoord(Coords coords);
     virtual Coords getCoords() = 0;
 };
 
