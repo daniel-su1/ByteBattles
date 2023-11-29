@@ -25,6 +25,8 @@ class GamePiece: public Subject {
     virtual vector<AbilityCard*>& getAppliedAbilities() = 0;
     // subject functions 
     void notifyObservers();
+    void attach(Observer* ob);
+    void detach(Observer* ob);
 };
 
 #endif
