@@ -5,6 +5,7 @@ class Coords {
     int x;
     int y;
     public:
+    Coords(int x, int y);
     // accessor/gettor function that returns x
     int getX();
      // accessor/gettor function that returns y

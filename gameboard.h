@@ -14,17 +14,19 @@
 using namespace std;
 class TextDisplay; 
 class GameBoard {
-    TextDisplay *td;
+    unique_ptr<TextDisplay> td;
     vector<Player> players;
     vector<unique_ptr<Link>> allBoardPieces;
     vector<unique_ptr<AbilityCard>> allAbilityCards;
-    Player* currPlayer;
-    Player* winner;
+    unique_ptr<Player> currPlayer;
+    unique_ptr<Player>  winner;
     vector<Coords> boardBoundaries;
     vector<EdgeCoord> edgeCoords;
     vector<ServerPort> serverPorts;
     vector<FireWall> activeFirewalls;
     public:
+    ~GameBoard();
+    GameBoard();
     void init();
     void applyAbility(AbilityCard& ac, Player *player = nullptr);
     void movePiece(Link &link, Direction dir);
@@ -42,5 +44,6 @@ class GameBoard {
     vector<EdgeCoord>& getEdgeCoords();
     vector<ServerPort>& getServerPort();
     vector<FireWall>& getActiveFirewalls();
+    friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
 };
 #endif
