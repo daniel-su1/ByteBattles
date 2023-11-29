@@ -9,6 +9,7 @@ class Player {
     int abilityCount;
     bool won;
     public:
+    Player(string playerName, int abilityCount);
     // gettor/accessor functions
     string getPlayerName();
     int getNumVirusDownloads();
