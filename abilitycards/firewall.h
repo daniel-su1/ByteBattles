@@ -7,6 +7,7 @@ class FireWall: public AbilityCard {
     public:
         void activate() override;
         Coords getCoords();
+        FireWall(int abilityID, Player &owner, string DisplayName);
 };
 
 #endif
