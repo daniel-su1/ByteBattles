@@ -5,11 +5,16 @@ TextDisplay::TextDisplay(){
 }
 
 void TextDisplay::notify(Link &link) {
-    cout << "I AM NOTIFIED" << endl;
+  cout << "I AM NOTIFIED OF A LINK";
 }
 
 void TextDisplay::notify(GameBoard &gb) {
-    cout << "I AM NOTIFIED - BOARD" << endl;
+  vector<ServerPort> sp = gb.getServerPort();
+  for (int i = 0; i < sp.size(); i++) {
+    int x = sp[i].getCoords().getX();
+    int y = sp[i].getCoords().getY();
+    theDisplay[x][y] = sp[i].getDisplayName()[0];
+  }
 }
 
 ostream &operator<<(ostream &out, const TextDisplay &td) {

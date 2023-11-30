@@ -9,6 +9,7 @@ class TextDisplay: public Observer {
     GameBoard *gb;
  public:
     TextDisplay();
+    ~TextDisplay() = default;
     void notify(Link& link) override;
     void notify(GameBoard& gb) override;
     friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);

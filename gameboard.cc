@@ -9,7 +9,7 @@ GameBoard::~GameBoard() {
 }
 
 void GameBoard::notifyObservers() {
-
+    td->notify(*this);
 }
 
 void GameBoard::init() {
@@ -30,25 +30,26 @@ void GameBoard::init() {
     const int MAX_STEPSIZE = 2;
     const int PLAYER_COUNT = 2;
     const int ABILITY_COUNT = 5;
+    string SP_DISPLAY_STR = "S";
+    string BORDER_DISPLAY_STR = "=";
 
     td = new TextDisplay;
 
+    // intialize players
     for (int i = 0; i < PLAYER_COUNT; i++) {
         string playerName = "Player " + i;
         int abilityCount = ABILITY_COUNT;
         players.emplace_back(Player(playerName, abilityCount));
     }
-
+    
+    // intialize server ports; middle of board
+    serverPorts.emplace_back(ServerPort(Coords(0, BOARD_SIZE / 2 - 1), players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(0, BOARD_SIZE / 2), players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE - 1, BOARD_SIZE / 2 - 1), players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE - 1, BOARD_SIZE / 2), players[1], SP_DISPLAY_STR));
     currPlayer = &(players[0]);
 
-    // for (int playerNum = 1; playerNum <= PLAYER_COUNT; playerNum++) {
-    //     for (int i = 0; i < BOARD_SIZE; i++) {
-    //         // waiting on abilitycards.cc ctor
-    //         // owner: players[playerNum - 1]
-    //         // allBoardPieces.emplace_back();
-    //     }
-    // }
-
+    // adding board boundaries based on board sizes
     for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
         for (int i = 1; i < BOARD_SIZE - 1; i++) {
             boardBoundaries.emplace_back(Coords(0 - stepSize, i)); 
@@ -56,22 +57,26 @@ void GameBoard::init() {
         }
     }
 
-    // for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
-    //     for (int i = 0; i < BOARD_SIZE; i++) {
-    //         // waiting on edgecoord.cc ctor
-    //         // edgeCoords.emplace_back(Edgecoord(Coords(i, 0 - stepSize)), attach player somehow); // winning positions for one player
-    //         // edgeCoords.emplace_back coords(i, BOARD_SIZE - 1 + stepSize), still attach player // winning positions for other player
-    //     }
-    //     // edgeCoords.emplace_back coords (0 - stepSize, 0)
-    //     // (0 - stepSize, BOARD_SIZE - 1)
-    //     // (BOARD_SIZE - 1 + stepSize, 0)
-    //     // (BOARD_SIZE - 1 + stepsize, BOARD_SIZE - 1)
-    // }
+    for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if ((i != BOARD_SIZE / 2) && (i != BOARD_SIZE /2 - 1)) {
+             // player 2's target/winning areas
+            edgeCoords.emplace_back(EdgeCoord(Coords(i, 0 - stepSize), players[1], BORDER_DISPLAY_STR)); 
+             // player 1's target/winning areas
+            edgeCoords.emplace_back(EdgeCoord(Coords(i, BOARD_SIZE - 1 + stepSize), players[0], BORDER_DISPLAY_STR));
+            }
+        }
+        // add back if evelina is right
+        // edgeCoords.emplace_back coords (0 - stepSize, 0)
+        // (0 - stepSize, BOARD_SIZE - 1)
+        // (BOARD_SIZE - 1 + stepSize, 0)
+        // (BOARD_SIZE - 1 + stepsize, BOARD_SIZE - 1)
+    }
+    notifyObservers();
+}
 
-    // serverPorts.emplace_back(Coords(BOARD_SIZE / 2 - 1, 0));
-    // serverPorts.emplace_back(Coords(BOARD_SIZE / 2, 0));
-    // serverPorts.emplace_back(Coords(BOARD_SIZE / 2 - 1, BOARD_SIZE - 1));
-    // serverPorts.emplace_back(Coords(BOARD_SIZE / 2, BOARD_SIZE - 1));
+vector<ServerPort>& GameBoard::getServerPort() {
+    return serverPorts;
 }
 
 ostream &operator<<(ostream &out, const GameBoard &gb) {

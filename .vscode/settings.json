@@ -50,6 +50,7 @@
         "cwctype": "cpp",
         "cstring": "cpp",
         "string_view": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "deque": "cpp"
     }
 }
