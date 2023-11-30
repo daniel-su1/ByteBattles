@@ -1,14 +1,12 @@
 #ifndef FIREWALL_H
 #define FIREWALL_H
-#include "abilitycard.h"
-#include "coords.h"
-
-class Firewall : public AbilityCard {
+#include "../abilitycard.h"
+#include "../coords.h"
+class FireWall: public AbilityCard {
     Coords coords;
-
-   public:
-    Coords getCoords();
-    void activate();
-}
+    public:
+        void activate() override;
+        Coords getCoords();
+};
 
 #endif

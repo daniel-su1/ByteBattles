@@ -13,8 +13,8 @@
 #include "textdisplay.h"
 using namespace std;
 class TextDisplay; 
-class GameBoard : public Subject{
-    unique_ptr<TextDisplay> td;
+class GameBoard: public Subject {
+    TextDisplay *td;
     vector<Player> players;
     vector<unique_ptr<Link>> allBoardPieces;
     vector<unique_ptr<AbilityCard>> allAbilityCards;
@@ -45,5 +45,6 @@ class GameBoard : public Subject{
     vector<ServerPort>& getServerPort();
     vector<FireWall>& getActiveFirewalls();
     friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
+    void notifyObservers() override;
 };
 #endif

@@ -4,9 +4,9 @@
 #include <iostream>
 #include <vector>
 #include "player.h"
-#include "abilitycard.h"
 #include "subject.h"
 
+class AbilityCard;
 using namespace std;
 class GamePiece: public Subject {
     protected:
@@ -15,6 +15,7 @@ class GamePiece: public Subject {
     string displayName;
     vector<AbilityCard*> appliedAbilites;
     public:
+    GamePiece(Player &owner, string displayName);
     // attaches a player (owner) to the piece
     virtual void attachPlayer(Player *p) = 0;
     // returns a reference to the owner

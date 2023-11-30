@@ -4,19 +4,25 @@
 #include "link.h"
 #include "data.h"
 #include "virus.h"
+#include "player.h"
+#include "coords.h"
 #include "gameboard.h"
-using namespace std;
+
 int main() {
+    string name1 = "Player 1";
+    Player p1(name1, 5);
     char s;
     std::vector<unique_ptr<Link>> links;
     while (std::cin >> s) {
         int strength;
         if (s == 'v') {
             std::cin >> strength;
-            links.emplace_back(std::make_unique<Virus>(strength));
+            string pieceName = "A";
+            links.emplace_back(std::make_unique<Virus>(strength, Coords(1,1), pieceName, p1));
         } else if (s == 'd') {
             std::cin >> strength;
-            links.emplace_back(std::make_unique<Data>(strength));
+            string pieceName = "a";
+            links.emplace_back(std::make_unique<Data>(strength, Coords(1,1), pieceName, p1));
         } else {
             break;
         }
@@ -28,6 +34,8 @@ int main() {
             std::cout << "DATA, strength:";
         }
         std::cout << link->getStrength() << std::endl;
+        
+        std::cout << "Owner:" << (link->getOwner()).getPlayerName() << endl;
     }
         unique_ptr<GameBoard> gb = std::make_unique<GameBoard>();
         gb->init();

@@ -1,7 +1,8 @@
 #ifndef ABILITYCARD_H
 #define ABILITYCARD_H
+#include "gamepiece.h"
 
-class AbilityCard : public GamePiece {
+class AbilityCard: public GamePiece {
     bool usedAbility;
     int abilityID;
     public:

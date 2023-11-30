@@ -4,7 +4,7 @@
 #include "link.h"
 class Data: public Link {
     public:
-    Data(int strength);
+    Data(int strength, Coords currCoords, string displayName, Player &owner);
     int getStrength() override;
     LinkType getType() override;
     bool isIdentityRevealed() override;
