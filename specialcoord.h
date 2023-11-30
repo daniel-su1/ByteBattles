@@ -6,8 +6,8 @@ class SpecialCoord: public GamePiece {
     protected:
         Coords coords;
     public:
-    SpecialCoord(Coords coords, Player &owner, string displayName);
-    virtual Coords getCoords() = 0;
+        SpecialCoord(Coords coords, Player &owner, string displayName);
+        virtual Coords getCoords() = 0;
 };
 
 #endif

@@ -2,7 +2,7 @@
 using namespace std;
 
 Virus::Virus(int strength, Coords currCoords, string displayName, Player &owner):
-Link{strength, currCoords, displayName, owner, LinkType::virus} {}
+    Link{strength, currCoords, displayName, owner, LinkType::virus} {}
 
 int Virus::getStrength() {
     return strength;

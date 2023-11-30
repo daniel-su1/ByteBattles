@@ -5,9 +5,9 @@
 enum Direction {Up, Down, Left, Right}; 
 class BoardPiece: public GamePiece { // add public: GamePiece later
     protected:
-    int stepSize;
-    Coords prevCords;
-    Coords currCoords;
+        int stepSize;
+        Coords prevCords;
+        Coords currCoords;
     public:
         BoardPiece(int stepSize, Coords currCoords, Player& owner, string displayName);
         // sets new stepsize for the piece's movement
