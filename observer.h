@@ -7,6 +7,7 @@ class Observer {
  public:
     virtual void notify(Link& link) = 0;
     virtual void notify(GameBoard& gb) = 0;
+    virtual ~Observer();
 };
 
 #endif

@@ -1,7 +1,19 @@
 #include "edgecoord.h"
 
-Coords EdgeCoord::getCoords() {
-    return coords;
+EdgeCoord::EdgeCoord(Coords coords, Player &owner, string displayName): SpecialCoord(coords, owner, displayName) {}
+
+void EdgeCoord::attachPlayer(Player *p) {
+    owner = p;
 }
 
-EdgeCoord::EdgeCoord(Coords coords, Player &owner, string displayName): SpecialCoord(coords, owner, displayName) {}
+Player& EdgeCoord::getOwner(){
+    return *owner;
+}
+
+string EdgeCoord::getDisplayName() {
+    return displayName;
+}
+
+vector<AbilityCard*>& EdgeCoord::getAppliedAbilities() {
+    return appliedAbilites; 
+}
