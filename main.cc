@@ -6,6 +6,7 @@
 #include "virus.h"
 #include "player.h"
 #include "coords.h"
+#include "gameboard.h"
 
 int main() {
     string name1 = "Player 1";
@@ -36,7 +37,7 @@ int main() {
         
         std::cout << "Owner:" << (link->getOwner()).getPlayerName() << endl;
     }
-        // unique_ptr<GameBoard> gb = std::make_unique<GameBoard>();
-        // gb->init();
-        // cout << *gb;
+        unique_ptr<GameBoard> gb = std::make_unique<GameBoard>();
+        gb->init();
+        cout << *gb;
 }
