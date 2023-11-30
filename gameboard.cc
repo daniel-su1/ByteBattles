@@ -41,14 +41,6 @@ void GameBoard::init() {
 
     currPlayer = &(players[0]);
 
-    // for (int playerNum = 1; playerNum <= PLAYER_COUNT; playerNum++) {
-    //     for (int i = 0; i < BOARD_SIZE; i++) {
-    //         // waiting on abilitycards.cc ctor
-    //         // owner: players[playerNum - 1]
-    //         // allBoardPieces.emplace_back();
-    //     }
-    // }
-
     for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
         for (int i = 1; i < BOARD_SIZE - 1; i++) {
             boardBoundaries.emplace_back(Coords(0 - stepSize, i)); 
@@ -68,10 +60,10 @@ void GameBoard::init() {
     //     // (BOARD_SIZE - 1 + stepsize, BOARD_SIZE - 1)
     // }
 
-    // serverPorts.emplace_back(Coords(BOARD_SIZE / 2 - 1, 0));
-    // serverPorts.emplace_back(Coords(BOARD_SIZE / 2, 0));
-    // serverPorts.emplace_back(Coords(BOARD_SIZE / 2 - 1, BOARD_SIZE - 1));
-    // serverPorts.emplace_back(Coords(BOARD_SIZE / 2, BOARD_SIZE - 1));
+    serverPorts.emplace_back(Coords(BOARD_SIZE / 2 - 1, 0), players[0]);
+    serverPorts.emplace_back(Coords(BOARD_SIZE / 2, 0), players[0]);
+    serverPorts.emplace_back(Coords(BOARD_SIZE / 2 - 1, BOARD_SIZE - 1), players[1]);
+    serverPorts.emplace_back(Coords(BOARD_SIZE / 2, BOARD_SIZE - 1), players[1]);
 }
 
 ostream &operator<<(ostream &out, const GameBoard &gb) {
