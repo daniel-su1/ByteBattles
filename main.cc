@@ -36,7 +36,7 @@ int main() {
         
         std::cout << "Owner:" << (link->getOwner()).getPlayerName() << endl;
     }
-        unique_ptr<GameBoard> gb = std::make_unique<GameBoard>();
-        gb->init();
-        cout << *gb;
+        // unique_ptr<GameBoard> gb = std::make_unique<GameBoard>();
+        // gb->init();
+        // cout << *gb;
 }
