@@ -7,7 +7,7 @@ class SpecialCoord: public GamePiece {
         Coords coords;
     public:
         SpecialCoord(Coords coords, Player &owner, string displayName);
-        virtual Coords getCoords() = 0;
+        Coords getCoords();
 };
 
 #endif

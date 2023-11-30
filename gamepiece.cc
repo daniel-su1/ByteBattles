@@ -6,3 +6,4 @@ void GamePiece::notifyObservers() {
         std::cout << "calling observers" << std::endl;
     }
 }
+
