@@ -8,8 +8,10 @@ class TextDisplay: public Observer {
     vector<vector<char>> theDisplay; 
     GameBoard *gb;
  public:
+    TextDisplay();
     void notify(Link& link) override;
     void notify(GameBoard& gb) override;
+    friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);
 };
 
 #endif

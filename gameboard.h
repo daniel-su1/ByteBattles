@@ -25,6 +25,8 @@ class GameBoard: public Subject {
     vector<ServerPort> serverPorts;
     vector<FireWall> activeFirewalls;
     public:
+    ~GameBoard();
+    GameBoard();
     void init();
     void applyAbility(AbilityCard& ac, Player *player = nullptr);
     void movePiece(Link &link, Direction dir);
@@ -42,5 +44,6 @@ class GameBoard: public Subject {
     vector<EdgeCoord>& getEdgeCoords();
     vector<ServerPort>& getServerPort();
     vector<FireWall>& getActiveFirewalls();
+    friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
 };
 #endif

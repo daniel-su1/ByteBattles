@@ -3,11 +3,11 @@
 #include <string>
 using namespace std;
 class Player {
-    string playerName;
-    int numVirusDownloaded;
-    int numDataDownloaded;
-    int abilityCount;
-    bool won;
+        string playerName;
+        int numVirusDownloaded;
+        int numDataDownloaded;
+        int abilityCount;
+        bool won;
     public:
     Player(string playerName, int abilityCount);
     // gettor/accessor functions

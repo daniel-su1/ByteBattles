@@ -10,6 +10,5 @@ class AbilityCard: public GamePiece {
         virtual int getAbilityId() = 0;
         virtual void activate() = 0; // TO DO: implement all the activate() functions for diff cards
 };
-
 #endif
 

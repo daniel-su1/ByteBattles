@@ -11,7 +11,7 @@ int main() {
     string name1 = "Player 1";
     Player p1(name1, 5);
     char s;
-    std::vector<std::unique_ptr<Link>> links;
+    std::vector<unique_ptr<Link>> links;
     while (std::cin >> s) {
         int strength;
         if (s == 'v') {
@@ -36,4 +36,7 @@ int main() {
         
         std::cout << "Owner:" << (link->getOwner()).getPlayerName() << endl;
     }
+        unique_ptr<GameBoard> gb = std::make_unique<GameBoard>();
+        gb->init();
+        cout << *gb;
 }

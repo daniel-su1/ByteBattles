@@ -10,4 +10,3 @@ class FireWall: public AbilityCard {
 };
 
 #endif
-
