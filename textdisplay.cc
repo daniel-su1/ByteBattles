@@ -1,7 +1,7 @@
 #include "textdisplay.h"
 
 TextDisplay::TextDisplay(){
-   theDisplay = vector<vector<char>>(8, vector<char>(8, '_'));
+    theDisplay = vector<vector<char>>(8, vector<char>(8, '_'));
 }
 
 void TextDisplay::notify(Link &link) {

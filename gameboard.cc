@@ -7,9 +7,11 @@ GameBoard::GameBoard(): td{nullptr}, players(), allBoardPieces(), allAbilityCard
 GameBoard::~GameBoard() {
     delete td;
 }
+
 void GameBoard::notifyObservers() {
 
 }
+
 void GameBoard::init() {
     // reset
     td = nullptr;

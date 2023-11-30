@@ -25,26 +25,26 @@ class GameBoard: public Subject {
     vector<ServerPort> serverPorts;
     vector<FireWall> activeFirewalls;
     public:
-    ~GameBoard();
-    GameBoard();
-    void init();
-    void applyAbility(AbilityCard& ac, Player *player = nullptr);
-    void movePiece(Link &link, Direction dir);
-    void battlePieces(Link &linkp1, Link &linkp2);
-    void startNewTurn();
-    void downloadIdentity(Link &link1, Player *player);
-    void updateIdentity(Link& link);
-    Player& getWinner();
-    string getAbilities(Player&); // maybe this shold return the vector of ability cards... 
-    vector<Player>& getPlayers();
-    vector<Link>& getAllBoardPieces();
-    vector<AbilityCard>& getAllAbilityCards();
-    Player& getCurrPlayer();
-    vector<Coords>& getBoardBoundaries();
-    vector<EdgeCoord>& getEdgeCoords();
-    vector<ServerPort>& getServerPort();
-    vector<FireWall>& getActiveFirewalls();
-    friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
-    void notifyObservers() override;
+        GameBoard();
+        ~GameBoard();
+        void init();
+        void applyAbility(AbilityCard& ac, Player *player = nullptr);
+        void movePiece(Link &link, Direction dir);
+        void battlePieces(Link &linkp1, Link &linkp2);
+        void startNewTurn();
+        void downloadIdentity(Link &link1, Player *player);
+        void updateIdentity(Link& link);
+        Player& getWinner();
+        string getAbilities(Player&); // maybe this shold return the vector of ability cards... 
+        vector<Player>& getPlayers();
+        vector<Link>& getAllBoardPieces();
+        vector<AbilityCard>& getAllAbilityCards();
+        Player& getCurrPlayer();
+        vector<Coords>& getBoardBoundaries();
+        vector<EdgeCoord>& getEdgeCoords();
+        vector<ServerPort>& getServerPort();
+        vector<FireWall>& getActiveFirewalls();
+        friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
+        void notifyObservers() override;
 };
 #endif
