@@ -1,14 +1,14 @@
 #ifndef ABILITYCARD_H
 #define ABILITYCARD_H
+#include "gamepiece.h"
 
-class AbilityCard {
+class AbilityCard: public GamePiece {
     bool usedAbility;
     int abilityID;
     public:
-    virtual bool isUsed() = 0;
-    virtual int getAbilityId() = 0;
-    virtual void activate() = 0; // TO DO: implement all the activate() functions for diff cards
+        virtual bool isUsed() = 0;
+        virtual int getAbilityId() = 0;
+        virtual void activate() = 0; // TO DO: implement all the activate() functions for diff cards
 };
-
 #endif
 

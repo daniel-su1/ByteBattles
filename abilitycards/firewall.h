@@ -5,9 +5,8 @@
 class FireWall: public AbilityCard {
     Coords coords;
     public:
-    void activate() override;
-    Coords getCoords();
+        void activate() override;
+        Coords getCoords();
 };
 
 #endif
-

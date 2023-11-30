@@ -3,44 +3,26 @@
 #include <memory>
 #include "link.h"
 #include "data.h"
-#include "virus.h" // todo: remove all but gameboard
+#include "virus.h"
+#include "player.h"
+#include "coords.h"
 #include "gameboard.h"
 
 int main() {
-    string cmd;
-    GameBoard gb;
-    int moves = 0;
-
-    // You will need to make changes this code.
-
-    while (true) {
-        cin >> cmd;
-        if (cmd == "new") {
-        int n;
-        cin >> n;
-        }
-        else if (cmd == "init") {
-        cout << g;
-        }
-        else if (cmd == "game") {
-        cin >> moves;
-        }
-        else if (cmd == "switch") {
-        int r = 0, c = 0;
-        cin >> r >> c;
-        }
-    }
-
+    string name1 = "Player 1";
+    Player p1(name1, 5);
     char s;
-    std::vector<std::unique_ptr<Link>> links;
+    std::vector<unique_ptr<Link>> links;
     while (std::cin >> s) {
         int strength;
         if (s == 'v') {
             std::cin >> strength;
-            links.emplace_back(std::make_unique<Virus>(strength));
+            string pieceName = "A";
+            links.emplace_back(std::make_unique<Virus>(strength, Coords(1,1), pieceName, p1));
         } else if (s == 'd') {
             std::cin >> strength;
-            links.emplace_back(std::make_unique<Data>(strength));
+            string pieceName = "a";
+            links.emplace_back(std::make_unique<Data>(strength, Coords(1,1), pieceName, p1));
         } else {
             break;
         }
@@ -52,5 +34,10 @@ int main() {
             std::cout << "DATA, strength:";
         }
         std::cout << link->getStrength() << std::endl;
+        
+        std::cout << "Owner:" << (link->getOwner()).getPlayerName() << endl;
     }
+        unique_ptr<GameBoard> gb = std::make_unique<GameBoard>();
+        gb->init();
+        cout << *gb;
 }

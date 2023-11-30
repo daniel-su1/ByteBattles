@@ -9,11 +9,12 @@ class Player {
     int abilityCount;
     bool won;
     public:
-    // gettor/accessor functions
-    string getPlayerName();
-    int getNumVirusDownloads();
-    int getNumDataDownloads();
-    int getAbilityCount();
-    bool isWon();
+        Player(string playerName, int abilityCount);
+        // gettor/accessor functions
+        string getPlayerName();
+        int getNumVirusDownloads();
+        int getNumDataDownloads();
+        int getAbilityCount();
+        bool isWon();
 };
 #endif

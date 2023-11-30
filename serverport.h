@@ -4,7 +4,8 @@
 
 class ServerPort: public SpecialCoord {
     public:
-    Coords getCoords() override;
+        ServerPort(Coords coords, Player &owner, string displayName);
+        Coords getCoords() override;
 };
 
 #endif

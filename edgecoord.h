@@ -4,7 +4,8 @@
 
 class EdgeCoord: public SpecialCoord {
     public:
-    Coords getCoords() override;
+        EdgeCoord(Coords coords, Player &owner, string displayName);
+        Coords getCoords() override;
 };
 
 #endif
