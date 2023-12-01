@@ -1,5 +1,6 @@
 #include "gameboard.h"
-
+#include "virus.h"
+#include "data.h"
 GameBoard::GameBoard(): td{nullptr}, players(), allBoardPieces(), allAbilityCards(),
     currPlayer{nullptr}, winner{nullptr}, boardBoundaries(), edgeCoords(),
     serverPorts(), activeFirewalls() {}
@@ -46,10 +47,10 @@ void GameBoard::init() {
     }
     
     // intialize server ports; middle of board
-    serverPorts.emplace_back(ServerPort(Coords(0, BOARD_SIZE / 2 - 1), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(0, BOARD_SIZE / 2), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE - 1, BOARD_SIZE / 2 - 1), players[1], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE - 1, BOARD_SIZE / 2), players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2 - 1, 0), players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2, 0), players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2 - 1, BOARD_SIZE - 1), players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2, BOARD_SIZE - 1 ), players[1], SP_DISPLAY_STR));
     currPlayer = &(players[0]);
 
     // adding board boundaries based on board sizes
@@ -70,8 +71,10 @@ void GameBoard::init() {
             }
         }
     }
-    notifyObservers();
+    td->init(*this);
 }
+// interaction commands
+// ——————————————
 
 optional<string> GameBoard::moveLink(string linkName, string direction) {
     // TODO: actually implement
@@ -117,13 +120,35 @@ optional<string> GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { 
     }
 }
 
+// settors
+// ——————————————
 void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
-    cout << "links for " << player->getPlayerName() << " set" << endl;
-    cout << "links placements: ";
+    int count = (player->getPlayerName() == "Player 1") ? 0 : 8;
+    int xCoord = 0;
+    int yCoord = (player->getPlayerName() == "Player 1") ? 0 : 8 - 1;
+    char name = (player->getPlayerName() == "Player 1") ? 'a' : 'A';
+
     for (auto link : *linkPlacements) {
-        cout << link << " ";
+        int strength = link[1];
+        string displayName(1, name);
+
+        if (link[0] == 'V') {
+            allBoardPieces.emplace_back(make_unique<Virus>(strength, Coords(xCoord, yCoord), displayName, *player));
+        } else if (link[0] == 'D') {
+            allBoardPieces.emplace_back(make_unique<Data>(strength, Coords(xCoord, yCoord), displayName, *player));
+        }
+
+        if (xCoord == 2 || xCoord == 3) {
+            yCoord = (player->getPlayerName() == "Player 1") ? 1 : 8 - 2;
+        } else {
+            yCoord = (player->getPlayerName() == "Player 1") ? 0 : 8 - 1;
+        }
+        xCoord++;
+        name++;
+        Link &ptr = *(allBoardPieces[count].get());
+        td->notify(ptr);
+        count++;
     }
-    cout << endl;
     // TODO: create links and set in gb, handle bad input
 }
 
@@ -135,6 +160,8 @@ void GameBoard::setAbilities(string abilities, Player *player) {
     // or just deal with it lmao but maybe still cerr
 }
 
+// gettors:
+// ——————————————
 vector<Player>& GameBoard::getPlayers() {
     return players;
 }
@@ -145,4 +172,37 @@ Player& GameBoard::getCurrPlayer() {
 
 vector<ServerPort>& GameBoard::getServerPort() {
     return serverPorts;
+}
+
+// vector<std::shared_ptr<Link>> GameBoard::allLinks() {
+//     return allBoardPieces;
+// }
+
+// TODO (FIX)-> FIGURE OUT WHAT TO RETURN
+// vector<AbilityCard>& GameBoard::getAllAbilityCards() {
+//     vector<AbilityCard> result;
+//     for (const auto& ptr : allAbilityCards) {
+//         result.push_back(*ptr); // Assuming Link has a copy constructor
+//     }
+//     return result;
+// }
+
+Player& GameBoard::getCurrPlayer() {
+    return *currPlayer;
+}
+
+Player& GameBoard::getWinner() {
+    return *winner;
+}
+
+vector<Coords>& GameBoard::getBoardBoundaries() {
+    return boardBoundaries;
+}
+
+vector<EdgeCoord>& GameBoard::getEdgeCoords() {
+    return edgeCoords;
+}
+
+vector<FireWall>& GameBoard::getActiveFirewalls() {
+    return activeFirewalls;
 }
