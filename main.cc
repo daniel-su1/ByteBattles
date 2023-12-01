@@ -13,12 +13,12 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    GameBoard g;
-    g.init();
-
-    // cmd line args
-    const string ARG_ERROR_MSG = "Error, please follow one of these argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <order> -graphics -enhancements\n";
     try {
+        GameBoard g;
+        g.init();
+
+        // cmd line args
+        const string ARG_ERROR_MSG = "Error, please follow one of these argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <order> -graphics -enhancements\n";
         for (int i = 1; i < argc; i++) {
             string curArg = argv[i];
             if (curArg[0] == '-') { // is a flag
@@ -70,19 +70,17 @@ int main(int argc, char* argv[]) {
                 throw (logic_error(ARG_ERROR_MSG));
             }
         }
+        
+        string cmd;
+        while (cin >> cmd) {
+            if (cmd == "move") {
+                
+            }
+        }
+        cout << g;
     } catch (logic_error& err) {
         cerr << err.what();
     }
-
-    // string cmd;
-
-    // while (true) {
-    //     cin >> cmd;
-    //     if (cmd == "new") {
-    //     int n;
-    //     cin >> n;
-    //     }
-    // }
 }
 
 // int oldMain() {

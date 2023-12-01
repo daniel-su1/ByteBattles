@@ -27,29 +27,38 @@ class GameBoard: public Subject {
     public:
         GameBoard();
         ~GameBoard();
+        friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
+        void notifyObservers() override;
+
         void init();
-        void applyAbility(AbilityCard& ac, Player *player = nullptr);
-        void movePiece(Link &link, Direction dir);
+        void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO: same as movePiece for useAbility()
+        void movePiece(Link &link, Direction dir); // TODO: possibly move to private or delete bc of moveLink() below
         void battlePieces(Link &linkp1, Link &linkp2);
         void startNewTurn();
         void downloadIdentity(Link &link1, Player *player);
         void updateIdentity(Link& link);
 
-        void setAbilities(string abilities, Player *player);
-        void setLinks(unique_ptr <vector<string>> linkPlacements, Player *player);
+        // text command interactions
+        void moveLink(string linkName, string direction);
+        string playerAbilities(Player&);
+        void useAbility(int abilityID);
+        void useAbility(int abilityID, string linkName); // for link boost
+        void useAbility(int abilityId, int xCoord, int yCoord); // for firewall
 
-        Player& getWinner();
-        string getAbilities(Player&); // maybe this shold return the vector of ability cards... 
+        // setters
+        void setLinks(unique_ptr <vector<string>> linkPlacements, Player *player);
+        void setAbilities(string abilities, Player *player);
+
+        // getters
         vector<Player>& getPlayers();
-        vector<Link>& getAllBoardPieces();
+        vector<Link>& allLinks();
         vector<AbilityCard>& getAllAbilityCards();
         Player& getCurrPlayer();
+        Player& getWinner();
         vector<Coords>& getBoardBoundaries();
         vector<EdgeCoord>& getEdgeCoords();
         vector<ServerPort>& getServerPort();
         vector<FireWall>& getActiveFirewalls();
 
-        friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
-        void notifyObservers() override;
 };
 #endif
