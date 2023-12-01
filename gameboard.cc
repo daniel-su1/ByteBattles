@@ -1,6 +1,11 @@
 #include "gameboard.h"
 #include "virus.h"
 #include "data.h"
+#include "abilitycards/linkboost.h"
+#include "abilitycards/download.h"
+#include "abilitycards/scan.h"
+#include "abilitycards/polarize.h"
+
 GameBoard::GameBoard(): td{nullptr}, players(), allBoardPieces(), allAbilityCards(),
     currPlayer{nullptr}, winner{nullptr}, boardBoundaries(), edgeCoords(),
     serverPorts(), activeFirewalls() {}
@@ -81,7 +86,18 @@ optional<string> GameBoard::moveLink(string linkName, string direction) {
 }
 
 string GameBoard::playerAbilities(Player& player) {
-    return "these are my abilities yahoo";
+    string message = player.getPlayerName() + " Abilities:\n";
+    string abilities = "";
+    for (int i = 0; i < allAbilityCards.size(); i++) {
+        if (player.getPlayerName() == allAbilityCards[i]->getOwner().getPlayerName()) {
+            string displayName = allAbilityCards[i]->getDisplayName();
+            int id = allAbilityCards[i]->getAbilityId();
+            string isUsed = allAbilityCards[i]->isUsed() ? "[used] ": "[avaliable] ";
+            abilities += "#" + to_string(id) + "." + displayName + " " + isUsed;
+        }
+    }
+    message += abilities;
+    return (message + "\n");
 }
 
 optional<string> GameBoard::useAbility(int abilityID) {
@@ -161,10 +177,31 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
 }
 
 void GameBoard::setAbilities(string abilities, Player *player) {
-    cout << "abilities for " << player->getPlayerName() << " set" << endl;
-    cout << "abilities order: " << abilities << endl;
-    // TODO: create ability cards and set them in the gameboard
-    // also handle bad input and throw it out maybe
+    int id = 1;
+
+    for (char c: abilities) {
+        if (c == 'L') {
+            string displayName = "LinkBoost";
+            allAbilityCards.emplace_back(make_unique<LinkBoost>(id, *player, displayName));
+        } else if (c == 'F') {
+            string displayName = "FireWall";
+            allAbilityCards.emplace_back(make_unique<FireWall>(id, *player, displayName));
+        } else if (c == 'D') {
+            string displayName = "Download";
+            allAbilityCards.emplace_back(make_unique<Download>(id, *player, displayName));
+        } else if (c == 'S') {
+            string displayName = "Scan";
+            allAbilityCards.emplace_back(make_unique<Scan>(id, *player, displayName));
+        } else if (c == 'P') {
+            string displayName = "Polarize";
+            allAbilityCards.emplace_back(make_unique<Polarize>(id, *player, displayName));
+        } 
+        if (id == 5) {
+            id = 1;
+        } else {
+            id++;
+        }
+    }
     // or just deal with it lmao but maybe still cerr
 }
 

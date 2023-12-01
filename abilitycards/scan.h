@@ -4,7 +4,7 @@
 class Scan: public AbilityCard {
     public:
         void activate() override;
-        Scan(int abilityID, Player &owner, string DisplayName);
+        Scan(int abilityID, Player &owner, string displayName);
 };
 
 #endif

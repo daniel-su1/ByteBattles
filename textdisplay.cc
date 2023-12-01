@@ -25,6 +25,12 @@ void TextDisplay::init(GameBoard& gb) {
 
 // TO DO: change 8 to constant
 ostream &operator<<(ostream &out, const TextDisplay &td) {
+  Player &p1 = (td.myGb->getPlayers())[0];
+  Player &p2 = (td.myGb->getPlayers())[1];
+  // player 1
+  cout << p1.getPlayerName() << ":" << endl;
+  cout << "Downloaded: " << p1.getNumDataDownloads() << "D, " << p1.getNumVirusDownloads() << "V" << endl;
+  cout << "Abilities: " << p1.getAbilityCount() << endl;
   // board top edge
   for (int i = 0; i < td.myGb->BOARD_SIZE; i++) {
     out << "=";
@@ -41,6 +47,10 @@ ostream &operator<<(ostream &out, const TextDisplay &td) {
   for (int i = 0; i < td.myGb->BOARD_SIZE; i++) {
     out << "=";
   }
-
+  out << endl;
+  // player 2
+  cout << p2.getPlayerName() << ":" << endl;
+  cout << "Downloaded: " << p2.getNumDataDownloads() << "D, " << p1.getNumVirusDownloads() << "V" << endl;
+  cout << "Abilities: " << p2.getAbilityCount() << endl;
   return out;
 }

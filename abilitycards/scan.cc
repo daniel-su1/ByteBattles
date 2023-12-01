@@ -6,5 +6,5 @@ void Scan::activate() {
     cout << "scaaaan!!" << endl; 
 }
 
-Scan::Scan(int abilityID, Player &owner, string DisplayName):
+Scan::Scan(int abilityID, Player &owner, string displayName):
     AbilityCard(abilityID, owner, displayName, abilityType::SCAN) {}
