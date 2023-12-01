@@ -74,6 +74,8 @@ void GameBoard::init() {
 }
 
 
+// settors
+// ——————————————
 void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
     cout << "links for " << player->getPlayerName() << " set" << endl;
     cout << "links placements: ";
@@ -92,10 +94,48 @@ void GameBoard::setAbilities(string abilities, Player *player) {
     // or just deal with it lmao but maybe still cerr
 }
 
+// gettors:
+// ——————————————
 vector<Player>& GameBoard::getPlayers() {
     return players;
 }
 
 vector<ServerPort>& GameBoard::getServerPort() {
     return serverPorts;
+}
+
+// vector<Link>& GameBoard::allLinks() {
+//     vector<Link> result;
+//     for (const auto& ptr : allBoardPieces) {
+//         result.push_back(*ptr); // Assuming Link has a copy constructor
+//     }
+//     return result;
+// }
+
+// vector<AbilityCard>& GameBoard::getAllAbilityCards() {
+//     vector<AbilityCard> result;
+//     for (const auto& ptr : allAbilityCards) {
+//         result.push_back(*ptr); // Assuming Link has a copy constructor
+//     }
+//     return result;
+// }
+
+Player& GameBoard::getCurrPlayer() {
+    return *currPlayer;
+}
+
+Player& GameBoard::getWinner() {
+    return *winner;
+}
+
+vector<Coords>& GameBoard::getBoardBoundaries() {
+    return boardBoundaries;
+}
+
+vector<EdgeCoord>& GameBoard::getEdgeCoords() {
+    return edgeCoords;
+}
+
+vector<FireWall>& GameBoard::getActiveFirewalls() {
+    return activeFirewalls;
 }
