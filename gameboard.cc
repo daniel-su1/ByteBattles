@@ -8,9 +8,7 @@ GameBoard::~GameBoard() {
     delete td;
 }
 
-void GameBoard::notifyObservers() {
-    td->notify(*this);
-}
+void GameBoard::notifyObservers() { td->notify(*this); }
 
 void GameBoard::init() {
     // reset

@@ -5,3 +5,9 @@ Link::Link(int strength, Coords currCoords, string displayName, Player &owner, L
     strength{strength}, type{type}, identityRevealed{false} {}
 
 Link::~Link(){}
+
+bool Link::isIdentityRevealed() { return identityRevealed; }
+
+LinkType Link::getType() { return type; }
+
+int Link::getStrength() { return strength; }

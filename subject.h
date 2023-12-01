@@ -12,7 +12,7 @@ class Subject {
  public:
     void attach(Observer *ob);
     void detach(Observer *ob);
-    virtual void notifyObservers() = 0;
+    virtual void notifyObservers();
 };
 
 #endif
