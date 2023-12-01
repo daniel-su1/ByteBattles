@@ -8,6 +8,11 @@ GameBoard::~GameBoard() {
     delete td;
 }
 
+ostream &operator<<(ostream &out, const GameBoard &gb) {
+    cout << *gb.td << endl;
+    return out;
+}
+
 void GameBoard::notifyObservers() { td->notify(*this); }
 
 void GameBoard::init() {
@@ -34,8 +39,8 @@ void GameBoard::init() {
     td = new TextDisplay;
 
     // intialize players
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        string playerName = "Player " + i;
+    for (int i = 1; i <= PLAYER_COUNT; i++) {
+        string playerName = "Player " + to_string(i);
         int abilityCount = ABILITY_COUNT;
         players.emplace_back(Player(playerName, abilityCount));
     }
@@ -49,7 +54,7 @@ void GameBoard::init() {
 
     // adding board boundaries based on board sizes
     for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
-        for (int i = 1; i < BOARD_SIZE - 1; i++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
             boardBoundaries.emplace_back(Coords(0 - stepSize, i)); 
             boardBoundaries.emplace_back(Coords(BOARD_SIZE - 1 + stepSize, i)); 
         }
@@ -64,21 +69,33 @@ void GameBoard::init() {
             edgeCoords.emplace_back(EdgeCoord(Coords(i, BOARD_SIZE - 1 + stepSize), players[0], BORDER_DISPLAY_STR));
             }
         }
-        // add back if evelina is right
-        // edgeCoords.emplace_back coords (0 - stepSize, 0)
-        // (0 - stepSize, BOARD_SIZE - 1)
-        // (BOARD_SIZE - 1 + stepSize, 0)
-        // (BOARD_SIZE - 1 + stepsize, BOARD_SIZE - 1)
     }
     notifyObservers();
+}
+
+
+void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
+    cout << "links for " << player->getPlayerName() << " set" << endl;
+    cout << "links placements: ";
+    for (auto link : *linkPlacements) {
+        cout << link << " ";
+    }
+    cout << endl;
+    // TODO: create links and set in gb, handle bad input
+}
+
+void GameBoard::setAbilities(string abilities, Player *player) {
+    cout << "abilities for " << player->getPlayerName() << " set" << endl;
+    cout << "abilities order: " << abilities << endl;
+    // TODO: create ability cards and set them in the gameboard
+    // also handle bad input and throw it out maybe
+    // or just deal with it lmao but maybe still cerr
+}
+
+vector<Player>& GameBoard::getPlayers() {
+    return players;
 }
 
 vector<ServerPort>& GameBoard::getServerPort() {
     return serverPorts;
 }
-
-ostream &operator<<(ostream &out, const GameBoard &gb) {
-    cout << *gb.td << endl;
-    return out;
-}
-
