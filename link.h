@@ -12,11 +12,11 @@ class Link: public BoardPiece{
         Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type);
     public:
         // returns the strength of the link
-        virtual int getStrength() = 0;
+        int getStrength();
         // returns the type of the link
-        virtual LinkType getType() = 0;
+        LinkType getType();
         // returns true/false depending on whether identity of the link is known by the other player
-        virtual bool isIdentityRevealed() = 0;
+        bool isIdentityRevealed();
         virtual ~Link();
 };
 
