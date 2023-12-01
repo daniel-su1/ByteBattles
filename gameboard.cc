@@ -12,6 +12,11 @@ void GameBoard::notifyObservers() {
     td->notify(*this);
 }
 
+ostream &operator<<(ostream &out, const GameBoard &gb) {
+    cout << *gb.td << endl;
+    return out;
+}
+
 void GameBoard::init() {
     // reset
     td = nullptr;
@@ -75,56 +80,37 @@ void GameBoard::init() {
     notifyObservers();
 }
 
+void GameBoard::movePiece(string linkName, string dir) {
+    // TODO: piece movement
+}
+
+string GameBoard::playerAbilities(Player& player) {
+    return player.getPlayerName() + "'s abilities: ";
+}
+
+void GameBoard::setAbilities(string abilities, Player *player) {
+    cout << "abilities for " << player->getPlayerName() << " set" << endl;
+    cout << "abilities order: " << abilities << endl;
+    // TODO: create ability cards and set them in the gameboard
+    // also handle bad input and throw it out maybe
+    // or just deal with it lmao but maybe still cerr
+}
+
+void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
+    cout << "links for " << player->getPlayerName() << " set" << endl;
+    cout << "links placements: ";
+    for (auto link : *linkPlacements) {
+        cout << link << " ";
+    }
+    cout << endl;
+    // TODO: create links and set in gb, handle bad input
+}
+
+vector<Player>& GameBoard::getPlayers() {
+    return players;
+}
+
 vector<ServerPort>& GameBoard::getServerPort() {
     return serverPorts;
-}
-
-void GameBoard::setAbilities(string abilities, Player *player) {
-    cout << "abilities for " << player->getPlayerName() << " set" << endl;
-    cout << "abilities order: " << abilities << endl;
-    // TODO: create ability cards and set them in the gameboard
-    // also handle bad input and throw it out maybe
-    // or just deal with it lmao but maybe still cerr
-}
-
-void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
-    cout << "links for " << player->getPlayerName() << " set" << endl;
-    cout << "links placements: ";
-    for (auto link : *linkPlacements) {
-        cout << link << " ";
-    }
-    cout << endl;
-    // TODO: create links and set in gb, handle bad input
-}
-
-vector<Player>& GameBoard::getPlayers() {
-    return players;
-}
-
-void GameBoard::setAbilities(string abilities, Player *player) {
-    cout << "abilities for " << player->getPlayerName() << " set" << endl;
-    cout << "abilities order: " << abilities << endl;
-    // TODO: create ability cards and set them in the gameboard
-    // also handle bad input and throw it out maybe
-    // or just deal with it lmao but maybe still cerr
-}
-
-void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
-    cout << "links for " << player->getPlayerName() << " set" << endl;
-    cout << "links placements: ";
-    for (auto link : *linkPlacements) {
-        cout << link << " ";
-    }
-    cout << endl;
-    // TODO: create links and set in gb, handle bad input
-}
-
-vector<Player>& GameBoard::getPlayers() {
-    return players;
-}
-
-ostream &operator<<(ostream &out, const GameBoard &gb) {
-    cout << *gb.td << endl;
-    return out;
 }
 

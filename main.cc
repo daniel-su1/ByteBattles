@@ -13,25 +13,25 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    GameBoard g;
-    g.init();
-
-    // cmd line args
-    const string ARG_ERROR_MSG = "Error, please follow one of these argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <order> -graphics -enhancements\n";
     try {
+        GameBoard gb;
+        gb.init();
+
+        // cmd line setup args
+        const string ARG_ERROR_MSG = "Error, commands supported are: \n\t -ability1 <order> \n\t -ability2 <order> \n\t -link1 <placement-file> \n\t -link2 <order> \n\t -graphics \n\t -enhancements\n";
         for (int i = 1; i < argc; i++) {
             string curArg = argv[i];
             if (curArg[0] == '-') { // is a flag
                 if (curArg == "-ability1") {
                     i++; // next argument should be the order of abilities
                     string abilitiesOrder = argv[i];
-                    Player* player= &(g.getPlayers()[0]);
-                    g.setAbilities(abilitiesOrder, player);
+                    Player* player= &(gb.getPlayers()[0]);
+                    gb.setAbilities(abilitiesOrder, player);
                 } else if (curArg == "-ability2") {
                     i++; // next argument should be the order of abilities
                     string abilitiesOrder = argv[i];
-                    Player* player= &(g.getPlayers()[1]);
-                    g.setAbilities(abilitiesOrder, player);
+                    Player* player= &(gb.getPlayers()[1]);
+                    gb.setAbilities(abilitiesOrder, player);
                 } else if (curArg == "-link1") {
                     i++; // next arg should be a file containing placements
 
@@ -41,9 +41,9 @@ int main(int argc, char* argv[]) {
                     unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
                     while (placementFile >> pos) { linkPlacements->emplace_back(pos); }
 
-                    Player* player= &(g.getPlayers()[0]);
+                    Player* player= &(gb.getPlayers()[0]);
 
-                    g.setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
+                    gb.setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
                 } else if (curArg == "-link2") {
                     i++; // next arg should be a file containing placements
 
@@ -53,9 +53,9 @@ int main(int argc, char* argv[]) {
                     unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
                     while (placementFile >> pos) { linkPlacements->emplace_back(pos); }
 
-                    Player* player= &(g.getPlayers()[0]);
+                    Player* player= &(gb.getPlayers()[0]);
 
-                    g.setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
+                    gb.setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
                 } else if (curArg == "-graphics") {
                     // TODO: deal w graphics
                     // do not need i++ bc theres no args
@@ -70,19 +70,37 @@ int main(int argc, char* argv[]) {
                 throw (logic_error(ARG_ERROR_MSG));
             }
         }
+
+        // text command interactions
+        string cmd;
+        while (cin >> cmd) {
+            if (cmd == "move") {
+                // get link name (a-gb and A-gb) and direction (up, down, left, right) from cin
+                string link, dir;
+                cin >> link;
+                cin >> dir;
+                gb.movePiece(link, dir);
+            } else if (cmd == "abilities") {
+                cout << gb.playerAbilities(gb.getCurrPlayer());
+            } else if (cmd == "ability") {
+                // get ability card's id from cin
+                int id;
+                cin >> id;
+                vector<AbilityCard>& allAbilityCards = gb.getAllAbilityCards();
+                unique_ptr<AbilityCard> newCard = make_unique<AbilityCard>(allAbilityCards[id]);
+            } else if (cmd == "board") {
+
+            } else if (cmd == "sequence") {
+
+            } else if (cmd == "quit") {
+                break;
+            } else { // misspelled command
+                cerr << "Error, commands supported are: \n\t move <link> <dir> \n\t abilities \n\t ability <ID> \n\t board \n\t sequence <file> \n\t quit\n" << endl;
+            }
+        }
     } catch (logic_error& err) {
         cerr << err.what();
     }
-
-    // string cmd;
-
-    // while (true) {
-    //     cin >> cmd;
-    //     if (cmd == "new") {
-    //     int n;
-    //     cin >> n;
-    //     }
-    // }
 }
 
 // int oldMain() {
