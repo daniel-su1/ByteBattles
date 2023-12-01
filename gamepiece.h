@@ -24,6 +24,7 @@ class GamePiece: public Subject {
         string getDisplayName();
         // returns the avaliable ability cards
         vector<AbilityCard*>& getAppliedAbilities();
+        void notifyObservers() override;
 };
 
 #endif
