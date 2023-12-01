@@ -16,7 +16,6 @@ int main(int argc, char* argv[]) {
     try {
         GameBoard g;
         g.init();
-
         // cmd line args
         const string ARG_ERROR_MSG = "Error, please follow one of these argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <order> -graphics -enhancements\n";
         for (int i = 1; i < argc; i++) {
@@ -53,7 +52,7 @@ int main(int argc, char* argv[]) {
                     unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
                     while (placementFile >> pos) { linkPlacements->emplace_back(pos); }
 
-                    Player* player= &(g.getPlayers()[0]);
+                    Player* player= &(g.getPlayers()[1]);
 
                     g.setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
                 } else if (curArg == "-graphics") {
@@ -70,14 +69,13 @@ int main(int argc, char* argv[]) {
                 throw (logic_error(ARG_ERROR_MSG));
             }
         }
-        
+        cout << g;
         string cmd;
         while (cin >> cmd) {
             if (cmd == "move") {
                 
             }
         }
-        cout << g;
     } catch (logic_error& err) {
         cerr << err.what();
     }

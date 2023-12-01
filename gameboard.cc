@@ -1,5 +1,6 @@
 #include "gameboard.h"
-
+#include "virus.h"
+#include "data.h"
 GameBoard::GameBoard(): td{nullptr}, players(), allBoardPieces(), allAbilityCards(),
     currPlayer{nullptr}, winner{nullptr}, boardBoundaries(), edgeCoords(),
     serverPorts(), activeFirewalls() {}
@@ -72,6 +73,8 @@ void GameBoard::init() {
     }
     notifyObservers();
 }
+// interaction commands
+// ——————————————
 
 
 // settors
@@ -79,8 +82,50 @@ void GameBoard::init() {
 void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
     cout << "links for " << player->getPlayerName() << " set" << endl;
     cout << "links placements: ";
+    int xCoord = -1;
+    int yCoord = -1;
+    char name = '\0';
+    if (player->getPlayerName() == "Player 1") {
+        xCoord = 0;
+        yCoord = 0;
+        name = 'a';
+    } else {
+        xCoord = 0;
+        yCoord= 8 - 1; // todo: make 8 a const later
+        name = 'A';
+    }
     for (auto link : *linkPlacements) {
-        cout << link << " ";
+        if (link[0] == 'V') {
+           int strength = link[1];
+            string displayName(1, name);
+            allBoardPieces.emplace_back(std::make_unique<Virus>(strength, Coords(xCoord, yCoord), displayName, *player));
+            name++;
+            if (xCoord >= 7) {
+                xCoord = 0;
+                if (player->getPlayerName() == "Player 1") {
+                    yCoord++;
+                } else {
+                    yCoord--;
+                }
+            } else { // need to implement "skip over" ports;
+                xCoord++;
+            }
+        } else {
+            int strength = link[1];
+            string displayName(1, name);
+            allBoardPieces.emplace_back(std::make_unique<Data>(strength, Coords(xCoord, yCoord), displayName, *player));
+            name++;
+            if (xCoord >= 7) {
+                xCoord = 0;
+                if (player->getPlayerName() == "Player 1") {
+                    yCoord++;
+                } else {
+                    yCoord--;
+                }
+            } else {
+                xCoord++;
+            }
+        }
     }
     cout << endl;
     // TODO: create links and set in gb, handle bad input
@@ -104,14 +149,12 @@ vector<ServerPort>& GameBoard::getServerPort() {
     return serverPorts;
 }
 
+// TODO (FIX) -> FIGURE OUT WHAT TO RETURN
 // vector<Link>& GameBoard::allLinks() {
-//     vector<Link> result;
-//     for (const auto& ptr : allBoardPieces) {
-//         result.push_back(*ptr); // Assuming Link has a copy constructor
-//     }
-//     return result;
+//     return allBoardPieces
 // }
 
+// TODO (FIX)-> FIGURE OUT WHAT TO RETURN
 // vector<AbilityCard>& GameBoard::getAllAbilityCards() {
 //     vector<AbilityCard> result;
 //     for (const auto& ptr : allAbilityCards) {
