@@ -26,9 +26,20 @@ class GameBoard: public Subject {
     vector<ServerPort> serverPorts;
     vector<FireWall> activeFirewalls;
     public:
+        const int PLAYER_COUNT = 2;
+        const int ABILITY_COUNT = 5;
+
+        const int MAX_STEPSIZE = 2;
+
+        const int BOARD_SIZE = 8;
+        const int SP_X_COORD_1 = 3;
+        const int SP_X_COORD_2 = 4;
+        string SP_DISPLAY_STR = "S";
+        string BORDER_DISPLAY_STR = "=";
+
         GameBoard();
         ~GameBoard();
-        friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
+        friend ostream &operator<<(ostream &out, const GameBoard &gb);
         void notifyObservers() override;
 
         void init();

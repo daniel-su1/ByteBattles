@@ -29,14 +29,6 @@ void GameBoard::init() {
     serverPorts.clear();
     activeFirewalls.clear();
 
-    // set defaults
-    const int BOARD_SIZE = 8;
-    const int MAX_STEPSIZE = 2;
-    const int PLAYER_COUNT = 2;
-    const int ABILITY_COUNT = 5;
-    string SP_DISPLAY_STR = "S";
-    string BORDER_DISPLAY_STR = "=";
-
     td = new TextDisplay;
 
     // intialize players
@@ -47,10 +39,10 @@ void GameBoard::init() {
     }
     
     // intialize server ports; middle of board
-    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2 - 1, 0), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2, 0), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2 - 1, BOARD_SIZE - 1), players[1], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2, BOARD_SIZE - 1 ), players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, 0), players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, 0), players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, BOARD_SIZE - 1), players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, BOARD_SIZE - 1 ), players[1], SP_DISPLAY_STR));
     currPlayer = &(players[0]);
 
     // adding board boundaries based on board sizes
@@ -63,11 +55,11 @@ void GameBoard::init() {
 
     for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
         for (int i = 0; i < BOARD_SIZE; i++) {
-            if ((i != BOARD_SIZE / 2) && (i != BOARD_SIZE /2 - 1)) {
-             // player 2's target/winning areas
-            edgeCoords.emplace_back(EdgeCoord(Coords(i, 0 - stepSize), players[1], BORDER_DISPLAY_STR)); 
-             // player 1's target/winning areas
-            edgeCoords.emplace_back(EdgeCoord(Coords(i, BOARD_SIZE - 1 + stepSize), players[0], BORDER_DISPLAY_STR));
+            if ((i != SP_X_COORD_1) && (i != SP_X_COORD_2)) {
+                // player 2's target/winning areas
+                edgeCoords.emplace_back(EdgeCoord(Coords(i, 0 - stepSize), players[1], BORDER_DISPLAY_STR)); 
+                // player 1's target/winning areas
+                edgeCoords.emplace_back(EdgeCoord(Coords(i, BOARD_SIZE - 1 + stepSize), players[0], BORDER_DISPLAY_STR));
             }
         }
     }
@@ -123,31 +115,40 @@ optional<string> GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { 
 // settors
 // ——————————————
 void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
-    int count = (player->getPlayerName() == "Player 1") ? 0 : 8;
+    bool isPlayer1 = player->getPlayerName() == "Player 1";
     int xCoord = 0;
-    int yCoord = (player->getPlayerName() == "Player 1") ? 0 : 8 - 1;
-    char name = (player->getPlayerName() == "Player 1") ? 'a' : 'A';
+    int yCoord = isPlayer1 ? 0 : BOARD_SIZE - 1;
+    char name = isPlayer1 ? 'a' : 'A';
 
     for (auto link : *linkPlacements) {
         int strength = link[1];
         string displayName(1, name);
 
-        if (link[0] == 'V') {
-            allBoardPieces.emplace_back(make_unique<Virus>(strength, Coords(xCoord, yCoord), displayName, *player));
-        } else if (link[0] == 'D') {
-            allBoardPieces.emplace_back(make_unique<Data>(strength, Coords(xCoord, yCoord), displayName, *player));
+        // move yCoord towards center if blocked by server port
+        if (xCoord == SP_X_COORD_1 || xCoord == SP_X_COORD_2) { 
+            yCoord = isPlayer1 ? 1 : BOARD_SIZE - 2;
+        } else {
+            yCoord = isPlayer1 ? 0 : BOARD_SIZE - 1;
         }
 
-        if (xCoord == 2 || xCoord == 3) {
-            yCoord = (player->getPlayerName() == "Player 1") ? 1 : 8 - 2;
-        } else {
-            yCoord = (player->getPlayerName() == "Player 1") ? 0 : 8 - 1;
+        // create links and place in board
+        unique_ptr<Link> curLinkPtr;
+        if (link[0] == 'V') {
+            Virus curLink = Virus(strength, Coords(xCoord, yCoord), displayName, *player);
+            curLinkPtr = make_unique<Virus>(curLink);
+            td->notify(*curLinkPtr);
+        } else if (link[0] == 'D') {
+            Data curLink = Data(strength, Coords(xCoord, yCoord), displayName, *player);
+            curLinkPtr = make_unique<Data>(curLink);
+            td->notify(*curLinkPtr);
+        } else { // not V or D
+            throw (logic_error("Error, incorrect link placements: please follow <type1><strength1> <type2><strength2> ... , where type is V or D.\n"));
         }
+        allBoardPieces.emplace_back(move(curLinkPtr));
+
+        // update position and name
         xCoord++;
         name++;
-        Link &ptr = *(allBoardPieces[count].get());
-        td->notify(ptr);
-        count++;
     }
     // TODO: create links and set in gb, handle bad input
 }

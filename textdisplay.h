@@ -6,7 +6,7 @@
 
 class TextDisplay: public Observer {
     vector<vector<char>> theDisplay; 
-    GameBoard *gb;
+    GameBoard *myGb;
  public:
     TextDisplay();
     void init(GameBoard& gb);
