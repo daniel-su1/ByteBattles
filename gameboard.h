@@ -45,6 +45,5 @@ class GameBoard: public Subject {
         vector<ServerPort>& getServerPort();
         vector<FireWall>& getActiveFirewalls();
         friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
-        void notifyObservers() override;
 };
 #endif

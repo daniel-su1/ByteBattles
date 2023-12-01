@@ -11,13 +11,13 @@ class BoardPiece: public GamePiece { // add public: GamePiece later
     public:
         BoardPiece(int stepSize, Coords currCoords, Player& owner, string displayName);
         // sets new stepsize for the piece's movement
-        virtual void setStepSize(int newStepSize) = 0;
+        void setStepSize(int newStepSize);
         // moves the piece stepsize amount of steps in given direction
-        virtual void movePiece(Direction direction) = 0;
+        void movePiece(Direction direction);
         // returns the previous coords of the piece
-        virtual Coords getPreviousCoords() = 0;
+        Coords getPreviousCoords();
         // returns the curr coords of the piece
-        virtual Coords getCurrCoords() = 0;
+        Coords getCurrCoords();
 };
 
 #endif
