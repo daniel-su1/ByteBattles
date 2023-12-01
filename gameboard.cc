@@ -70,13 +70,11 @@ void GameBoard::init() {
 // interaction commands
 // ——————————————
 
-optional<string> GameBoard::moveLink(string linkName, string direction) {
+void GameBoard::moveLink(string linkName, string direction) {
     // TODO: actually implement
     bool hasError = true;
     if (hasError) {
-        return "i am a movelink error message";
-    } else {
-        return {};
+        throw (logic_error("i am a movelink for link boosts error message\n"));
     }
 }
 
@@ -84,33 +82,27 @@ string GameBoard::playerAbilities(Player& player) {
     return "these are my abilities yahoo";
 }
 
-optional<string> GameBoard::useAbility(int abilityID) {
+void GameBoard::useAbility(int abilityID) {
     // TODO: actually implement
     bool hasError = true;
     if (hasError) {
-        return "i am a useability error message";
-    } else {
-        return {};
+        throw (logic_error("i am a useability error message\n"));
     }
 }
 
-optional<string> GameBoard::useAbility(int abilityID, string linkName) { // for link boost
+void GameBoard::useAbility(int abilityID, string linkName) { // for link boost
     // TODO: actually implement
     bool hasError = true;
     if (hasError) {
-        return "i am a useability for link boosts error message";
-    } else {
-        return {};
+        throw (logic_error("i am a useability for link boosts error message\n"));
     }
 }
 
-optional<string> GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firewall
+void GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firewall
     // TODO: actually implement
     bool hasError = true;
     if (hasError) {
-        return "i am a useability for firewalls error message";
-    } else {
-        return {};
+        throw (logic_error("i am a useability for firewalls error message\n"));
     }
 }
 

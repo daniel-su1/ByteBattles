@@ -3,7 +3,6 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include <optional>
 #include "player.h"
 #include "link.h"
 #include "abilitycard.h"
@@ -52,11 +51,11 @@ class GameBoard: public Subject {
 
         // text command interactions
         // all methods other than playerAbilities() return a string with the error message if the method fails
-        optional<string> moveLink(string linkName, string direction);
+        void moveLink(string linkName, string direction);
         string playerAbilities(Player& player); // unlikely to fail since there is no user input
-        optional<string> useAbility(int abilityID);
-        optional<string> useAbility(int abilityID, string linkName); // for link boost
-        optional<string> useAbility(int abilityId, int xCoord, int yCoord); // for firewall
+        void useAbility(int abilityID);
+        void useAbility(int abilityID, string linkName); // for link boost
+        void useAbility(int abilityId, int xCoord, int yCoord); // for firewall
 
         // setters
         void setLinks(unique_ptr <vector<string>> linkPlacements, Player *player);
