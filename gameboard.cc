@@ -55,13 +55,18 @@ void GameBoard::init() {
 
     for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
         for (int i = 0; i < BOARD_SIZE; i++) {
-            if ((i != SP_X_COORD_1) && (i != SP_X_COORD_2)) {
+            // non server port x coords can have winning positions at distance of 1 or 2
+            // and server ports x coords can only win at distance of 1
+            if (((i != SP_X_COORD_1) && (i != SP_X_COORD_2)) || stepSize == 1) { 
                 // player 2's target/winning areas
                 edgeCoords.emplace_back(EdgeCoord(Coords(i, 0 - stepSize), players[1], BORDER_DISPLAY_STR)); 
                 // player 1's target/winning areas
                 edgeCoords.emplace_back(EdgeCoord(Coords(i, BOARD_SIZE - 1 + stepSize), players[0], BORDER_DISPLAY_STR));
             }
         }
+    }
+    for (auto coord : edgeCoords) {
+        cout << coord.getCoords().getX() << " " << coord.getCoords().getY() << endl;
     }
     td->init(*this);
 }
