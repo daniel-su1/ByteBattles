@@ -9,10 +9,10 @@ class AbilityCard: public GamePiece {
     int abilityID;
     abilityType cardType;
     public:
-        AbilityCard(int abilityID, Player &owner, string DisplayName, abilityType type);
+        AbilityCard(int abilityID, Player &owner, string displayName, abilityType type);
         abilityType getType();
-        virtual bool isUsed() = 0;
-        virtual int getAbilityId() = 0;
+        bool isUsed();
+        int getAbilityId();
         virtual void activate() = 0; // TO DO: implement all the activate() functions for diff cards
 };
 #endif
