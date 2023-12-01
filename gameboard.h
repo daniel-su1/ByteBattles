@@ -51,8 +51,8 @@ class GameBoard: public Subject {
 
         // getters
         vector<Player>& getPlayers();
-        vector<Link>& allLinks();
-        vector<AbilityCard>& getAllAbilityCards();
+        // vector<std::shared_ptr<Link>> getAllLinks();
+        // vector<AbilityCard>& getAllAbilityCards();
         Player& getCurrPlayer();
         Player& getWinner();
         vector<Coords>& getBoardBoundaries();

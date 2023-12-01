@@ -51,6 +51,7 @@
         "cstring": "cpp",
         "string_view": "cpp",
         "numbers": "cpp",
-        "deque": "cpp"
+        "deque": "cpp",
+        "fstream": "cpp"
     }
 }
