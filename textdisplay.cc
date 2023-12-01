@@ -14,6 +14,7 @@ void TextDisplay::notify(GameBoard &gb) {
 }
 
 void TextDisplay::init(GameBoard& gb) {
+    myGb = &gb;
     vector<ServerPort> sp = gb.getServerPort();
     for (int i = 0; i < sp.size(); i++) {
       int x = sp[i].getCoords().getX();
@@ -25,19 +26,19 @@ void TextDisplay::init(GameBoard& gb) {
 // TO DO: change 8 to constant
 ostream &operator<<(ostream &out, const TextDisplay &td) {
   // board top edge
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < td.myGb->BOARD_SIZE; i++) {
     out << "=";
   }
   out << endl;
   // board
-  for (int i = 0; i < 8; i++) { 
-    for (int j = 0; j < 8; j++) {
+  for (int i = 0; i < td.myGb->BOARD_SIZE; i++) { 
+    for (int j = 0; j < td.myGb->BOARD_SIZE; j++) {
       out << td.theDisplay[i][j];
     }
     out << endl;
   }
   // board bottom edge
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < td.myGb->BOARD_SIZE; i++) {
     out << "=";
   }
 
