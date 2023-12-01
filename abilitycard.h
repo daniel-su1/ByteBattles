@@ -2,7 +2,7 @@
 #define ABILITYCARD_H
 #include "gamepiece.h"
 
-enum abilityType {firewall, scan, polarize, download, linkboost};
+enum abilityType {FIREWALL, SCAN, POLARIZE, DOWNLOAD, LINKBOOST};
 
 class AbilityCard: public GamePiece {
     bool usedAbility;
