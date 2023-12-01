@@ -34,6 +34,10 @@ class GameBoard: public Subject {
         void startNewTurn();
         void downloadIdentity(Link &link1, Player *player);
         void updateIdentity(Link& link);
+
+        void setAbilities(string abilities, Player *player);
+        void setLinks(unique_ptr <vector<string>> linkPlacements, Player *player);
+
         Player& getWinner();
         string getAbilities(Player&); // maybe this shold return the vector of ability cards... 
         vector<Player>& getPlayers();
@@ -44,6 +48,7 @@ class GameBoard: public Subject {
         vector<EdgeCoord>& getEdgeCoords();
         vector<ServerPort>& getServerPort();
         vector<FireWall>& getActiveFirewalls();
+
         friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
         void notifyObservers() override;
 };
