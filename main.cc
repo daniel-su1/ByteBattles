@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
                     unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
                     while (placementFile >> pos) { linkPlacements->emplace_back(pos); }
 
-                    Player* player= &(g.getPlayers()[0]);
+                    Player* player= &(g.getPlayers()[1]);
 
                     g.setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
                 } else if (curArg == "-graphics") {
