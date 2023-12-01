@@ -152,7 +152,12 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
         xCoord++;
         name++;
     }
-    // TODO: create links and set in gb, handle bad input
+    
+    // not iterated towards the end
+    if ((isPlayer1 && yCoord != 0) || (!isPlayer1 && yCoord != BOARD_SIZE - 1)) {
+        string errorMsg = "Error, incorrect link placements: please place " + to_string(BOARD_SIZE) + " links.\n";
+        throw (logic_error(errorMsg));
+    }
 }
 
 void GameBoard::setAbilities(string abilities, Player *player) {
