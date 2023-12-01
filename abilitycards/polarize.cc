@@ -6,4 +6,5 @@ void Polarize::activate() {
     cout << "Polarized beep!!" << endl; 
 }
 
-Polarize::Polarize(int abilityID, Player &owner, string DisplayName):AbilityCard(abilityID, owner, displayName) {}
+Polarize::Polarize(int abilityID, Player &owner, string DisplayName):
+    AbilityCard(abilityID, owner, displayName, abilityType::POLARIZE) {}
