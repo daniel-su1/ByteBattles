@@ -65,9 +65,6 @@ void GameBoard::init() {
             }
         }
     }
-    for (auto coord : edgeCoords) {
-        cout << coord.getCoords().getX() << " " << coord.getCoords().getY() << endl;
-    }
     td->init(*this);
 }
 // interaction commands
