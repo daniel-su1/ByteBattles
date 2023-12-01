@@ -10,4 +10,4 @@ Coords FireWall::getCoords() {
     return coords;
 }
 
-FireWall::FireWall(int abilityID, Player &owner, string DisplayName): AbilityCard(abilityID, owner, displayName,abilityType::firewall),coords{Coords(-1,-1)} {};
+FireWall::FireWall(int abilityID, Player &owner, string DisplayName): AbilityCard(abilityID, owner, displayName,abilityType::FIREWALL),coords{Coords(-100,-100)} {};

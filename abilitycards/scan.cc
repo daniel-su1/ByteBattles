@@ -7,4 +7,4 @@ void Scan::activate() {
 }
 
 Scan::Scan(int abilityID, Player &owner, string DisplayName):
-    AbilityCard(abilityID, owner, displayName, abilityType::scan) {}
+    AbilityCard(abilityID, owner, displayName, abilityType::SCAN) {}
