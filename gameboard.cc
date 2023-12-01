@@ -76,6 +76,49 @@ void GameBoard::init() {
 // interaction commands
 // ——————————————
 
+optional<string> GameBoard::moveLink(string linkName, string direction) {
+    // TODO: actually implement
+    bool hasError = true;
+    if (hasError) {
+        return "i am a movelink error message";
+    } else {
+        return {};
+    }
+}
+
+string GameBoard::playerAbilities(Player& player) {
+    return "these are my abilities yahoo";
+}
+
+optional<string> GameBoard::useAbility(int abilityID) {
+    // TODO: actually implement
+    bool hasError = true;
+    if (hasError) {
+        return "i am a useability error message";
+    } else {
+        return {};
+    }
+}
+
+optional<string> GameBoard::useAbility(int abilityID, string linkName) { // for link boost
+    // TODO: actually implement
+    bool hasError = true;
+    if (hasError) {
+        return "i am a useability for link boosts error message";
+    } else {
+        return {};
+    }
+}
+
+optional<string> GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firewall
+    // TODO: actually implement
+    bool hasError = true;
+    if (hasError) {
+        return "i am a useability for firewalls error message";
+    } else {
+        return {};
+    }
+}
 
 // settors
 // ——————————————
@@ -123,10 +166,6 @@ vector<Player>& GameBoard::getPlayers() {
     return players;
 }
 
-vector<ServerPort>& GameBoard::getServerPort() {
-    return serverPorts;
-}
-
 // vector<std::shared_ptr<Link>> GameBoard::allLinks() {
 //     return allBoardPieces;
 // }
@@ -154,6 +193,10 @@ vector<Coords>& GameBoard::getBoardBoundaries() {
 
 vector<EdgeCoord>& GameBoard::getEdgeCoords() {
     return edgeCoords;
+}
+
+vector<ServerPort>& GameBoard::getServerPort() {
+    return serverPorts;
 }
 
 vector<FireWall>& GameBoard::getActiveFirewalls() {
