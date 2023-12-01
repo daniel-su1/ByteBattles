@@ -166,14 +166,6 @@ vector<Player>& GameBoard::getPlayers() {
     return players;
 }
 
-Player& GameBoard::getCurrPlayer() {
-    return *currPlayer;
-}
-
-vector<ServerPort>& GameBoard::getServerPort() {
-    return serverPorts;
-}
-
 // vector<std::shared_ptr<Link>> GameBoard::allLinks() {
 //     return allBoardPieces;
 // }
@@ -201,6 +193,10 @@ vector<Coords>& GameBoard::getBoardBoundaries() {
 
 vector<EdgeCoord>& GameBoard::getEdgeCoords() {
     return edgeCoords;
+}
+
+vector<ServerPort>& GameBoard::getServerPort() {
+    return serverPorts;
 }
 
 vector<FireWall>& GameBoard::getActiveFirewalls() {
