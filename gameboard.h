@@ -39,7 +39,7 @@ class GameBoard: public Subject {
 
         GameBoard();
         ~GameBoard();
-        friend ostream &operator<<(ostream &out, const GameBoard &gd);
+        friend ostream &operator<<(ostream &out, const GameBoard &gb);
         void notifyObservers() override;
 
         void init();
