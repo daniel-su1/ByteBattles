@@ -9,6 +9,7 @@ class TextDisplay: public Observer {
     GameBoard *gb;
  public:
     TextDisplay();
+    void init(GameBoard& gb);
     ~TextDisplay() = default;
     void notify(Link& link) override;
     void notify(GameBoard& gb) override;

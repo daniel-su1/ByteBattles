@@ -5,18 +5,22 @@ TextDisplay::TextDisplay(){
 }
 
 void TextDisplay::notify(Link &link) {
-  cout << "I AM NOTIFIED OF A LINK";
+  int x = link.getCurrCoords().getX();
+  int y = link.getCurrCoords().getY();
+  theDisplay[y][x] = link.getDisplayName()[0];
 }
 
 void TextDisplay::notify(GameBoard &gb) {
-  vector<ServerPort> sp = gb.getServerPort();
-  for (int i = 0; i < sp.size(); i++) {
-    int x = sp[i].getCoords().getX();
-    int y = sp[i].getCoords().getY();
-    theDisplay[x][y] = sp[i].getDisplayName()[0];
-  }
 }
 
+void TextDisplay::init(GameBoard& gb) {
+    vector<ServerPort> sp = gb.getServerPort();
+    for (int i = 0; i < sp.size(); i++) {
+      int x = sp[i].getCoords().getX();
+      int y = sp[i].getCoords().getY();
+      theDisplay[y][x] = sp[i].getDisplayName()[0];
+    }
+}
 
 // TO DO: change 8 to constant
 ostream &operator<<(ostream &out, const TextDisplay &td) {
@@ -36,8 +40,6 @@ ostream &operator<<(ostream &out, const TextDisplay &td) {
   for (int i = 0; i < 8; i++) {
     out << "=";
   }
-
-  // player 2 info:
 
   return out;
 }

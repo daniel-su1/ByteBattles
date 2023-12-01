@@ -47,10 +47,10 @@ void GameBoard::init() {
     }
     
     // intialize server ports; middle of board
-    serverPorts.emplace_back(ServerPort(Coords(0, BOARD_SIZE / 2 - 1), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(0, BOARD_SIZE / 2), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE - 1, BOARD_SIZE / 2 - 1), players[1], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE - 1, BOARD_SIZE / 2), players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2 - 1, 0), players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2, 0), players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2 - 1, BOARD_SIZE - 1), players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(BOARD_SIZE / 2, BOARD_SIZE - 1 ), players[1], SP_DISPLAY_STR));
     currPlayer = &(players[0]);
 
     // adding board boundaries based on board sizes
@@ -71,7 +71,7 @@ void GameBoard::init() {
             }
         }
     }
-    notifyObservers();
+    td->init(*this);
 }
 // interaction commands
 // ——————————————
@@ -80,54 +80,32 @@ void GameBoard::init() {
 // settors
 // ——————————————
 void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
-    cout << "links for " << player->getPlayerName() << " set" << endl;
-    cout << "links placements: ";
-    int xCoord = -1;
-    int yCoord = -1;
-    char name = '\0';
-    if (player->getPlayerName() == "Player 1") {
-        xCoord = 0;
-        yCoord = 0;
-        name = 'a';
-    } else {
-        xCoord = 0;
-        yCoord= 8 - 1; // todo: make 8 a const later
-        name = 'A';
-    }
+    int count = (player->getPlayerName() == "Player 1") ? 0 : 8;
+    int xCoord = 0;
+    int yCoord = (player->getPlayerName() == "Player 1") ? 0 : 8 - 1;
+    char name = (player->getPlayerName() == "Player 1") ? 'a' : 'A';
+
     for (auto link : *linkPlacements) {
+        int strength = link[1];
+        string displayName(1, name);
+
         if (link[0] == 'V') {
-           int strength = link[1];
-            string displayName(1, name);
-            allBoardPieces.emplace_back(std::make_unique<Virus>(strength, Coords(xCoord, yCoord), displayName, *player));
-            name++;
-            if (xCoord >= 7) {
-                xCoord = 0;
-                if (player->getPlayerName() == "Player 1") {
-                    yCoord++;
-                } else {
-                    yCoord--;
-                }
-            } else { // need to implement "skip over" ports;
-                xCoord++;
-            }
-        } else {
-            int strength = link[1];
-            string displayName(1, name);
-            allBoardPieces.emplace_back(std::make_unique<Data>(strength, Coords(xCoord, yCoord), displayName, *player));
-            name++;
-            if (xCoord >= 7) {
-                xCoord = 0;
-                if (player->getPlayerName() == "Player 1") {
-                    yCoord++;
-                } else {
-                    yCoord--;
-                }
-            } else {
-                xCoord++;
-            }
+            allBoardPieces.emplace_back(make_unique<Virus>(strength, Coords(xCoord, yCoord), displayName, *player));
+        } else if (link[0] == 'D') {
+            allBoardPieces.emplace_back(make_unique<Data>(strength, Coords(xCoord, yCoord), displayName, *player));
         }
+
+        if (xCoord == 2 || xCoord == 3) {
+            yCoord = (player->getPlayerName() == "Player 1") ? 1 : 8 - 2;
+        } else {
+            yCoord = (player->getPlayerName() == "Player 1") ? 0 : 8 - 1;
+        }
+        xCoord++;
+        name++;
+        Link &ptr = *(allBoardPieces[count].get());
+        td->notify(ptr);
+        count++;
     }
-    cout << endl;
     // TODO: create links and set in gb, handle bad input
 }
 
@@ -149,9 +127,8 @@ vector<ServerPort>& GameBoard::getServerPort() {
     return serverPorts;
 }
 
-// TODO (FIX) -> FIGURE OUT WHAT TO RETURN
-// vector<Link>& GameBoard::allLinks() {
-//     return allBoardPieces
+// vector<std::shared_ptr<Link>> GameBoard::allLinks() {
+//     return allBoardPieces;
 // }
 
 // TODO (FIX)-> FIGURE OUT WHAT TO RETURN
