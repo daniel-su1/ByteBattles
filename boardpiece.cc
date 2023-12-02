@@ -3,7 +3,7 @@
 BoardPiece::BoardPiece(int stepSize, Coords currCoords, Player& owner,
                        string displayName)
     : GamePiece(owner, displayName),
-      stepSize{stepSize},
+      stepSize{1},
       prevCords(Coords(-1, -1)),
       currCoords(currCoords) {}
 
@@ -20,10 +20,10 @@ void BoardPiece::movePiece(Direction direction) {
         int newX = currCoords.getX() + stepSize;
         currCoords.setX(newX);
     } else if (direction == Up) {
-        int newY = currCoords.getY() + stepSize;
+        int newY = currCoords.getY() - stepSize;
         currCoords.setY(newY);
     } else if (direction == Down) {
-        int newY = currCoords.getY() - stepSize;
+        int newY = currCoords.getY() + stepSize;
         currCoords.setY(newY);
     }
 }

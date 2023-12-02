@@ -1,6 +1,7 @@
 #include "gamepiece.h"
 
-GamePiece::GamePiece(Player &owner, string displayName): owner{&owner}, displayName{displayName}, appliedAbilites() {}
+GamePiece::GamePiece(Player &owner, string displayName): owner{&owner}, displayName{displayName}, appliedAbilites() {
+}
 
 vector<AbilityCard*>& GamePiece::getAppliedAbilities() { return appliedAbilites; }
 
