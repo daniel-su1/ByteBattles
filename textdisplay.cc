@@ -44,12 +44,9 @@ void printPlayerInfo(Player& p, GameBoard* gb, ostream& out) {
     shared_ptr<Link> curLink = playerLinks[i];
     out << curLink->getDisplayName() << ": ";
     if (curLink->isIdentityRevealed()) {
-      if (curLink->getType() == LinkType::data) {
-        out << "D";
-      } else {
-        out << "V";
-      }
-    out << to_string(curLink->getStrength());
+      out << curLink->typeAndStrength << " ";
+    } else {
+      out << "? ";
     }
   }
   out << endl;

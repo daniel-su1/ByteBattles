@@ -11,6 +11,7 @@ class Link: public BoardPiece{
         bool identityRevealed;
         Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type);
     public:
+        string typeAndStrength;
         // returns the strength of the link
         int getStrength();
         // returns the type of the link
