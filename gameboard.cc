@@ -33,9 +33,10 @@ void GameBoard::init() {
     edgeCoords.clear();
     serverPorts.clear();
     activeFirewalls.clear();
+    observers.clear();
 
     td = new TextDisplay;
-
+    observers = std::vector<Observer*>();
     // intialize players
     for (int i = 1; i <= PLAYER_COUNT; i++) {
         string playerName = "Player " + to_string(i);
@@ -71,15 +72,43 @@ void GameBoard::init() {
     }
     td->init(*this);
 }
+
+void GameBoard::movePiece(Link &link, Direction dir) {
+    link.movePiece(dir);
+    td->notify(link);
+}
 // interaction commands
 // ——————————————
 
 void GameBoard::moveLink(string linkName, string direction) {
-    // TODO: actually implement
-    bool hasError = true;
-    if (hasError) {
-        throw (logic_error("i am a movelink for link boosts error message\n"));
+    Link &l = *(allBoardPieces[0]);
+    Direction dir = Direction::Up;
+    bool notfound = true;
+    for (int i = 0; i < allBoardPieces.size(); i++) {
+        if (linkName == allBoardPieces[i]->getDisplayName()) {
+            l = *allBoardPieces[i];
+            notfound = false;
+        }
     }
+
+    if (notfound) {
+        throw(logic_error("u suck_1"));
+    }
+
+    if (direction == "up") {
+        dir =  Direction::Up;
+    } else if (direction == "down") {
+        dir = Direction::Down;
+    } else if (direction == "right") {
+        dir = Direction::Right;
+    } else if (direction == "left") {
+        dir = Direction::Left;
+    } else {
+        throw(logic_error("u suck"));
+    }
+
+    movePiece(l, dir);
+
 }
 
 unique_ptr<vector<shared_ptr<AbilityCard>>> GameBoard::getPlayerAbilities(Player& player) {
@@ -149,7 +178,7 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
     char name = isPlayer1 ? 'a' : 'A';
 
     for (auto link : *linkPlacements) {
-        int strength = link[1];
+        int strength = link[1] - '0';
         string displayName(1, name);
 
         // move yCoord towards center if blocked by server port
