@@ -5,7 +5,7 @@
 class Download: public AbilityCard {
     public:
     void activate() override;
-    Download(int abilityID, Player &owner, string DisplayName);
+    Download(int abilityID, Player &owner, string displayName);
 };
 
 #endif

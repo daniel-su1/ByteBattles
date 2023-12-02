@@ -4,7 +4,7 @@
 class Polarize: public AbilityCard {
     public:
         void activate() override;
-        Polarize(int abilityID, Player &owner, string DisplayName);
+        Polarize(int abilityID, Player &owner, string displayName);
 };
 
 #endif

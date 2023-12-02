@@ -25,26 +25,52 @@ class GameBoard: public Subject {
     vector<ServerPort> serverPorts;
     vector<FireWall> activeFirewalls;
     public:
+        const int PLAYER_COUNT = 2;
+        const int ABILITY_COUNT = 5;
+
+        const int MAX_STEPSIZE = 2;
+
+        const int BOARD_SIZE = 8;
+        const int SP_X_COORD_1 = 3;
+        const int SP_X_COORD_2 = 4;
+        string SP_DISPLAY_STR = "S";
+        string BORDER_DISPLAY_STR = "=";
+
         GameBoard();
         ~GameBoard();
+        friend ostream &operator<<(ostream &out, const GameBoard &gb);
+        void notifyObservers() override;
+
         void init();
-        void applyAbility(AbilityCard& ac, Player *player = nullptr);
-        void movePiece(Link &link, Direction dir);
+        void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO: same as movePiece for useAbility()
+        void movePiece(Link &link, Direction dir); // TODO: possibly move to private or delete bc of moveLink() below
         void battlePieces(Link &linkp1, Link &linkp2);
         void startNewTurn();
         void downloadIdentity(Link &link1, Player *player);
         void updateIdentity(Link& link);
-        Player& getWinner();
-        string getAbilities(Player&); // maybe this shold return the vector of ability cards... 
+
+        // text command interactions
+        // all methods other than playerAbilities() return a string with the error message if the method fails
+        void moveLink(string linkName, string direction);
+        string playerAbilities(Player& player); // unlikely to fail since there is no user input
+        void useAbility(int abilityID);
+        void useAbility(int abilityID, string linkName); // for link boost
+        void useAbility(int abilityId, int xCoord, int yCoord); // for firewall
+
+        // setters
+        void setLinks(unique_ptr <vector<string>> linkPlacements, Player *player);
+        void setAbilities(string abilities, Player *player);
+
+        // getters
         vector<Player>& getPlayers();
-        vector<Link>& getAllBoardPieces();
-        vector<AbilityCard>& getAllAbilityCards();
+        // vector<std::shared_ptr<Link>> getAllLinks();
+        // vector<AbilityCard>& getAllAbilityCards();
         Player& getCurrPlayer();
+        Player& getWinner();
         vector<Coords>& getBoardBoundaries();
         vector<EdgeCoord>& getEdgeCoords();
         vector<ServerPort>& getServerPort();
         vector<FireWall>& getActiveFirewalls();
-        friend std::ostream &operator<<(std::ostream &out, const GameBoard &gd);
-        void notifyObservers() override;
+
 };
 #endif

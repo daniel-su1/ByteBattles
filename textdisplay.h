@@ -6,9 +6,10 @@
 
 class TextDisplay: public Observer {
     vector<vector<char>> theDisplay; 
-    GameBoard *gb;
+    GameBoard *myGb;
  public:
     TextDisplay();
+    void init(GameBoard& gb);
     ~TextDisplay() = default;
     void notify(Link& link) override;
     void notify(GameBoard& gb) override;

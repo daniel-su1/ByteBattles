@@ -4,7 +4,7 @@
 class LinkBoost: public AbilityCard {
     public:
         void activate() override;
-        LinkBoost(int abilityID, Player &owner, string DisplayName);
+        LinkBoost(int abilityID, Player &owner, string displayName);
 };
 
 #endif
