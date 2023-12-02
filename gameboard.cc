@@ -133,8 +133,12 @@ void GameBoard::moveLink(string linkName, string direction) {
     // checking if moved on top of own piece
     for (size_t i = 0; i < allLinks.size(); i++) {
         Coords pieceCoords = allLinks[i]->getCurrCoords();
-        if (newCoord == pieceCoords && (&allLinks[i]->getOwner() == &l->getOwner())) {
-            throw(logic_error("Error: Illegal Move — one of your pieces occupies this space!\n"));
+        if (newCoord == pieceCoords) {
+            if (&allLinks[i]->getOwner() == &l->getOwner()) {
+                throw(logic_error("Error: Illegal Move — one of your pieces occupies this space!\n"));
+            } else {
+                // do battle
+            }
         }
     }
 
@@ -149,6 +153,8 @@ void GameBoard::moveLink(string linkName, string direction) {
             }
         }
     }
+
+
     movePiece(l, dir);
 
 }
