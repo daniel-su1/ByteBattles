@@ -8,6 +8,15 @@ void TextDisplay::notify(Link &link) {
   int x = link.getCurrCoords().getX();
   int y = link.getCurrCoords().getY();
   theDisplay[y][x] = link.getDisplayName()[0];
+
+
+  int prevX = link.getPreviousCoords().getX();
+  int prevY = link.getPreviousCoords().getY();
+
+  if (prevX != -1 && prevY != -1) {
+  theDisplay[prevY][prevX] = '.';
+  }
+
 }
 
 void TextDisplay::notify(GameBoard &gb) {
