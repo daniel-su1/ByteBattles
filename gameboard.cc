@@ -85,6 +85,13 @@ void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
     td->notify(*link);
     gd->notify(*link);
 }
+
+// player downloads link1 (becomes the new owner)
+void GameBoard::downloadIdentity(Link &link1, Player *player) {
+    link1.attachPlayer(player);
+    cout << player->getPlayerName() << " has downloaded " << link1.getDisplayName() << " :" <<  endl;
+    cout << "a " << link1.getType() << " of strength" << link1.getStrength() << endl;
+}
 // interaction commands
 // ——————————————
 
@@ -148,15 +155,17 @@ void GameBoard::moveLink(string linkName, string direction) {
         if (newCoord == serverPortCoord) {
             if (&(serverPorts[i].getOwner()) == &l->getOwner()) {
                 throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port\n"));
-            } else {
-                // do download 
+            } else { // other player downloads link
+                Player originalOwner = l->getOwner();
+                Player newOwner = players[0];
+                if (originalOwner.getPlayerName() == "Player 1") {
+                    Player newOwner = players[1];
+                } 
+                downloadIdentity(*l, &newOwner);
             }
         }
     }
-
-
     movePiece(l, dir);
-
 }
 
 unique_ptr<vector<shared_ptr<AbilityCard>>> GameBoard::getPlayerAbilities(Player& player) {
