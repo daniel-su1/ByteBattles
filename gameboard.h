@@ -29,6 +29,7 @@ class GameBoard: public Subject {
     vector<FireWall> activeFirewalls;
     public:
         const int PLAYER_COUNT = 2;
+        const int INVALID_PLAYER = -1;
         const int ABILITY_COUNT = 5;
 
         const int MAX_STEPSIZE = 2;
@@ -48,7 +49,7 @@ class GameBoard: public Subject {
         void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO: same as movePiece for useAbility()
         void movePiece(shared_ptr<Link> link, Direction dir); // TODO: possibly move to private or delete bc of moveLink() below
         void battlePieces(Link &linkp1, Link &linkp2);
-        void startNewTurn();
+        bool startNewTurn(); // return value indicates success
         void downloadIdentity(Link &link1, Player *player);
         void updateIdentity(Link& link);
 

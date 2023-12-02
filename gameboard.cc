@@ -7,7 +7,7 @@
 #include "abilitycards/polarize.h"
 
 GameBoard::GameBoard(): td{nullptr}, gd{nullptr}, players(), allLinks(), allAbilityCards(),
-    currPlayerIndex{0}, winnerIndex{-1}, boardBoundaries(), edgeCoords(),
+    currPlayerIndex{INVALID_PLAYER}, winnerIndex{INVALID_PLAYER}, boardBoundaries(), edgeCoords(),
     serverPorts(), activeFirewalls() {}
 
 GameBoard::~GameBoard() {
@@ -16,7 +16,7 @@ GameBoard::~GameBoard() {
 }
 
 ostream &operator<<(ostream &out, const GameBoard &gb) {
-    cout << *gb.td << endl;
+    cout << *gb.td;
     return out;
 }
 
@@ -86,8 +86,12 @@ void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
     gd->notify(*link);
 }
 
-void GameBoard::startNewTurn() {
+bool GameBoard::startNewTurn() {
+    if (winnerIndex != INVALID_PLAYER) {
+        return false;
+    }
     currPlayerIndex = getNextPlayerIndex();
+    return true;
 }
 
 // interaction commands
