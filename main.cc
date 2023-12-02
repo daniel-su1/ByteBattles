@@ -12,6 +12,8 @@
 
 using namespace std;
 
+class QuitProgram : public exception {};
+
 unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb) {
     const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <order> -graphics -enhancements\n";
     for (int i = 1; i < argc; i++) {
@@ -89,9 +91,14 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
                 // next input should be a file name containing commands
                 string fileName;
                 in >> fileName;
-
+                ifstream sequenceFile{fileName};
+                if (sequenceFile.fail()) {
+                    throw (logic_error("Error, file does not exist."));
+                } else {
+                    gb = parseCmds(sequenceFile, move(gb)); 
+                }
             } else if (cmd == "quit") {
-                break;
+                throw QuitProgram(); // exit game and terminate program
             } else {
                 string errorMsg = "Error, please use one of the following commands:\n";
                 errorMsg += "\tmove a <dir> where a is a link name (a-g or A-G)\n";
@@ -102,8 +109,10 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
                 errorMsg += "\tquit\n"; 
                 // TODO: add more deets
                 // TODO: ensure nothing is missing from the additional three abilities
-                throw(logic_error(errorMsg));
+                throw (invalid_argument(errorMsg)); // invalid arguments from text command mistakes are thrown into main
             }
+        } catch (invalid_argument& err) {
+            throw;
         } catch (logic_error& e) {
             cerr << e.what();
         }
@@ -124,5 +133,11 @@ int main(int argc, char* argv[]) {
     }
 
     // text commands
-    gb = parseCmds(cin, move(gb));
+    try {
+        gb = parseCmds(cin, move(gb));
+    } catch (invalid_argument& e) { // if the text commands are incorrect
+        cerr << e.what();
+    } catch (QuitProgram& q) {
+        return 0; // exit program on quit command
+    }
 }
