@@ -73,20 +73,20 @@ void GameBoard::init() {
     td->init(*this);
 }
 
-void GameBoard::movePiece(Link &link, Direction dir) {
-    link.movePiece(dir);
-    td->notify(link);
+void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
+    link->movePiece(dir);
+    td->notify(*link);
 }
 // interaction commands
 // ——————————————
 
 void GameBoard::moveLink(string linkName, string direction) {
-    Link &l = *(allBoardPieces[0]);
+    shared_ptr<Link> l;
     Direction dir = Direction::Up;
     bool notfound = true;
-    for (int i = 0; i < allBoardPieces.size(); i++) {
-        if (linkName == allBoardPieces[i]->getDisplayName()) {
-            l = *allBoardPieces[i];
+    for (int i = 0; i < allLinks.size(); i++) {
+        if (linkName == allLinks[i]->getDisplayName()) {
+            l = allLinks[i];
             notfound = false;
         }
     }

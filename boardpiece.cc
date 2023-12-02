@@ -25,7 +25,6 @@ void BoardPiece::movePiece(Direction direction) {
     } else if (direction == Down) {
         int newY = currCoords.getY() + stepSize;
         currCoords.setY(newY);
-        cout << currCoords.getY();
     }
 }
 
