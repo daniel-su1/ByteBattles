@@ -23,7 +23,7 @@ ostream &operator<<(ostream &out, const GameBoard &gb) {
 void GameBoard::notifyObservers() { 
     td->notify(*this); 
     gd->notify(*this);
-    }
+}
 
 void GameBoard::init() {
     // reset
@@ -40,8 +40,8 @@ void GameBoard::init() {
     observers.clear();
 
     td = new TextDisplay;
-    observers = std::vector<Observer*>();    
     gd = new GraphicsDisplay;
+    observers = std::vector<Observer*>();
     
     // intialize players
     for (int i = 1; i <= PLAYER_COUNT; i++) {

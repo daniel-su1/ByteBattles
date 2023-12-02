@@ -1,21 +1,26 @@
 #include "graphicsdisplay.h"
 
 GraphicsDisplay::GraphicsDisplay() {
-    theDisplay = new Xwindow(500, 500);
-    theDisplay->fillRectangle(0, 0, 500, 500, Xwindow::White);
+    theDisplay = new Xwindow(BOARD_WINDOW_SIZE, BOARD_WINDOW_SIZE);
+    theDisplay->fillRectangle(0, 0, BOARD_WINDOW_SIZE, BOARD_WINDOW_SIZE, Xwindow::White);
 }
 
 GraphicsDisplay::~GraphicsDisplay() {}
 
+void GraphicsDisplay::renderSquare(int x, int y, GamePiece& gp) {
+    const int BUFFER_SIZE = 23;
+    int text_x = SQUARE_SIZE * x + BUFFER_SIZE;
+    int text_y = SQUARE_SIZE * y + SQUARE_SIZE / 2 + BUFFER_SIZE;
+    string displayName = gp.getDisplayName();
+    theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y, SQUARE_SIZE, SQUARE_SIZE, Xwindow::Black);
+    theDisplay->drawString(text_x, text_y, displayName);
+}
+
 void GraphicsDisplay::notify(Link &link) {
     int x = link.getCurrCoords().getX();
     int y = link.getCurrCoords().getY();
-    int text_x = 62.5 * x + 23;
-    int text_y = 62.5 * y + (62.5 / 2) + 12;
-    string displayName = link.getDisplayName();
-    theDisplay->fillRectangle(62.5 * x, 62.5 * y, 62.5, 62.5, Xwindow::Black);
-    theDisplay->drawString(text_x, text_y, displayName);
-    theDisplay->fillRectangle(62.5 * link.getPreviousCoords().getX(), 62.5 * link.getPreviousCoords().getY(), 62.5, 62.5, Xwindow::White);
+    renderSquare(x, y, link);
+    theDisplay->fillRectangle(SQUARE_SIZE * link.getPreviousCoords().getX(), SQUARE_SIZE * link.getPreviousCoords().getY(), SQUARE_SIZE, SQUARE_SIZE, Xwindow::White);
  }
 
 void GraphicsDisplay::init(GameBoard &gb) {
@@ -23,11 +28,7 @@ void GraphicsDisplay::init(GameBoard &gb) {
     for (size_t i = 0; i < sp.size(); i++) {
         int x = sp[i].getCoords().getX();
         int y = sp[i].getCoords().getY();
-        int text_x = 62.5 * x + 23;
-        int text_y = 62.5 * y + (62.5/2) + 12;
-        string displayName = sp[i].getDisplayName();
-        theDisplay->fillRectangle(62.5*x, 62.5 * y, 62.5, 62.5, Xwindow::Black);
-        theDisplay->drawString(text_x, text_y, displayName);
+        renderSquare(x, y, sp[i]);
     }
 }
 

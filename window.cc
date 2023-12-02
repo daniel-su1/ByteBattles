@@ -10,14 +10,13 @@
 using namespace std;
 
 void Xwindow::setLargerFont() {
-    const char *fontName =
-        "-*-times-*-r-*-*-34-*-*-*-*-*-*-*";
+    const char *fontName = "-*-times-*-r-*-*-34-*-*-*-*-*-*-*";
     XFontStruct *font =
         XLoadQueryFont(d, fontName);  // 'd' is a member of Xwindow
     if (font) {
         XSetFont(d, gc, font->fid);  // 'gc' is a member of Xwindow
     } else {
-        std::cerr << "failed to load font: " << fontName << std::endl;
+        cerr << "failed to load font: " << fontName << endl;
     }
 }
 
