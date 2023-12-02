@@ -13,6 +13,7 @@ class Coords {
         // setter functions 
         void setX(int newX);
         void setY(int newY);
+        bool operator==(Coords& rhs);
 };
 
 #endif

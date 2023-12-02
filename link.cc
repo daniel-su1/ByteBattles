@@ -12,3 +12,7 @@ bool Link::isIdentityRevealed() { return identityRevealed; }
 LinkType Link::getType() { return type; }
 
 int Link::getStrength() { return strength; }
+
+int Link::getStepSize() {
+    return stepSize;
+}
