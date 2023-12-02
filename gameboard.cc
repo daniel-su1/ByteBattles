@@ -8,10 +8,11 @@
 
 GameBoard::GameBoard(): td{nullptr}, players(), allLinks(), allAbilityCards(),
     currPlayerIndex{0}, winnerIndex{-1}, boardBoundaries(), edgeCoords(),
-    serverPorts(), activeFirewalls() {}
+    serverPorts(), activeFirewalls(), gd{} {}
 
 GameBoard::~GameBoard() {
     delete td;
+    delete gd;
 }
 
 ostream &operator<<(ostream &out, const GameBoard &gb) {
@@ -19,7 +20,10 @@ ostream &operator<<(ostream &out, const GameBoard &gb) {
     return out;
 }
 
-void GameBoard::notifyObservers() { td->notify(*this); }
+void GameBoard::notifyObservers() { 
+    td->notify(*this); 
+    gd->notify(*this);
+}
 
 void GameBoard::init() {
     // reset
@@ -36,7 +40,9 @@ void GameBoard::init() {
     observers.clear();
 
     td = new TextDisplay;
+    gd = new GraphicsDisplay;
     observers = std::vector<Observer*>();
+    
     // intialize players
     for (int i = 1; i <= PLAYER_COUNT; i++) {
         string playerName = "Player " + to_string(i);
@@ -71,11 +77,13 @@ void GameBoard::init() {
         }
     }
     td->init(*this);
+    gd->init(*this);
 }
 
 void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
     link->movePiece(dir);
     td->notify(*link);
+    gd->notify(*link);
 }
 // interaction commands
 // ——————————————
@@ -194,10 +202,12 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
             Virus curLink = Virus(strength, Coords(xCoord, yCoord), displayName, *player);
             curLinkPtr = make_shared<Virus>(curLink);
             td->notify(*curLinkPtr);
+            gd->notify(*curLinkPtr);
         } else if (link[0] == 'D') {
             Data curLink = Data(strength, Coords(xCoord, yCoord), displayName, *player);
             curLinkPtr = make_shared<Data>(curLink);
             td->notify(*curLinkPtr);
+            gd->notify(*curLinkPtr);
         } else { // not V or D
             throw (logic_error("Error, incorrect link placements: please follow <type1><strength1> <type2><strength2> ... , where type is V or D.\n"));
         }

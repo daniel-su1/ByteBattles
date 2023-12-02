@@ -11,10 +11,13 @@
 #include "serverport.h"
 #include "abilitycards/firewall.h"
 #include "textdisplay.h"
+#include "graphicsdisplay.h"
 using namespace std;
 class TextDisplay; 
+class GraphicsDisplay;
 class GameBoard: public Subject {
     TextDisplay *td;
+    GraphicsDisplay *gd;
     vector<Player> players;
     vector<shared_ptr<Link>> allLinks;
     vector<shared_ptr<AbilityCard>> allAbilityCards;
