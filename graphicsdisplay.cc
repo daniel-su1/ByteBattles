@@ -15,6 +15,7 @@ void GraphicsDisplay::notify(Link &link) {
     string displayName = link.getDisplayName();
     theDisplay->fillRectangle(62.5 * x, 62.5 * y, 62.5, 62.5, Xwindow::Black);
     theDisplay->drawString(text_x, text_y, displayName);
+    theDisplay->fillRectangle(62.5 * link.getPreviousCoords().getX(), 62.5 * link.getPreviousCoords().getY(), 62.5, 62.5, Xwindow::White);
  }
 
 void GraphicsDisplay::init(GameBoard &gb) {
