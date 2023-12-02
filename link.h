@@ -18,6 +18,9 @@ class Link: public BoardPiece{
         LinkType getType();
         // returns true/false depending on whether identity of the link is known by the other player
         bool isIdentityRevealed();
+        // returns step size
+        int getStepSize();
+        
         virtual ~Link();
 };
 

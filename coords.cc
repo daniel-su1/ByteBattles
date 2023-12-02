@@ -17,4 +17,6 @@ void Coords::setY(int newY) {
     y = newY;
 }
 
-
+bool Coords::operator==(Coords& rhs) {
+    return x == rhs.getX() && y == rhs.getY();
+}

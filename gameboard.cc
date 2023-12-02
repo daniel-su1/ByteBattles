@@ -100,19 +100,32 @@ void GameBoard::moveLink(string linkName, string direction) {
     }
 
     if (notfound) {
-        throw(logic_error("u suck_1"));
+        throw(logic_error("Error: Could not find piece to move."));
     }
-
+    int newX = l->getCurrCoords().getX();
+    int newY = l->getCurrCoords().getY();
+    int stepSize = l->getStepSize();
     if (direction == "up") {
         dir =  Direction::Up;
+        newY = l->getCurrCoords().getY() - stepSize;
     } else if (direction == "down") {
         dir = Direction::Down;
+        newY = l->getCurrCoords().getY() + stepSize;
     } else if (direction == "right") {
         dir = Direction::Right;
+        newX = l->getCurrCoords().getX() + stepSize;
     } else if (direction == "left") {
         dir = Direction::Left;
+        newX = l->getCurrCoords().getX() - stepSize;
     } else {
-        throw(logic_error("u suck"));
+        throw(logic_error("Error: Not a valid move direction\n"));
+    }
+    // checking move legality 
+    Coords newCoord{newX, newY};
+    for (size_t i = 0; i < boardBoundaries.size(); i++) {
+        if (newCoord == boardBoundaries[i]) {
+            throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!\n"));
+        }
     }
 
     movePiece(l, dir);
