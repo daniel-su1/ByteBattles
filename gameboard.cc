@@ -118,16 +118,37 @@ void GameBoard::moveLink(string linkName, string direction) {
         dir = Direction::Left;
         newX = l->getCurrCoords().getX() - stepSize;
     } else {
-        throw(logic_error("Error: Not a valid move direction\n"));
+        throw(logic_error("Error: Not a valid move direction!\n"));
     }
-    // checking move legality 
+    //———————— checking move legality ——————— //
     Coords newCoord{newX, newY};
+
+    // checking if moved off edge
     for (size_t i = 0; i < boardBoundaries.size(); i++) {
         if (newCoord == boardBoundaries[i]) {
             throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!\n"));
         }
     }
 
+    // checking if moved on top of own piece
+    for (size_t i = 0; i < allLinks.size(); i++) {
+        Coords pieceCoords = allLinks[i]->getCurrCoords();
+        if (newCoord == pieceCoords && (&allLinks[i]->getOwner() == &l->getOwner())) {
+            throw(logic_error("Error: Illegal Move — one of your pieces occupies this space!\n"));
+        }
+    }
+
+    // checking if moved onto one's own server ports / into opponents 
+    for (size_t i = 0; i < serverPorts.size(); i++) {
+        Coords serverPortCoord = serverPorts[i].getCoords();
+        if (newCoord == serverPortCoord) {
+            if (&(serverPorts[i].getOwner()) == &l->getOwner()) {
+                throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port\n"));
+            } else {
+                // do download 
+            }
+        }
+    }
     movePiece(l, dir);
 
 }
