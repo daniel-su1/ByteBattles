@@ -23,19 +23,43 @@ void TextDisplay::init(GameBoard& gb) {
     }
 }
 
-// TO DO: change 8 to constant
-ostream &operator<<(ostream &out, const TextDisplay &td) {
-  Player &p1 = (td.myGb->getPlayers())[0];
-  Player &p2 = (td.myGb->getPlayers())[1];
-  // player 1
-  cout << p1.getPlayerName() << ":" << endl;
-  cout << "Downloaded: " << p1.getNumDataDownloads() << "D, " << p1.getNumVirusDownloads() << "V" << endl;
-  cout << "Abilities: " << p1.getAbilityCount() << endl;
-  // board top edge
-  for (int i = 0; i < td.myGb->BOARD_SIZE; i++) {
+void printPlayerInfo(Player& p, GameBoard* gb, ostream& out) {
+  out << p.getPlayerName() << ":" << endl;
+  out << "Downloaded: " << p.getNumDataDownloads() << "D, " << p.getNumVirusDownloads() << "V" << endl;
+  out << "Abilities: " << p.getAbilityCount() << endl;
+  vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
+  for (int i = 0; i < playerLinks.size(); i++) {
+    if (i == playerLinks.size() / 2) { // halfway point
+      out << "\n";
+    }
+    shared_ptr<Link> curLink = playerLinks[i];
+    out << curLink->getDisplayName() << ": ";
+    if (curLink->isIdentityRevealed()) {
+      if (curLink->getType() == LinkType::data) {
+        out << "D";
+      } else {
+        out << "V";
+      }
+    out << to_string(curLink->getStrength());
+    }
+  }
+  out << endl;
+}
+
+void printBoardBoundaries(int boundarySize, ostream& out) {
+  for (int i = 0; i < boundarySize; i++) {
     out << "=";
   }
   out << endl;
+}
+
+ostream &operator<<(ostream &out, const TextDisplay &td) {
+  Player &p1 = (td.myGb->getPlayers())[td.myGb->getCurrPlayerIndex()];
+  Player &p2 = (td.myGb->getPlayers())[td.myGb->getNextPlayerIndex()];
+  // player 1
+  printPlayerInfo(p1, td.myGb, out);
+  // board top edge
+  printBoardBoundaries(td.myGb->BOARD_SIZE, out);
   // board
   for (int i = 0; i < td.myGb->BOARD_SIZE; i++) { 
     for (int j = 0; j < td.myGb->BOARD_SIZE; j++) {
@@ -44,13 +68,8 @@ ostream &operator<<(ostream &out, const TextDisplay &td) {
     out << endl;
   }
   // board bottom edge
-  for (int i = 0; i < td.myGb->BOARD_SIZE; i++) {
-    out << "=";
-  }
-  out << endl;
+  printBoardBoundaries(td.myGb->BOARD_SIZE, out);
   // player 2
-  cout << p2.getPlayerName() << ":" << endl;
-  cout << "Downloaded: " << p2.getNumDataDownloads() << "D, " << p1.getNumVirusDownloads() << "V" << endl;
-  cout << "Abilities: " << p2.getAbilityCount() << endl;
+  printPlayerInfo(p2, td.myGb, out);
   return out;
 }
