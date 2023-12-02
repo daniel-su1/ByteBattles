@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 
-#include "cell.h"
 #include "gameboard.h"
 #include "observer.h"
 #include "window.h"
@@ -14,9 +13,10 @@ class GraphicsDisplay : public Observer {
 
    public:
     GraphicsDisplay();
-    ~GraphicsDisplay() = default;
+    ~GraphicsDisplay();
     void notify(Link &link) override;
     void notify(GameBoard &gb) override;
+    void init(GameBoard &gb);
 };
 
 #endif

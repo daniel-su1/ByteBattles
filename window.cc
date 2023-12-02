@@ -3,12 +3,23 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <unistd.h>
-
 #include <cstdlib>
 #include <iostream>
 #include <string>
 
 using namespace std;
+
+void Xwindow::setLargerFont() {
+    const char *fontName =
+        "-*-times-*-r-*-*-34-*-*-*-*-*-*-*";
+    XFontStruct *font =
+        XLoadQueryFont(d, fontName);  // 'd' is a member of Xwindow
+    if (font) {
+        XSetFont(d, gc, font->fid);  // 'gc' is a member of Xwindow
+    } else {
+        std::cerr << "failed to load font: " << fontName << std::endl;
+    }
+}
 
 Xwindow::Xwindow(int width, int height) {
     d = XOpenDisplay(NULL);
@@ -54,7 +65,11 @@ Xwindow::Xwindow(int width, int height) {
     XSynchronize(d, True);
 
     usleep(1000);
+
+    setLargerFont();
 }
+
+
 
 Xwindow::~Xwindow() {
     XFreeGC(d, gc);
@@ -68,5 +83,7 @@ void Xwindow::fillRectangle(int x, int y, int width, int height, int colour) {
 }
 
 void Xwindow::drawString(int x, int y, string msg) {
-    XDrawString(d, w, DefaultGC(d, s), x, y, msg.c_str(), msg.length());
+    XSetForeground(d, gc, colours[White]);  // Set the color to white
+    XDrawString(d, w, gc, x, y, msg.c_str(), msg.length());
+    XSetForeground(d, gc, colours[Black]);  // Reset to default color if needed
 }
