@@ -16,10 +16,10 @@ class TextDisplay;
 class GameBoard: public Subject {
     TextDisplay *td;
     vector<Player> players;
-    vector<unique_ptr<Link>> allBoardPieces;
-    vector<unique_ptr<AbilityCard>> allAbilityCards;
-    Player* currPlayer;
-    Player* winner;
+    vector<shared_ptr<Link>> allLinks;
+    vector<shared_ptr<AbilityCard>> allAbilityCards;
+    int currPlayerIndex;
+    int winnerIndex;
     vector<Coords> boardBoundaries;
     vector<EdgeCoord> edgeCoords;
     vector<ServerPort> serverPorts;
@@ -63,14 +63,17 @@ class GameBoard: public Subject {
 
         // getters
         vector<Player>& getPlayers();
+        unique_ptr<vector<shared_ptr<Link>>> getPlayerLinks(Player& player);
         // vector<std::shared_ptr<Link>> getAllLinks();
         // vector<AbilityCard>& getAllAbilityCards();
-        Player& getCurrPlayer();
-        Player& getWinner();
+        int getCurrPlayerIndex();
+        int getNextPlayerIndex();
+        int getWinnerIndex();
         vector<Coords>& getBoardBoundaries();
         vector<EdgeCoord>& getEdgeCoords();
         vector<ServerPort>& getServerPort();
         vector<FireWall>& getActiveFirewalls();
-
+    private: // oops possibly deletable
+        unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
 };
 #endif

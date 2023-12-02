@@ -82,7 +82,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
 
                 gb->moveLink(linkName, direction);
             } else if (cmd == "abilities") {
-                cout << gb->playerAbilities(gb->getCurrPlayer());
+                cout << gb->playerAbilities(gb->getPlayers()[gb->getCurrPlayerIndex()]);
             } else if (cmd == "ability") {
                 
             } else if (cmd == "board") {
