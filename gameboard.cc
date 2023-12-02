@@ -6,8 +6,8 @@
 #include "abilitycards/scan.h"
 #include "abilitycards/polarize.h"
 
-GameBoard::GameBoard(): td{nullptr}, players(), allBoardPieces(), allAbilityCards(),
-    currPlayer{nullptr}, winner{nullptr}, boardBoundaries(), edgeCoords(),
+GameBoard::GameBoard(): td{nullptr}, players(), allLinks(), allAbilityCards(),
+    currPlayerIndex{0}, winnerIndex{-1}, boardBoundaries(), edgeCoords(),
     serverPorts(), activeFirewalls(), gd{} {}
 
 GameBoard::~GameBoard() {
@@ -29,10 +29,10 @@ void GameBoard::init() {
     // reset
     td = nullptr;
     players.clear();
-    allBoardPieces.clear();
+    allLinks.clear();
     allAbilityCards.clear();
-    currPlayer = nullptr;
-    winner = nullptr;
+    currPlayerIndex = 0;
+    winnerIndex = -1;
     boardBoundaries.clear();
     edgeCoords.clear();
     serverPorts.clear();
@@ -53,7 +53,6 @@ void GameBoard::init() {
     serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, 0), players[0], SP_DISPLAY_STR));
     serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, BOARD_SIZE - 1), players[1], SP_DISPLAY_STR));
     serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, BOARD_SIZE - 1 ), players[1], SP_DISPLAY_STR));
-    currPlayer = &(players[0]);
 
     // adding board boundaries based on board sizes
     for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
@@ -89,18 +88,37 @@ void GameBoard::moveLink(string linkName, string direction) {
     }
 }
 
-string GameBoard::playerAbilities(Player& player) {
-    string message = player.getPlayerName() + " Abilities:\n";
-    string abilities = "";
-    for (int i = 0; i < allAbilityCards.size(); i++) {
-        if (player.getPlayerName() == allAbilityCards[i]->getOwner().getPlayerName()) {
-            string displayName = allAbilityCards[i]->getDisplayName();
-            int id = allAbilityCards[i]->getAbilityId();
-            string isUsed = allAbilityCards[i]->isUsed() ? "[used] ": "[avaliable] ";
-            abilities += "#" + to_string(id) + "." + displayName + " " + isUsed;
+unique_ptr<vector<shared_ptr<AbilityCard>>> GameBoard::getPlayerAbilities(Player& player) {
+    vector<shared_ptr<AbilityCard>> result;
+    for (auto ac : allAbilityCards) {
+        if (player.getPlayerName() == ac->getOwner().getPlayerName()) {
+            result.emplace_back(ac);
         }
     }
-    message += abilities;
+    return make_unique<vector<shared_ptr<AbilityCard>>>(result);
+}
+
+unique_ptr<vector<shared_ptr<Link>>> GameBoard::getPlayerLinks(Player& player) {
+    vector<shared_ptr<Link>> result;
+    for (auto link : allLinks) {
+        if (player.getPlayerName() == link->getOwner().getPlayerName()) {
+            result.emplace_back(link);
+        }
+    }
+    return make_unique<vector<shared_ptr<Link>>>(result);
+}
+
+string GameBoard::playerAbilities(Player& player) {
+    string message = player.getPlayerName() + " Abilities:\n";
+    string abilitiesStr = "";
+    vector<shared_ptr<AbilityCard>> abilities = *getPlayerAbilities(player);
+    for (auto ability : abilities) {
+        string displayName = ability->getDisplayName();
+        int id = ability->getAbilityId();
+        string isUsed = ability->isUsed() ? "[used] ": "[avaliable] ";
+        abilitiesStr += "#" + to_string(id) + "." + displayName + " " + isUsed;
+    }
+    message += abilitiesStr;
     return (message + "\n");
 }
 
@@ -128,7 +146,7 @@ void GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firew
     }
 }
 
-// settors
+// setters
 // ——————————————
 void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
     bool isPlayer1 = player->getPlayerName() == "Player 1";
@@ -148,21 +166,21 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
         }
 
         // create links and place in board
-        unique_ptr<Link> curLinkPtr;
+        shared_ptr<Link> curLinkPtr;
         if (link[0] == 'V') {
             Virus curLink = Virus(strength, Coords(xCoord, yCoord), displayName, *player);
-            curLinkPtr = make_unique<Virus>(curLink);
+            curLinkPtr = make_shared<Virus>(curLink);
             td->notify(*curLinkPtr);
             gd->notify(*curLinkPtr);
         } else if (link[0] == 'D') {
             Data curLink = Data(strength, Coords(xCoord, yCoord), displayName, *player);
-            curLinkPtr = make_unique<Data>(curLink);
+            curLinkPtr = make_shared<Data>(curLink);
             td->notify(*curLinkPtr);
             gd->notify(*curLinkPtr);
         } else { // not V or D
             throw (logic_error("Error, incorrect link placements: please follow <type1><strength1> <type2><strength2> ... , where type is V or D.\n"));
         }
-        allBoardPieces.emplace_back(move(curLinkPtr));
+        allLinks.emplace_back(move(curLinkPtr));
 
         // update position and name
         xCoord++;
@@ -182,19 +200,19 @@ void GameBoard::setAbilities(string abilities, Player *player) {
     for (char c: abilities) {
         if (c == 'L') {
             string displayName = "LinkBoost";
-            allAbilityCards.emplace_back(make_unique<LinkBoost>(id, *player, displayName));
+            allAbilityCards.emplace_back(make_shared<LinkBoost>(id, *player, displayName));
         } else if (c == 'F') {
             string displayName = "FireWall";
-            allAbilityCards.emplace_back(make_unique<FireWall>(id, *player, displayName));
+            allAbilityCards.emplace_back(make_shared<FireWall>(id, *player, displayName));
         } else if (c == 'D') {
             string displayName = "Download";
-            allAbilityCards.emplace_back(make_unique<Download>(id, *player, displayName));
+            allAbilityCards.emplace_back(make_shared<Download>(id, *player, displayName));
         } else if (c == 'S') {
             string displayName = "Scan";
-            allAbilityCards.emplace_back(make_unique<Scan>(id, *player, displayName));
+            allAbilityCards.emplace_back(make_shared<Scan>(id, *player, displayName));
         } else if (c == 'P') {
             string displayName = "Polarize";
-            allAbilityCards.emplace_back(make_unique<Polarize>(id, *player, displayName));
+            allAbilityCards.emplace_back(make_shared<Polarize>(id, *player, displayName));
         } 
         if (id == 5) {
             id = 1;
@@ -205,7 +223,7 @@ void GameBoard::setAbilities(string abilities, Player *player) {
     // or just deal with it lmao but maybe still cerr
 }
 
-// gettors:
+// getters:
 // ——————————————
 vector<Player>& GameBoard::getPlayers() {
     return players;
@@ -224,12 +242,16 @@ vector<Player>& GameBoard::getPlayers() {
 //     return result;
 // }
 
-Player& GameBoard::getCurrPlayer() {
-    return *currPlayer;
+int GameBoard::getCurrPlayerIndex() {
+    return currPlayerIndex;
 }
 
-Player& GameBoard::getWinner() {
-    return *winner;
+int GameBoard::getNextPlayerIndex() {
+    return currPlayerIndex ? 0 : 1;
+}
+
+int GameBoard::getWinnerIndex() {
+    return winnerIndex;
 }
 
 vector<Coords>& GameBoard::getBoardBoundaries() {

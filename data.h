@@ -5,5 +5,5 @@
 class Data: public Link {
     public:
         Data(int strength, Coords currCoords, string displayName, Player &owner);
-        };
+};
 #endif
