@@ -43,7 +43,6 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
                            Xwindow::White);
     theDisplay->drawString(27, player ? 97 : 747, pAbilities.c_str(),
                            Xwindow::White);
-    std::cout << "test1" << endl;
     // std::cout << "Number of links: " << player2Links.size() << std::endl;
 
     // for (int i = 0; i < player2Links.size(); i++) {
@@ -96,6 +95,9 @@ void GraphicsDisplay::notify(Link &link) {
     int y = link.getCurrCoords().getY();
     drawBoardSquare(link.getPreviousCoords().getX(),
                     link.getPreviousCoords().getY());
+    if (x == -1 || y == -1) {
+        return;
+    }
     renderSquare(x, y, link);
     
 }
