@@ -18,6 +18,8 @@ class BoardPiece: public GamePiece { // add public: GamePiece later
         Coords getPreviousCoords();
         // returns the curr coords of the piece
         Coords getCurrCoords();
+        void downloadLink();
+
 };
 
 #endif

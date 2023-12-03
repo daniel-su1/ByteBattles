@@ -123,7 +123,8 @@ void GraphicsDisplay::init(GameBoard &gb) {
     Player p1 = (this->gb->getPlayers())[this->gb->getCurrPlayerIndex()];
     Player p2 = (this->gb->getPlayers())[this->gb->getNextPlayerIndex()];
     renderPlayerInfo(p1);
-    renderPlayerInfo(p2);
 }
 
-void GraphicsDisplay::notify(GameBoard &gb) {}
+void GraphicsDisplay::notify(GameBoard &gb) {
+    renderPlayerInfo(p2);
+}
