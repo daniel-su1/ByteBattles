@@ -18,6 +18,7 @@ void GraphicsDisplay::renderSquare(int x, int y, GamePiece& gp) {
     const int BUFFER_SIZE = 23;
     int text_x = SQUARE_SIZE * x + BUFFER_SIZE;
     int text_y = SQUARE_SIZE * y + SQUARE_SIZE / 2 + BUFFER_SIZE;
+    theDisplay->setLargerFont("courier34r");
     string displayName = gp.getDisplayName();
     if(displayName == "S"){
         theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,

@@ -9,16 +9,19 @@
 
 using namespace std;
 
-void Xwindow::setLargerFont(string inFont) {
-    if(inFont == "courier34r"){
-        const char *fontName = "-*-courier-*-r-*-*-34-*-*-*-*-*-*-*";
-    } else if (inFont == "lucida25i") {
-        const char *fontName = "-*-lucida-*-i-*-*-25-*-*-*-*-*-*-*";
-    } else if (inFont == "lucida25r") {
-        const char *fontName = "-*-lucida-*-r-*-*-25-*-*-*-*-*-*-*";
+void Xwindow::setLargerFont(std::string inFont) {
+    string fontName;
+    if (inFont == "courier34r") {
+        fontName = "-*-courier-*-r-*-*-34-*-*-*-*-*-*-*";
+    }
+    else if (inFont == "lucida25i") {
+        fontName = "-*-lucida-*-i-*-*-25-*-*-*-*-*-*-*";
+    }
+    else if (inFont == "lucida25r") {
+        fontName = "-*-lucida-*-r-*-*-25-*-*-*-*-*-*-*";
     }
     XFontStruct *font =
-        XLoadQueryFont(d, fontName);  // 'd' is a member of Xwindow
+        XLoadQueryFont(d, fontName.c_str());  // 'd' is a member of Xwindow
     if (font) {
         XSetFont(d, gc, font->fid);  // 'gc' is a member of Xwindow
     } else {
@@ -77,8 +80,6 @@ Xwindow::Xwindow(int width, int height) {
     XSynchronize(d, True);
 
     usleep(1000);
-
-    setLargerFont();
 }
 
 
