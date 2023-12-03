@@ -13,7 +13,7 @@ class GraphicsDisplay : public Observer {
     void renderSquare(int x, int y, GamePiece& gp);
     void renderPlayerInfo(Player p);
     void drawBoardSquare(int x, int y);
-    void drawPlayerInfoCircle(int x, int y, string info, bool virus);
+    void drawPlayerInfoCircle(int x, int y, string info, bool isRevealed, bool virus);
    public:
     const int BOARD_WINDOW_SIZE = 500;
     const int SQUARE_SIZE = BOARD_WINDOW_SIZE /8;

@@ -14,11 +14,12 @@ void GraphicsDisplay::drawBoardSquare(int x, int y) {
                               SQUARE_SIZE, SQUARE_SIZE, color);
 }
 
-void GraphicsDisplay::drawPlayerInfoCircle(int x, int y, string info,
-                                           bool virus) {
+void GraphicsDisplay::drawPlayerInfoCircle(int x, int y, string info, 
+                                           bool isRevealed, bool virus) {
     const int CIRCLE_RADIUS = 24;
-    theDisplay->fillCircle(x, y, CIRCLE_RADIUS,
-                           virus ? Xwindow::DarkRed : Xwindow::DarkGreen);
+    theDisplay->fillCircle(x, y, CIRCLE_RADIUS, isRevealed 
+                           ? (virus ? Xwindow::DarkRed : Xwindow::DarkGreen)
+                           : Xwindow::Black);
     theDisplay->setLargerFont("courier20r");
     theDisplay->drawString(x - 16, y + 6, info, Xwindow::White);
 }
@@ -66,6 +67,7 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
         drawPlayerInfoCircle(pLinksX, pLinksY,
                              curLink->getDisplayName() + ":" +
                                  std::to_string(curLink->getStrength()),
+                             curLink->isIdentityRevealed(),
                              curLink->getType() == LinkType::virus);
         pLinksX += 55;
     }
@@ -77,7 +79,7 @@ void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
     int text_y = SQUARE_SIZE * y + SQUARE_SIZE / 2 + BUFFER_SIZE;
     theDisplay->setLargerFont("courier34r");
     string displayName = gp.getDisplayName();
-    if (displayName == "S") {
+    if (displayName == gb->SP_DISPLAY_STR) { // server ports
         theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
                                   SQUARE_SIZE, SQUARE_SIZE, Xwindow::Yellow);
         theDisplay->drawString(text_x, text_y + 140, displayName,
