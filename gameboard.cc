@@ -111,10 +111,7 @@ void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player *player) {
     } else if (linkType == "Virus") {
         player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
     }
-    link1->setIdentityRevealed(true);
-    cout << player->getNumDataDownloads() << endl;
-    cout << player->getNumVirusDownloads() << endl;
-    
+    link1->setIdentityRevealed(true);    
     td->notify(*link1);
     gd->notify(*link1);
 }
@@ -185,10 +182,10 @@ void GameBoard::moveLink(string linkName, string direction) {
         Coords edgeCoord = edgeCoords[i].getCoords();
         if (newCoord == edgeCoord) {
             if (newOwner.getPlayerName() != edgeCoords[i].getOwner().getPlayerName()) {
-            downloadIdentity(l, &newOwner);
-            gd->notify(*this);
+                downloadIdentity(l, &newOwner);
+                gd->notify(*this);
             } else {
-            throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!\n"));
+                throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!\n"));
             }
         }   
     }
