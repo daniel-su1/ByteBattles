@@ -86,6 +86,23 @@ void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
     gd->notify(*link);
 }
 
+// player downloads link1 (becomes the new owner)
+void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player *player) {
+    cout << player->getPlayerName() << " has downloaded " << link1->getDisplayName() << ":" <<  endl;
+    string linkType = (link1->getType() == LinkType::virus) ? "Virus" : "Data";
+    cout << "A " << linkType << " of strength " << link1->getStrength() << "." << endl;
+    link1->setDownloaded(true); 
+    link1->downloadLink();
+    if (linkType == "Data") {
+        player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
+    } else if (linkType == "Virus") {
+        player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
+    }
+    td->notify(*link1);
+    gd->notify(*link1);
+
+}
+
 void GameBoard::startNewTurn() {
     if (winnerIndex != INVALID_PLAYER) {
         isWon = true; // where do we check this lol TODO: check if christina did this already
@@ -156,23 +173,23 @@ void GameBoard::moveLink(string linkName, string direction) {
             }
         }
     }
-
     // checking if moved onto one's own server ports / into opponents 
     for (size_t i = 0; i < serverPorts.size(); i++) {
         Coords serverPortCoord = serverPorts[i].getCoords();
         if (newCoord == serverPortCoord) {
             if (&(serverPorts[i].getOwner()) == &l->getOwner()) {
                 throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port\n"));
-            } else {
-                // do download 
+            } else { // other player downloads link
+                Player originalOwner = l->getOwner();
+                Player& newOwner = *players[getNextPlayerIndex()];
+                downloadIdentity(l, &newOwner);
+                startNewTurn();
+                return;
             }
         }
     }
-
-
+    
     movePiece(l, dir);
-
-
     startNewTurn();
 }
 

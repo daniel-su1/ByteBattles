@@ -9,8 +9,11 @@ class Link: public BoardPiece{
         int strength;  
         LinkType type;
         bool identityRevealed;
+        bool downloaded; 
         Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type);
     public:
+        bool isDownloaded();
+        void setDownloaded(bool d);
         string typeAndStrength;
         // returns the strength of the link
         int getStrength();
@@ -20,7 +23,6 @@ class Link: public BoardPiece{
         bool isIdentityRevealed();
         // returns step size
         int getStepSize();
-        
         virtual ~Link();
 };
 
