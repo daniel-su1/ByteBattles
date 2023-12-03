@@ -70,7 +70,7 @@ unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb
     return gb;
 }
 
-unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
+unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isFile = false) {
     string cmd;
     while (in >> cmd) {
         try {
@@ -96,7 +96,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
                 if (sequenceFile.fail()) {
                     throw (logic_error("Error, file does not exist."));
                 } else {
-                    gb = parseCmds(sequenceFile, move(gb)); 
+                    gb = parseCmds(sequenceFile, move(gb), true); 
                 }
             } else if (cmd == "quit") {
                 throw QuitProgram(); // exit game and terminate program
@@ -110,7 +110,11 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
                 errorMsg += "\tquit\n"; 
                 // TODO: add more deets
                 // TODO: ensure nothing is missing from the additional three abilities
-                throw (invalid_argument(errorMsg)); // invalid arguments from text command mistakes are thrown into main
+                if (isFile) { // invalid arguments from sequence file are thrown into main
+                    throw (invalid_argument(errorMsg)); 
+                } else {
+                    throw (logic_error(errorMsg));
+                }
             }
         } catch (invalid_argument& err) {
             throw;
