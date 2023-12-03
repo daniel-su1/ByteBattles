@@ -191,28 +191,38 @@ string GameBoard::playerAbilities(Player& player) {
 }
 
 void GameBoard::useAbility(int abilityID) {
+    // max one ability per turn
     if (currPlayerAbilityPlayed) {
-        throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
+        throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
     }
     currPlayerAbilityPlayed = true;
-    // TODO: actually implement
-    cout << "HELLO ABILITY 1\n";
+
+    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+    ac->activate();
 }
 
-void GameBoard::useAbility(int abilityID, string linkName) { // for link boost
+// for link boost
+void GameBoard::useAbility(int abilityID, string linkName) {
+    // max one ability per turn
     if (currPlayerAbilityPlayed) {
-        throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
+        throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
     }
     currPlayerAbilityPlayed = true;
-    cout << "HELLO ABILITY 2\n";
+
+    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+    ac->activate();
 }
 
-void GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firewall
+// for firewall
+void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
+    // max one ability per turn
     if (currPlayerAbilityPlayed) {
-        throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
+        throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
     }
     currPlayerAbilityPlayed = true;
-    cout << "HELLO ABILITY 3\n";
+
+    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+    ac->activate();
 }
 
 // setters
@@ -319,13 +329,8 @@ unique_ptr<vector<shared_ptr<Link>>> GameBoard::getPlayerLinks(Player& player) {
 }
 
 AbilityType GameBoard::getAbilityType(int id) {
-    for (auto ac : allAbilityCards) {
-        if (ac->getAbilityId() == id) {
-            return ac->getType();
-        }
-    }
-    string errorMsg = "Error, unable to find ability card with id " + to_string(id) + ". See all abilities with the \"abilities\" command.";
-    throw (logic_error(errorMsg));
+    shared_ptr<AbilityCard> ac = getAbilityCard(id);
+    return ac->getType();
 }
 
 // vector<std::shared_ptr<Link>> GameBoard::allLinks() {
@@ -371,4 +376,14 @@ vector<ServerPort>& GameBoard::getServerPort() {
 
 vector<FireWall>& GameBoard::getActiveFirewalls() {
     return activeFirewalls;
+}
+
+shared_ptr<AbilityCard> GameBoard::getAbilityCard(int abilityID) {
+    for (auto ac : allAbilityCards) {
+        if (ac->getAbilityId() == abilityID) {
+            return make_shared<AbilityCard>(ac);
+        }
+    }
+    string errorMsg = "Error, unable to find ability card with id " + to_string(abilityID) + ". See all abilities with the \"abilities\" command.";
+    throw (logic_error(errorMsg));
 }
