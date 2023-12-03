@@ -19,6 +19,7 @@ class GraphicsDisplay : public Observer {
     void notify(Link &link) override;
     void notify(GameBoard &gb) override;
     void init(GameBoard &gb);
+    void drawBoardSquare(int x, int y);
 };
 
 #endif

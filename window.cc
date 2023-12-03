@@ -9,8 +9,14 @@
 
 using namespace std;
 
-void Xwindow::setLargerFont() {
-    const char *fontName = "-*-times-*-r-*-*-34-*-*-*-*-*-*-*";
+void Xwindow::setLargerFont(string inFont) {
+    if(inFont == "courier34r"){
+        const char *fontName = "-*-courier-*-r-*-*-34-*-*-*-*-*-*-*";
+    } else if (inFont == "lucida25i") {
+        const char *fontName = "-*-lucida-*-i-*-*-25-*-*-*-*-*-*-*";
+    } else if (inFont == "lucida25r") {
+        const char *fontName = "-*-lucida-*-r-*-*-25-*-*-*-*-*-*-*";
+    }
     XFontStruct *font =
         XLoadQueryFont(d, fontName);  // 'd' is a member of Xwindow
     if (font) {
@@ -41,14 +47,21 @@ Xwindow::Xwindow(int width, int height) {
 
     // Set up colours.
     XColor xcolour;
-    Colormap cmap;
-    char color_vals[5][10] = {"white", "black", "red", "green", "blue"};
+    Colormap cmap = DefaultColormap(d, DefaultScreen(d));
+    static const int NumColors = 12;
+    char color_vals[NumColors][20] = {
+        "white", "black",   "red",      "green",      "blue",        "yellow",
+        "cyan",  "magenta", "SkyBlue1", "RoyalBlue1", "chartreuse1", "DarkRed"};
 
     cmap = DefaultColormap(d, DefaultScreen(d));
-    for (int i = 0; i < 5; ++i) {
-        XParseColor(d, cmap, color_vals[i], &xcolour);
-        XAllocColor(d, cmap, &xcolour);
-        colours[i] = xcolour.pixel;
+    for (int i = 0; i < NumColors; ++i) {
+        if (!XParseColor(d, cmap, color_vals[i], &xcolour)) {
+            cerr << "Failed to parse color " << color_vals[i] << endl;
+        } else if (!XAllocColor(d, cmap, &xcolour)) {
+            cerr << "Failed to allocate color " << color_vals[i] << endl;
+        } else {
+            colours[i] = xcolour.pixel;
+        }
     }
 
     XSetForeground(d, gc, colours[Black]);
@@ -81,8 +94,17 @@ void Xwindow::fillRectangle(int x, int y, int width, int height, int colour) {
     XSetForeground(d, gc, colours[Black]);
 }
 
-void Xwindow::drawString(int x, int y, string msg) {
-    XSetForeground(d, gc, colours[White]);  // Set the color to white
+void Xwindow::drawString(int x, int y, string msg, int colour) {
+    XSetForeground(d, gc, colours[colour]);  // Set the color
     XDrawString(d, w, gc, x, y, msg.c_str(), msg.length());
     XSetForeground(d, gc, colours[Black]);  // Reset to default color if needed
+}
+
+void Xwindow::fillCircle(int x, int y, int radius, int colour) {
+    XSetForeground(d, gc, colours[colour]);
+    // Draw a full circle
+    XFillArc(d, w, gc, x - radius, y - radius, 2 * radius, 2 * radius, 0,
+             360 * 64);
+    XSetForeground(d, gc,
+                   colours[Black]);  // Reset color to default if necessary
 }
