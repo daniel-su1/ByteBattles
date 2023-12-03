@@ -5,6 +5,9 @@
 #include "abilitycards/download.h"
 #include "abilitycards/scan.h"
 #include "abilitycards/polarize.h"
+#include "abilitycards/bomb.h"
+#include "abilitycards/hazeofwar.h"
+#include "abilitycards/wallwall.h"
 
 GameBoard::GameBoard()
     : td(nullptr),
@@ -330,13 +333,28 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
         } else if (c == 'D') {
             string displayName = "Download";
             allAbilityCards.emplace_back(make_shared<Download>(id, *player, displayName));
-        } else if (c == 'S') {
-            string displayName = "Scan";
-            allAbilityCards.emplace_back(make_shared<Scan>(id, *player, displayName));
         } else if (c == 'P') {
             string displayName = "Polarize";
             allAbilityCards.emplace_back(make_shared<Polarize>(id, *player, displayName));
-        } 
+        } else if (c == 'S') {
+            string displayName = "Scan";
+            allAbilityCards.emplace_back(make_shared<Scan>(id, *player, displayName));
+        } else if (c == 'W') {
+            string displayName = "WallWall";
+            allAbilityCards.emplace_back(make_shared<WallWall>(id, *player, displayName));
+        } else if (c == 'B') {
+            string displayName = "Bomb";
+            allAbilityCards.emplace_back(make_shared<Bomb>(id, *player, displayName));
+        } else if (c == 'H') {
+            string displayName = "HazeOfWar";
+            allAbilityCards.emplace_back(make_shared<HazeOfWar>(id, *player, displayName));
+        } else {
+            string errorMsg = "Incorrect ability type: please use one of:\n";
+            errorMsg += "\tL (LinkBoost)\n\tF (FireWall)\n\tD (Download)\n\tP (Polarize)\n";
+            errorMsg += "\tS (Scan)\n\tW (WallWall)\n\tB (Bomb)\n\tH (HazeOfWar)";
+            throw (logic_error(errorMsg));
+        }
+
         if (id == 5) {
             id = 1;
         } else {

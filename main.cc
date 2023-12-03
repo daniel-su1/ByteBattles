@@ -137,7 +137,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
         } catch (invalid_argument& err) {
             throw;
         } catch (logic_error& e) {
-            cerr << e.what();
+            cerr << e.what() << endl;
         }
     }
     return gb;
