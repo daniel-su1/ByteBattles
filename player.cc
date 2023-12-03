@@ -1,4 +1,5 @@
 #include "player.h"
+#include <iostream>
 Player::Player(string playerName, int abilityCount): playerName{playerName}, numVirusDownloaded{0}, numDataDownloaded{0},
     abilityCount{abilityCount}, won{false} {}
 
@@ -22,4 +23,10 @@ bool Player::isWon() {
     return won;
 }
 
+void Player::setNumVirusDownloaded(int newNum){
+    numVirusDownloaded = newNum;
+}
+void Player::setNumDataDownloaded(int newNum) {
+    numDataDownloaded = newNum;
+}
 

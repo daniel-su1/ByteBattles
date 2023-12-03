@@ -49,7 +49,7 @@ class GameBoard: public Subject {
         void movePiece(shared_ptr<Link> link, Direction dir); // TODO: possibly move to private or delete bc of moveLink() below
         void battlePieces(Link &linkp1, Link &linkp2);
         void startNewTurn();
-        void downloadIdentity(Link &link1, Player *player);
+        void downloadIdentity(shared_ptr<Link> link1, Player *player);
         void updateIdentity(Link& link);
 
         // text command interactions

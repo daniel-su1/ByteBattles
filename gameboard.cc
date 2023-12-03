@@ -87,10 +87,20 @@ void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
 }
 
 // player downloads link1 (becomes the new owner)
-void GameBoard::downloadIdentity(Link &link1, Player *player) {
-    link1.attachPlayer(player);
-    cout << player->getPlayerName() << " has downloaded " << link1.getDisplayName() << " :" <<  endl;
-    cout << "a " << link1.getType() << " of strength" << link1.getStrength() << endl;
+void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player *player) {
+    cout << player->getPlayerName() << " has downloaded " << link1->getDisplayName() << ":" <<  endl;
+    string linkType = (link1->getType() == LinkType::virus) ? "Virus" : "Data";
+    cout << "A " << linkType << " of strength " << link1->getStrength() << "." << endl;
+    link1->setDownloaded(true); 
+    link1->downloadLink();
+    if (linkType == "Data") {
+        player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
+    } else if (linkType == "Virus") {
+        player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
+    }
+    td->notify(*link1);
+    gd->notify(*link1);
+
 }
 // interaction commands
 // ——————————————
@@ -148,7 +158,6 @@ void GameBoard::moveLink(string linkName, string direction) {
             }
         }
     }
-
     // checking if moved onto one's own server ports / into opponents 
     for (size_t i = 0; i < serverPorts.size(); i++) {
         Coords serverPortCoord = serverPorts[i].getCoords();
@@ -159,12 +168,14 @@ void GameBoard::moveLink(string linkName, string direction) {
                 Player originalOwner = l->getOwner();
                 Player newOwner = players[0];
                 if (originalOwner.getPlayerName() == "Player 1") {
-                    Player newOwner = players[1];
+                    newOwner = players[1];
                 } 
-                downloadIdentity(*l, &newOwner);
+                downloadIdentity(l, &newOwner);
+                return;
             }
         }
     }
+    
     movePiece(l, dir);
 }
 

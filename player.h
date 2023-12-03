@@ -16,5 +16,7 @@ class Player {
         int getNumDataDownloads();
         int getAbilityCount();
         bool isWon();
+        void setNumVirusDownloaded(int newNum);
+        void setNumDataDownloaded(int newNum); 
 };
 #endif
