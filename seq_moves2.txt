@@ -1,0 +1,16 @@
+move c down
+move D up
+move c down
+move D up
+move c down
+move D up
+move c left
+move D up
+move c left
+move D left
+move c right
+move D up
+move c right
+move D up
+move c down
+move D up

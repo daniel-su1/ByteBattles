@@ -25,4 +25,6 @@ int Link::getStepSize() {
     return stepSize;
 }
 
-
+void Link::setIdentityRevealed(bool b) {
+    identityRevealed = b;
+}

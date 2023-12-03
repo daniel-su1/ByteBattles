@@ -24,6 +24,7 @@ class Link: public BoardPiece{
         // returns step size
         int getStepSize();
         virtual ~Link();
+        void setIdentityRevealed(bool b);
 };
 
 #endif

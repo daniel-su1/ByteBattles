@@ -16,10 +16,10 @@ GameBoard::GameBoard()
       currPlayerAbilityPlayed(false),
       winnerIndex(INVALID_PLAYER),
       isWon(false),
+      graphicsEnabled(false),
       boardBoundaries(),
       edgeCoords(),
       serverPorts(),
-      graphicsEnabled(false),
       activeFirewalls() {}
 
 GameBoard::~GameBoard() {
@@ -111,9 +111,9 @@ void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player *player) {
     } else if (linkType == "Virus") {
         player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
     }
+    link1->setIdentityRevealed(true);    
     td->notify(*link1);
     gd->notify(*link1);
-
 }
 
 void GameBoard::startNewTurn() {
@@ -135,7 +135,7 @@ void GameBoard::moveLink(string linkName, string direction) {
 
     // find the link with name linkName owned by current player
     vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(p));
-    for (auto link : playerLinks) {
+    for (shared_ptr<Link> link : playerLinks) {
         if (linkName == link->getDisplayName()) {
             l = link;
             notFound = false;
@@ -175,6 +175,21 @@ void GameBoard::moveLink(string linkName, string direction) {
         }
     }
 
+    Player& newOwner = *players[getNextPlayerIndex()];
+
+    // checking if moved into winning edge pieces 
+    for (size_t i = 0; i < edgeCoords.size(); i++) {
+        Coords edgeCoord = edgeCoords[i].getCoords();
+        if (newCoord == edgeCoord) {
+            if (newOwner.getPlayerName() != edgeCoords[i].getOwner().getPlayerName()) {
+                downloadIdentity(l, &newOwner);
+                gd->notify(*this);
+            } else {
+                throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!\n"));
+            }
+        }   
+    }
+
     // checking if moved on top of own piece
     for (size_t i = 0; i < allLinks.size(); i++) {
         Coords pieceCoords = allLinks[i]->getCurrCoords();
@@ -193,8 +208,6 @@ void GameBoard::moveLink(string linkName, string direction) {
             if (&(serverPorts[i].getOwner()) == &l->getOwner()) {
                 throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port\n"));
             } else { // other player downloads link
-                Player originalOwner = l->getOwner();
-                Player& newOwner = *players[getNextPlayerIndex()];
                 downloadIdentity(l, &newOwner);
                 startNewTurn();
                 gd->notify(*this);
@@ -211,7 +224,7 @@ string GameBoard::playerAbilities(Player& player) {
     string message = player.getPlayerName() + " Abilities:\n";
     string abilitiesStr = "";
     vector<shared_ptr<AbilityCard>> abilities = *getPlayerAbilities(player);
-    for (auto ability : abilities) {
+    for (shared_ptr<AbilityCard> ability : abilities) {
         string displayName = ability->getDisplayName();
         int id = ability->getAbilityId();
         string isUsed = ability->isUsed() ? "[used] ": "[avaliable] ";
@@ -222,39 +235,38 @@ string GameBoard::playerAbilities(Player& player) {
 }
 
 void GameBoard::useAbility(int abilityID) {
+    // max one ability per turn
     if (currPlayerAbilityPlayed) {
-        throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
+        throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
     }
     currPlayerAbilityPlayed = true;
-    // TODO: actually implement
-    bool hasError = true;
-    if (hasError) {
-        throw (logic_error("i am a useability error message\n"));
-    }
+
+    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+    ac->activate();
 }
 
-void GameBoard::useAbility(int abilityID, string linkName) { // for link boost
+// for link boost
+void GameBoard::useAbility(int abilityID, string linkName) {
+    // max one ability per turn
     if (currPlayerAbilityPlayed) {
-        throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
+        throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
     }
     currPlayerAbilityPlayed = true;
-    // TODO: actually implement
-    bool hasError = true;
-    if (hasError) {
-        throw (logic_error("i am a useability for link boosts error message\n"));
-    }
+
+    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+    ac->activate();
 }
 
-void GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firewall
+// for firewall
+void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
+    // max one ability per turn
     if (currPlayerAbilityPlayed) {
-        throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
+        throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
     }
     currPlayerAbilityPlayed = true;
-    // TODO: actually implement
-    bool hasError = true;
-    if (hasError) {
-        throw (logic_error("i am a useability for firewalls error message\n"));
-    }
+
+    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+    ac->activate();
 }
 
 // setters
@@ -303,8 +315,6 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<
         string errorMsg = "Error, incorrect link placements: please place " + to_string(BOARD_SIZE) + " links.\n";
         throw (logic_error(errorMsg));
     }
-
-    gd->notify(*this);
 }
 
 void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
@@ -344,7 +354,7 @@ vector<shared_ptr<Player>>& GameBoard::getPlayers() {
 
 unique_ptr<vector<shared_ptr<AbilityCard>>> GameBoard::getPlayerAbilities(Player& player) {
     vector<shared_ptr<AbilityCard>> result;
-    for (auto ac : allAbilityCards) {
+    for (shared_ptr<AbilityCard> ac : allAbilityCards) {
         if (player.getPlayerName() == ac->getOwner().getPlayerName()) {
             result.emplace_back(ac);
         }
@@ -354,12 +364,17 @@ unique_ptr<vector<shared_ptr<AbilityCard>>> GameBoard::getPlayerAbilities(Player
 
 unique_ptr<vector<shared_ptr<Link>>> GameBoard::getPlayerLinks(Player& player) {
     vector<shared_ptr<Link>> result;
-    for (auto link : allLinks) {
+    for (shared_ptr<Link> link : allLinks) {
         if (player.getPlayerName() == link->getOwner().getPlayerName()) {
             result.emplace_back(link);
         }
     }
     return make_unique<vector<shared_ptr<Link>>>(result);
+}
+
+AbilityType GameBoard::getAbilityType(int id) {
+    shared_ptr<AbilityCard> ac = getAbilityCard(id);
+    return ac->getType();
 }
 
 // vector<std::shared_ptr<Link>> GameBoard::allLinks() {
@@ -405,4 +420,14 @@ vector<ServerPort>& GameBoard::getServerPort() {
 
 vector<FireWall>& GameBoard::getActiveFirewalls() {
     return activeFirewalls;
+}
+
+shared_ptr<AbilityCard> GameBoard::getAbilityCard(int abilityID) {
+    for (shared_ptr<AbilityCard> ac : allAbilityCards) {
+        if (ac->getAbilityId() == abilityID) {
+            return ac;
+        }
+    }
+    string errorMsg = "Error, unable to find ability card with id " + to_string(abilityID) + ". See all abilities with the \"abilities\" command.";
+    throw (logic_error(errorMsg));
 }

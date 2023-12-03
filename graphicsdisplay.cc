@@ -44,7 +44,6 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
                            Xwindow::White);
     theDisplay->drawString(27, player ? 97 : 747, pAbilities.c_str(),
                            Xwindow::White);
-    std::cout << "test1" << endl;
     // std::cout << "Number of links: " << player2Links.size() << std::endl;
 
     // for (int i = 0; i < player2Links.size(); i++) {
@@ -58,7 +57,7 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
     int pLinksX = 290;
     int pLinksY = player ? 45 : 695;
 
-    for (int i = 0; i < playerLinks.size(); i++) {
+    for (size_t i = 0; i < playerLinks.size(); i++) {
         shared_ptr<Link> curLink = playerLinks[i];
         if (i == 4) {
             pLinksX = 290;
@@ -98,6 +97,9 @@ void GraphicsDisplay::notify(Link &link) {
     int y = link.getCurrCoords().getY();
     drawBoardSquare(link.getPreviousCoords().getX(),
                     link.getPreviousCoords().getY());
+    if (x == -1 || y == -1) {
+        return;
+    }
     renderSquare(x, y, link);
     
 }
@@ -105,8 +107,8 @@ void GraphicsDisplay::notify(Link &link) {
 void GraphicsDisplay::init(GameBoard &gb) {
     this->gb = &gb;
     vector<ServerPort> sp = gb.getServerPort();
-    for (size_t x = 0; x < gb.BOARD_SIZE; x++) {
-        for (size_t y = 0; y < gb.BOARD_SIZE; y++) {
+    for (int x = 0; x < gb.BOARD_SIZE; x++) {
+        for (int y = 0; y < gb.BOARD_SIZE; y++) {
             if (y % 2) {
                 theDisplay->fillRectangle(
                     SQUARE_SIZE * x, SQUARE_SIZE * y + 150, SQUARE_SIZE,

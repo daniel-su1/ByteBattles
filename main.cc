@@ -83,7 +83,31 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
             } else if (cmd == "abilities") {
                 cout << gb->playerAbilities(*gb->getPlayers()[gb->getCurrPlayerIndex()]);
             } else if (cmd == "ability") {
-                
+                int abilityId;
+                in >> abilityId;
+                AbilityType type = gb->getAbilityType(abilityId);
+                switch (type) {
+                    case AbilityType::LINKBOOST: {
+                        string linkName;
+                        if (in >> linkName) {
+                            gb->useAbility(abilityId, linkName);
+                        } else {
+                            throw (logic_error("Error, please follow:\n\tability <ID> <linkname> for link boosts"));
+                        }
+                        break;
+                    } case AbilityType::FIREWALL: {
+                        int xCoord, yCoord;
+                        if (in >> xCoord && in >> yCoord) {
+                            gb->useAbility(abilityId, xCoord, yCoord);
+                        } else {
+                            throw (logic_error("Error, please follow:\n\tability <ID> <x> <y>"));
+                        }
+                        break;
+                    } default: {
+                        gb->useAbility(abilityId);
+                        break;
+                    }
+                }
             } else if (cmd == "board") {
                 cout << *gb;
             } else if (cmd == "sequence") {
@@ -130,6 +154,8 @@ int main(int argc, char* argv[]) {
         cerr << err.what();
         return 1; // terminate program with incorrect args
     }
+
+    gb->notifyObservers();
 
     // text commands
     try {

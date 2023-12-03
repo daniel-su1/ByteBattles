@@ -76,6 +76,7 @@ class GameBoard: public Subject {
         unique_ptr<vector<shared_ptr<Link>>> getPlayerLinks(Player& player);
         // vector<std::shared_ptr<Link>> getAllLinks();
         // vector<AbilityCard>& getAllAbilityCards();
+        AbilityType getAbilityType(int id);
         int getCurrPlayerIndex();
         int getNextPlayerIndex();
         int getWinnerIndex();
@@ -85,7 +86,8 @@ class GameBoard: public Subject {
         vector<ServerPort>& getServerPort();
         vector<FireWall>& getActiveFirewalls();
         void enableGraphics();
-    private: // oops possibly deletable
-        unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
+    private:
+        unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player); // possibly deletable
+        shared_ptr<AbilityCard> getAbilityCard(int abilityID);
 };
 #endif
