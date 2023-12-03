@@ -27,7 +27,7 @@ void TextDisplay::notify(GameBoard &gb) {
 void TextDisplay::init(GameBoard& gb) {
     myGb = &gb;
     vector<ServerPort> sp = gb.getServerPort();
-    for (int i = 0; i < sp.size(); i++) {
+    for (size_t i = 0; i < sp.size(); i++) {
       int x = sp[i].getCoords().getX();
       int y = sp[i].getCoords().getY();
       theDisplay[y][x] = sp[i].getDisplayName()[0];
@@ -39,7 +39,7 @@ void printPlayerInfo(Player& p, GameBoard* gb, ostream& out) {
   out << "Downloaded: " << p.getNumDataDownloads() << "D, " << p.getNumVirusDownloads() << "V" << endl;
   out << "Abilities: " << p.getAbilityCount() << endl;
   vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
-  for (int i = 0; i < playerLinks.size(); i++) {
+  for (size_t i = 0; i < playerLinks.size(); i++) {
     if (i == playerLinks.size() / 2) { // halfway point
       out << "\n";
     }

@@ -65,7 +65,7 @@ class GameBoard: public Subject {
         string playerAbilities(Player& player); // unlikely to fail since there is no user input
         void useAbility(int abilityID);
         void useAbility(int abilityID, string linkName); // for link boost
-        void useAbility(int abilityId, int xCoord, int yCoord); // for firewall
+        void useAbility(int abilityID, int xCoord, int yCoord); // for firewall
 
         // setters
         void setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<Player> player);
@@ -74,6 +74,7 @@ class GameBoard: public Subject {
         // getters
         vector<shared_ptr<Player>>& getPlayers();
         unique_ptr<vector<shared_ptr<Link>>> getPlayerLinks(Player& player);
+        AbilityType getAbilityType(int id);
         // vector<std::shared_ptr<Link>> getAllLinks();
         // vector<AbilityCard>& getAllAbilityCards();
         int getCurrPlayerIndex();
@@ -85,7 +86,8 @@ class GameBoard: public Subject {
         vector<ServerPort>& getServerPort();
         vector<FireWall>& getActiveFirewalls();
         void enableGraphics();
-    private: // oops possibly deletable
-        unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
+    private:
+        unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player); // possibly deletable
+        shared_ptr<AbilityCard> getAbilityCard(int abilityID);
 };
 #endif
