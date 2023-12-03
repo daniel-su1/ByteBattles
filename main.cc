@@ -22,12 +22,12 @@ unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb
             if (curArg == "-ability1") {
                 i++; // next argument should be the order of abilities
                 string abilitiesOrder = argv[i];
-                Player* player= &(gb->getPlayers()[0]);
+                shared_ptr<Player> player= gb->getPlayers()[0];
                 gb->setAbilities(abilitiesOrder, player);
             } else if (curArg == "-ability2") {
                 i++; // next argument should be the order of abilities
                 string abilitiesOrder = argv[i];
-                Player* player= &(gb->getPlayers()[1]);
+                shared_ptr<Player> player= gb->getPlayers()[1];
                 gb->setAbilities(abilitiesOrder, player);
             } else if (curArg == "-link1") {
                 i++; // next arg should be a file containing placements
@@ -38,8 +38,7 @@ unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb
                 unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
                 while (placementFile >> pos) { linkPlacements->emplace_back(pos); }
 
-                Player* player= &(gb->getPlayers()[0]);
-
+                shared_ptr<Player> player= gb->getPlayers()[0];
                 gb->setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
             } else if (curArg == "-link2") {
                 i++; // next arg should be a file containing placements
@@ -50,8 +49,7 @@ unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb
                 unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
                 while (placementFile >> pos) { linkPlacements->emplace_back(pos); }
 
-                Player* player= &(gb->getPlayers()[1]);
-
+                shared_ptr<Player> player= gb->getPlayers()[1];
                 gb->setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
             } else if (curArg == "-graphics") {
                 // TODO: deal w graphics
@@ -83,7 +81,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
                 gb->moveLink(linkName, direction);
                 cout << *gb;
             } else if (cmd == "abilities") {
-                cout << gb->playerAbilities(gb->getPlayers()[gb->getCurrPlayerIndex()]);
+                cout << gb->playerAbilities(*gb->getPlayers()[gb->getCurrPlayerIndex()]);
             } else if (cmd == "ability") {
                 
             } else if (cmd == "board") {
