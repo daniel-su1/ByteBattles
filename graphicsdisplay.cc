@@ -27,10 +27,10 @@ void GraphicsDisplay::drawPlayerInfoCircle(int x, int y, string info,
 }
 
 void GraphicsDisplay::renderPlayerInfo() {
-    Player p1 = (gb->getPlayers())[gb->getCurrPlayerIndex()];
-    Player p2 = (gb->getPlayers())[gb->getNextPlayerIndex()];
+    Player &p1 = *(gb->getPlayers())[gb->getCurrPlayerIndex()];
+    Player &p2 = *(gb->getPlayers())[gb->getNextPlayerIndex()];
 
-    vector<shared_ptr<Link>> player2Links = *gb->getPlayerLinks(p2);
+    vector<shared_ptr<Link>> player2Links = *(gb->getPlayerLinks(p2));
     
     int p2LinksX = 256;
     int p2LinksY = 712;
@@ -106,7 +106,8 @@ void GraphicsDisplay::init(GameBoard &gb) {
         int y = sp[i].getCoords().getY();
         renderSquare(x, y, sp[i]);
     }
-    renderPlayerInfo();
 }
 
-void GraphicsDisplay::notify(GameBoard &gb) {}
+void GraphicsDisplay::notify(GameBoard &gb) {
+    renderPlayerInfo();
+}

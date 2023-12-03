@@ -302,6 +302,8 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<
         string errorMsg = "Error, incorrect link placements: please place " + to_string(BOARD_SIZE) + " links.\n";
         throw (logic_error(errorMsg));
     }
+
+    gd->notify(*this);
 }
 
 void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
