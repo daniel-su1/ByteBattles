@@ -18,7 +18,7 @@ class GraphicsDisplay;
 class GameBoard: public Subject {
     TextDisplay *td;
     GraphicsDisplay *gd;
-    vector<Player> players;
+    vector<shared_ptr<Player>> players;
     vector<shared_ptr<Link>> allLinks;
     vector<shared_ptr<AbilityCard>> allAbilityCards;
 
@@ -31,6 +31,7 @@ class GameBoard: public Subject {
     vector<EdgeCoord> edgeCoords;
     vector<ServerPort> serverPorts;
     vector<FireWall> activeFirewalls;
+    
     public:
         const int PLAYER_COUNT = 2;
         const int INVALID_PLAYER = -1;
@@ -50,11 +51,11 @@ class GameBoard: public Subject {
         void notifyObservers() override;
 
         void init();
-        void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO: same as movePiece for useAbility()
+        // void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO: same as movePiece for useAbility()
         void movePiece(shared_ptr<Link> link, Direction dir); // TODO: possibly move to private or delete bc of moveLink() below
         void battlePieces(Link &linkp1, Link &linkp2);
         void startNewTurn();
-        void downloadIdentity(Link &link1, Player *player);
+        void downloadIdentity(shared_ptr<Link> link1, Player *player);
         void updateIdentity(Link& link);
 
         // text command interactions
@@ -66,11 +67,11 @@ class GameBoard: public Subject {
         void useAbility(int abilityID, int xCoord, int yCoord); // for firewall
 
         // setters
-        void setLinks(unique_ptr <vector<string>> linkPlacements, Player *player);
-        void setAbilities(string abilities, Player *player);
+        void setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<Player> player);
+        void setAbilities(string abilities, shared_ptr<Player> player);
 
         // getters
-        vector<Player>& getPlayers();
+        vector<shared_ptr<Player>>& getPlayers();
         unique_ptr<vector<shared_ptr<Link>>> getPlayerLinks(Player& player);
         AbilityType getAbilityType(int id);
         // vector<std::shared_ptr<Link>> getAllLinks();

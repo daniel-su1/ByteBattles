@@ -5,21 +5,23 @@ TextDisplay::TextDisplay(){
 }
 
 void TextDisplay::notify(Link &link) {
+
   int x = link.getCurrCoords().getX();
   int y = link.getCurrCoords().getY();
+  if (x != -1 && y != -1) {
   theDisplay[y][x] = link.getDisplayName()[0];
-
-
+  }
+  
   int prevX = link.getPreviousCoords().getX();
   int prevY = link.getPreviousCoords().getY();
-
   if (prevX != -1 && prevY != -1) {
-  theDisplay[prevY][prevX] = '.';
+    theDisplay[prevY][prevX] = '.';
   }
 
 }
 
 void TextDisplay::notify(GameBoard &gb) {
+    myGb = &gb;
 }
 
 void TextDisplay::init(GameBoard& gb) {
@@ -60,8 +62,8 @@ void printBoardBoundaries(int boundarySize, ostream& out) {
 }
 
 ostream &operator<<(ostream &out, const TextDisplay &td) {
-  Player &p1 = (td.myGb->getPlayers())[td.myGb->getCurrPlayerIndex()];
-  Player &p2 = (td.myGb->getPlayers())[td.myGb->getNextPlayerIndex()];
+  Player &p1 = *(td.myGb->getPlayers())[td.myGb->getCurrPlayerIndex()];
+  Player &p2 = *(td.myGb->getPlayers())[td.myGb->getNextPlayerIndex()];
   // player 1
   printPlayerInfo(p1, td.myGb, out);
   // board top edge
