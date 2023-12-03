@@ -47,14 +47,14 @@ void GameBoard::init() {
     for (int i = 1; i <= PLAYER_COUNT; i++) {
         string playerName = "Player " + to_string(i);
         int abilityCount = ABILITY_COUNT;
-        players.emplace_back(Player(playerName, abilityCount));
+        players.emplace_back(make_shared<Player>(playerName, abilityCount));
     }
     
     // intialize server ports; middle of board
-    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, 0), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, 0), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, BOARD_SIZE - 1), players[1], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, BOARD_SIZE - 1 ), players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, 0), *players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, 0), *players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, BOARD_SIZE - 1), *players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, BOARD_SIZE - 1 ), *players[1], SP_DISPLAY_STR));
 
     // adding board boundaries based on board sizes
     for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
@@ -70,9 +70,9 @@ void GameBoard::init() {
             // and server ports x coords can only win at distance of 1
             if (((i != SP_X_COORD_1) && (i != SP_X_COORD_2)) || stepSize == 1) { 
                 // player 2's target/winning areas
-                edgeCoords.emplace_back(EdgeCoord(Coords(i, 0 - stepSize), players[1], BORDER_DISPLAY_STR)); 
+                edgeCoords.emplace_back(EdgeCoord(Coords(i, 0 - stepSize), *players[1], BORDER_DISPLAY_STR)); 
                 // player 1's target/winning areas
-                edgeCoords.emplace_back(EdgeCoord(Coords(i, BOARD_SIZE - 1 + stepSize), players[0], BORDER_DISPLAY_STR));
+                edgeCoords.emplace_back(EdgeCoord(Coords(i, BOARD_SIZE - 1 + stepSize), *players[0], BORDER_DISPLAY_STR));
             }
         }
     }
@@ -118,7 +118,7 @@ void GameBoard::moveLink(string linkName, string direction) {
     shared_ptr<Link> l;
     Direction dir = Direction::Up;
     bool notFound = true;
-    Player& p = getPlayers()[getCurrPlayerIndex()];
+    Player& p = *players[currPlayerIndex];
 
     // find the link with name linkName owned by current player
     vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(p));
@@ -181,7 +181,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                 throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port\n"));
             } else { // other player downloads link
                 Player originalOwner = l->getOwner();
-                Player newOwner = players[getNextPlayerIndex()];
+                Player& newOwner = *players[getNextPlayerIndex()];
                 downloadIdentity(l, &newOwner);
                 startNewTurn();
                 return;
@@ -245,7 +245,7 @@ void GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firew
 
 // setters
 // ——————————————
-void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
+void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<Player> player) {
     bool isPlayer1 = player->getPlayerName() == "Player 1";
     int xCoord = 0;
     int yCoord = isPlayer1 ? 0 : BOARD_SIZE - 1;
@@ -291,7 +291,7 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
     }
 }
 
-void GameBoard::setAbilities(string abilities, Player *player) {
+void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     int id = 1;
 
     for (char c: abilities) {
@@ -322,7 +322,7 @@ void GameBoard::setAbilities(string abilities, Player *player) {
 
 // getters:
 // ——————————————
-vector<Player>& GameBoard::getPlayers() {
+vector<shared_ptr<Player>>& GameBoard::getPlayers() {
     return players;
 }
 

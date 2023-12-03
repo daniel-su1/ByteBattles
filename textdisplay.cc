@@ -62,8 +62,8 @@ void printBoardBoundaries(int boundarySize, ostream& out) {
 }
 
 ostream &operator<<(ostream &out, const TextDisplay &td) {
-  Player &p1 = (td.myGb->getPlayers())[td.myGb->getCurrPlayerIndex()];
-  Player &p2 = (td.myGb->getPlayers())[td.myGb->getNextPlayerIndex()];
+  Player &p1 = *(td.myGb->getPlayers())[td.myGb->getCurrPlayerIndex()];
+  Player &p2 = *(td.myGb->getPlayers())[td.myGb->getNextPlayerIndex()];
   // player 1
   printPlayerInfo(p1, td.myGb, out);
   // board top edge
