@@ -21,14 +21,19 @@ class GameBoard: public Subject {
     vector<Player> players;
     vector<shared_ptr<Link>> allLinks;
     vector<shared_ptr<AbilityCard>> allAbilityCards;
+
     int currPlayerIndex;
+    bool currPlayerAbilityPlayed;
     int winnerIndex;
+    bool isWon;
+
     vector<Coords> boardBoundaries;
     vector<EdgeCoord> edgeCoords;
     vector<ServerPort> serverPorts;
     vector<FireWall> activeFirewalls;
     public:
         const int PLAYER_COUNT = 2;
+        const int INVALID_PLAYER = -1;
         const int ABILITY_COUNT = 5;
 
         const int MAX_STEPSIZE = 2;
@@ -72,6 +77,7 @@ class GameBoard: public Subject {
         int getCurrPlayerIndex();
         int getNextPlayerIndex();
         int getWinnerIndex();
+        bool getIsWon();
         vector<Coords>& getBoardBoundaries();
         vector<EdgeCoord>& getEdgeCoords();
         vector<ServerPort>& getServerPort();
