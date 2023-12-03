@@ -11,9 +11,10 @@ Coords BoardPiece::getPreviousCoords() { return prevCords; }
 
 Coords BoardPiece::getCurrCoords() { return currCoords; }
 
-void BoardPiece::movePiece(Direction direction) {
+
+void BoardPiece::movePiece(Direction direction) {    
     prevCords = currCoords;
-    if (direction == Left) {  // TODO: implement checking for moves
+    if (direction == Left) { 
         int newX = currCoords.getX() - stepSize;
         currCoords.setX(newX);
     } else if (direction == Right) {
@@ -26,6 +27,12 @@ void BoardPiece::movePiece(Direction direction) {
         int newY = currCoords.getY() + stepSize;
         currCoords.setY(newY);
     }
+}
+
+void BoardPiece::downloadLink() {
+    prevCords = currCoords;
+    currCoords.setX(-1);
+    currCoords.setY(-1);
 }
 
 void BoardPiece::setStepSize(int newStepSize) { stepSize = newStepSize; }
