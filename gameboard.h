@@ -72,6 +72,7 @@ class GameBoard: public Subject {
         // getters
         vector<Player>& getPlayers();
         unique_ptr<vector<shared_ptr<Link>>> getPlayerLinks(Player& player);
+        AbilityType getAbilityType(int id);
         // vector<std::shared_ptr<Link>> getAllLinks();
         // vector<AbilityCard>& getAllAbilityCards();
         int getCurrPlayerIndex();

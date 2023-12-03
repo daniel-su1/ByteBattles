@@ -15,7 +15,7 @@ using namespace std;
 class QuitProgram : public exception {};
 
 unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb) {
-    const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <order> -graphics -enhancements\n";
+    const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <order> -graphics -enhancements";
     for (int i = 1; i < argc; i++) {
         string curArg = argv[i];
         if (curArg[0] == '-') { // is a flag
@@ -77,15 +77,40 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isFi
             if (cmd == "move") {
                 // the next inputs should be the name of the link (a-g, A-G) followed by its direction (up, down, left, right)
                 string linkName, direction;
-                in >> linkName;
-                in >> direction;
-
-                gb->moveLink(linkName, direction);
-                cout << *gb;
+                if (in >> linkName && in >> direction) {
+                    gb->moveLink(linkName, direction);
+                    cout << *gb;
+                } else {
+                    throw (logic_error("Error, please follow:\n\tmove a <dir> where a is a link name (a-g or A-G)"));
+                }
             } else if (cmd == "abilities") {
-                cout << gb->playerAbilities(gb->getPlayers()[gb->getCurrPlayerIndex()]);
+                cout << gb->playerAbilities(gb->getPlayers()[gb->getCurrPlayerIndex()]) << endl;
             } else if (cmd == "ability") {
-                
+                int abilityId;
+                in >> abilityId;
+                AbilityType type = gb->getAbilityType(abilityId);
+                switch (type) {
+                    case AbilityType::LINKBOOST: {
+                        string linkName;
+                        if (in >> linkName) {
+                            gb->useAbility(abilityId, linkName);
+                        } else {
+                            throw (logic_error("Error, please follow:\n\tability <ID> <linkname> for link boosts"));
+                        }
+                        break;
+                    } case AbilityType::FIREWALL: {
+                        int xCoord, yCoord;
+                        if (in >> xCoord && in >> yCoord) {
+                            gb->useAbility(abilityId, xCoord, yCoord);
+                        } else {
+                            throw (logic_error("Error, please follow:\n\tability <ID> <x> <y>"));
+                        }
+                        break;
+                    } default: {
+                        gb->useAbility(abilityId);
+                        break;
+                    }
+                }
             } else if (cmd == "board") {
                 cout << *gb;
             } else if (cmd == "sequence") {
@@ -107,7 +132,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isFi
                 errorMsg += "\tability <N> <linkname> (link boost) or ability <N> <x> <y> (firewall)\n";
                 errorMsg += "\tboard\n";
                 errorMsg += "\tsequence <file>\n";
-                errorMsg += "\tquit\n"; 
+                errorMsg += "\tquit"; 
                 // TODO: add more deets
                 // TODO: ensure nothing is missing from the additional three abilities
                 if (isFile) { // invalid arguments from sequence file are thrown into main
@@ -119,7 +144,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isFi
         } catch (invalid_argument& err) {
             throw;
         } catch (logic_error& e) {
-            cerr << e.what();
+            cerr << e.what() << endl;
         }
     }
     return gb;

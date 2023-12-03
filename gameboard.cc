@@ -113,7 +113,7 @@ void GameBoard::moveLink(string linkName, string direction) {
     }
 
     if (notFound) {
-        string errorMsg = "Error: " + linkName + " is not owned by " + p.getPlayerName() + ".\n";
+        string errorMsg = "Error: " + linkName + " is not owned by " + p.getPlayerName() + ".";
         throw(logic_error(errorMsg));
     }
 
@@ -133,7 +133,7 @@ void GameBoard::moveLink(string linkName, string direction) {
         dir = Direction::Left;
         newX = l->getCurrCoords().getX() - stepSize;
     } else {
-        throw(logic_error("Error: Not a valid move direction!\n"));
+        throw(logic_error("Error: Not a valid move direction!"));
     }
     //———————— checking move legality ——————— //
     Coords newCoord{newX, newY};
@@ -141,7 +141,7 @@ void GameBoard::moveLink(string linkName, string direction) {
     // checking if moved off edge
     for (size_t i = 0; i < boardBoundaries.size(); i++) {
         if (newCoord == boardBoundaries[i]) {
-            throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!\n"));
+            throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!"));
         }
     }
 
@@ -150,7 +150,7 @@ void GameBoard::moveLink(string linkName, string direction) {
         Coords pieceCoords = allLinks[i]->getCurrCoords();
         if (newCoord == pieceCoords) {
             if (&allLinks[i]->getOwner() == &l->getOwner()) {
-                throw(logic_error("Error: Illegal Move — one of your pieces occupies this space!\n"));
+                throw(logic_error("Error: Illegal Move — one of your pieces occupies this space!"));
             } else {
                 // do battle
             }
@@ -162,7 +162,7 @@ void GameBoard::moveLink(string linkName, string direction) {
         Coords serverPortCoord = serverPorts[i].getCoords();
         if (newCoord == serverPortCoord) {
             if (&(serverPorts[i].getOwner()) == &l->getOwner()) {
-                throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port\n"));
+                throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port."));
             } else {
                 // do download 
             }
@@ -187,7 +187,7 @@ string GameBoard::playerAbilities(Player& player) {
         abilitiesStr += "#" + to_string(id) + "." + displayName + " " + isUsed;
     }
     message += abilitiesStr;
-    return (message + "\n");
+    return message;
 }
 
 void GameBoard::useAbility(int abilityID) {
@@ -196,10 +196,7 @@ void GameBoard::useAbility(int abilityID) {
     }
     currPlayerAbilityPlayed = true;
     // TODO: actually implement
-    bool hasError = true;
-    if (hasError) {
-        throw (logic_error("i am a useability error message\n"));
-    }
+    cout << "HELLO ABILITY 1\n";
 }
 
 void GameBoard::useAbility(int abilityID, string linkName) { // for link boost
@@ -207,11 +204,7 @@ void GameBoard::useAbility(int abilityID, string linkName) { // for link boost
         throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
     }
     currPlayerAbilityPlayed = true;
-    // TODO: actually implement
-    bool hasError = true;
-    if (hasError) {
-        throw (logic_error("i am a useability for link boosts error message\n"));
-    }
+    cout << "HELLO ABILITY 2\n";
 }
 
 void GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firewall
@@ -219,11 +212,7 @@ void GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firew
         throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
     }
     currPlayerAbilityPlayed = true;
-    // TODO: actually implement
-    bool hasError = true;
-    if (hasError) {
-        throw (logic_error("i am a useability for firewalls error message\n"));
-    }
+    cout << "HELLO ABILITY 3\n";
 }
 
 // setters
@@ -258,7 +247,7 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
             td->notify(*curLinkPtr);
             gd->notify(*curLinkPtr);
         } else { // not V or D
-            throw (logic_error("Error, incorrect link placements: please follow <type1><strength1> <type2><strength2> ... , where type is V or D.\n"));
+            throw (logic_error("Error, incorrect link placements: please follow <type1><strength1> <type2><strength2> ... , where type is V or D."));
         }
         allLinks.emplace_back(move(curLinkPtr));
 
@@ -269,7 +258,7 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
     
     // not iterated towards the end
     if ((isPlayer1 && yCoord != 0) || (!isPlayer1 && yCoord != BOARD_SIZE - 1)) {
-        string errorMsg = "Error, incorrect link placements: please place " + to_string(BOARD_SIZE) + " links.\n";
+        string errorMsg = "Error, incorrect link placements: please place " + to_string(BOARD_SIZE) + " links.";
         throw (logic_error(errorMsg));
     }
 }
@@ -327,6 +316,16 @@ unique_ptr<vector<shared_ptr<Link>>> GameBoard::getPlayerLinks(Player& player) {
         }
     }
     return make_unique<vector<shared_ptr<Link>>>(result);
+}
+
+AbilityType GameBoard::getAbilityType(int id) {
+    for (auto ac : allAbilityCards) {
+        if (ac->getAbilityId() == id) {
+            return ac->getType();
+        }
+    }
+    string errorMsg = "Error, unable to find ability card with id " + to_string(id) + ". See all abilities with the \"abilities\" command.";
+    throw (logic_error(errorMsg));
 }
 
 // vector<std::shared_ptr<Link>> GameBoard::allLinks() {
