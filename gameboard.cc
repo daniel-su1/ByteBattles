@@ -105,7 +105,7 @@ void GameBoard::moveLink(string linkName, string direction) {
 
     // find the link with name linkName owned by current player
     vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(p));
-    for (auto link : playerLinks) {
+    for (shared_ptr<Link> link : playerLinks) {
         if (linkName == link->getDisplayName()) {
             l = link;
             notFound = false;
@@ -180,7 +180,7 @@ string GameBoard::playerAbilities(Player& player) {
     string message = player.getPlayerName() + " Abilities:\n";
     string abilitiesStr = "";
     vector<shared_ptr<AbilityCard>> abilities = *getPlayerAbilities(player);
-    for (auto ability : abilities) {
+    for (shared_ptr<AbilityCard> ability : abilities) {
         string displayName = ability->getDisplayName();
         int id = ability->getAbilityId();
         string isUsed = ability->isUsed() ? "[used] ": "[avaliable] ";
@@ -310,7 +310,7 @@ vector<Player>& GameBoard::getPlayers() {
 
 unique_ptr<vector<shared_ptr<AbilityCard>>> GameBoard::getPlayerAbilities(Player& player) {
     vector<shared_ptr<AbilityCard>> result;
-    for (auto ac : allAbilityCards) {
+    for (shared_ptr<AbilityCard> ac : allAbilityCards) {
         if (player.getPlayerName() == ac->getOwner().getPlayerName()) {
             result.emplace_back(ac);
         }
@@ -320,7 +320,7 @@ unique_ptr<vector<shared_ptr<AbilityCard>>> GameBoard::getPlayerAbilities(Player
 
 unique_ptr<vector<shared_ptr<Link>>> GameBoard::getPlayerLinks(Player& player) {
     vector<shared_ptr<Link>> result;
-    for (auto link : allLinks) {
+    for (shared_ptr<Link> link : allLinks) {
         if (player.getPlayerName() == link->getOwner().getPlayerName()) {
             result.emplace_back(link);
         }
@@ -379,9 +379,9 @@ vector<FireWall>& GameBoard::getActiveFirewalls() {
 }
 
 shared_ptr<AbilityCard> GameBoard::getAbilityCard(int abilityID) {
-    for (auto ac : allAbilityCards) {
+    for (shared_ptr<AbilityCard> ac : allAbilityCards) {
         if (ac->getAbilityId() == abilityID) {
-            return make_shared<AbilityCard>(ac);
+            return ac;
         }
     }
     string errorMsg = "Error, unable to find ability card with id " + to_string(abilityID) + ". See all abilities with the \"abilities\" command.";
