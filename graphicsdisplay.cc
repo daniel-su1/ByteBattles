@@ -96,6 +96,9 @@ void GraphicsDisplay::notify(Link &link) {
     int y = link.getCurrCoords().getY();
     drawBoardSquare(link.getPreviousCoords().getX(),
                     link.getPreviousCoords().getY());
+    if (x == -1 || y == -1) {
+        return;
+    }
     renderSquare(x, y, link);
     
 }
