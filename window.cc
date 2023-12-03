@@ -9,16 +9,15 @@
 
 using namespace std;
 
-void Xwindow::setLargerFont(std::string inFont) {
+void Xwindow::setLargerFont(const std::string& inFont) {
     string fontName;
     if (inFont == "courier34r") {
         fontName = "-*-courier-*-r-*-*-34-*-*-*-*-*-*-*";
     }
-    else if (inFont == "lucida25i") {
-        fontName = "-*-lucida-*-i-*-*-25-*-*-*-*-*-*-*";
-    }
-    else if (inFont == "lucida25r") {
-        fontName = "-*-lucida-*-r-*-*-25-*-*-*-*-*-*-*";
+    else if (inFont == "courier25o") {
+        fontName = "-*-courier-*-o-*-*-25-*-*-*-*-*-*-*";
+    } else if (inFont == "courier20r") {
+        fontName = "-*-courier-*-r-*-*-20-*-*-*-*-*-*-*";
     }
     XFontStruct *font =
         XLoadQueryFont(d, fontName.c_str());  // 'd' is a member of Xwindow

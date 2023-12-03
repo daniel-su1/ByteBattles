@@ -26,6 +26,7 @@ class GameBoard: public Subject {
     bool currPlayerAbilityPlayed;
     int winnerIndex;
     bool isWon;
+    bool graphicsEnabled;
 
     vector<Coords> boardBoundaries;
     vector<EdgeCoord> edgeCoords;
@@ -82,6 +83,7 @@ class GameBoard: public Subject {
         vector<EdgeCoord>& getEdgeCoords();
         vector<ServerPort>& getServerPort();
         vector<FireWall>& getActiveFirewalls();
+        void enableGraphics();
     private: // oops possibly deletable
         unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
 };

@@ -6,14 +6,27 @@
 #include "abilitycards/scan.h"
 #include "abilitycards/polarize.h"
 
-GameBoard::GameBoard(): td{nullptr}, gd{nullptr}, players(), allLinks(), allAbilityCards(),
-    currPlayerIndex{INVALID_PLAYER}, currPlayerAbilityPlayed{false}, winnerIndex{INVALID_PLAYER}, 
-    isWon{false}, boardBoundaries(), edgeCoords(), serverPorts(), activeFirewalls() {}
+GameBoard::GameBoard()
+    : td(nullptr),
+      gd(nullptr),
+      players(),
+      allLinks(),
+      allAbilityCards(),
+      currPlayerIndex(INVALID_PLAYER),
+      currPlayerAbilityPlayed(false),
+      winnerIndex(INVALID_PLAYER),
+      isWon(false),
+      boardBoundaries(),
+      edgeCoords(),
+      serverPorts(),
+      graphicsEnabled(false),
+      activeFirewalls() {}
 
 GameBoard::~GameBoard() {
     delete td;
     delete gd;
 }
+
 
 ostream &operator<<(ostream &out, const GameBoard &gb) {
     cout << *gb.td;

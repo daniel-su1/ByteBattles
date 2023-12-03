@@ -25,7 +25,7 @@ class Xwindow {
     // Draws a string
     void drawString(int x, int y, std::string msg, int colour = White);
 
-    void setLargerFont(std::string inFont);
+    void setLargerFont(const std::string& inFont);
     void fillCircle(int x, int y, int radius, int colour = Black);
 };
 
