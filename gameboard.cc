@@ -111,9 +111,9 @@ void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player *player) {
     } else if (linkType == "Virus") {
         player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
     }
+    link1->setIdentityRevealed(true);    
     td->notify(*link1);
     gd->notify(*link1);
-
 }
 
 void GameBoard::startNewTurn() {
@@ -175,6 +175,21 @@ void GameBoard::moveLink(string linkName, string direction) {
         }
     }
 
+    Player& newOwner = *players[getNextPlayerIndex()];
+
+    // checking if moved into winning edge pieces 
+    for (size_t i = 0; i < edgeCoords.size(); i++) {
+        Coords edgeCoord = edgeCoords[i].getCoords();
+        if (newCoord == edgeCoord) {
+            if (newOwner.getPlayerName() != edgeCoords[i].getOwner().getPlayerName()) {
+                downloadIdentity(l, &newOwner);
+                gd->notify(*this);
+            } else {
+                throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!\n"));
+            }
+        }   
+    }
+
     // checking if moved on top of own piece
     for (size_t i = 0; i < allLinks.size(); i++) {
         Coords pieceCoords = allLinks[i]->getCurrCoords();
@@ -193,8 +208,6 @@ void GameBoard::moveLink(string linkName, string direction) {
             if (&(serverPorts[i].getOwner()) == &l->getOwner()) {
                 throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port\n"));
             } else { // other player downloads link
-                Player originalOwner = l->getOwner();
-                Player& newOwner = *players[getNextPlayerIndex()];
                 downloadIdentity(l, &newOwner);
                 startNewTurn();
                 gd->notify(*this);
