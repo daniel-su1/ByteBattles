@@ -56,7 +56,7 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
     int pLinksX = 290;
     int pLinksY = player ? 45 : 695;
 
-    for (int i = 0; i < playerLinks.size(); i++) {
+    for (size_t i = 0; i < playerLinks.size(); i++) {
         shared_ptr<Link> curLink = playerLinks[i];
         if (i == 4) {
             pLinksX = 290;
@@ -105,8 +105,8 @@ void GraphicsDisplay::notify(Link &link) {
 void GraphicsDisplay::init(GameBoard &gb) {
     this->gb = &gb;
     vector<ServerPort> sp = gb.getServerPort();
-    for (size_t x = 0; x < gb.BOARD_SIZE; x++) {
-        for (size_t y = 0; y < gb.BOARD_SIZE; y++) {
+    for (int x = 0; x < gb.BOARD_SIZE; x++) {
+        for (int y = 0; y < gb.BOARD_SIZE; y++) {
             if (y % 2) {
                 theDisplay->fillRectangle(
                     SQUARE_SIZE * x, SQUARE_SIZE * y + 150, SQUARE_SIZE,
