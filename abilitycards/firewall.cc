@@ -6,6 +6,11 @@ void FireWall::activate() {
     cout << "FIREWALL WOOSH" << endl; 
 }
 
+void FireWall::setCoords(int xCoord, int yCoord) {
+    coords.setX(xCoord);
+    coords.setY(yCoord);
+}
+
 Coords FireWall::getCoords() {
     return coords;
 }
