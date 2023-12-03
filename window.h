@@ -30,6 +30,8 @@ class Xwindow {
     void fillRoundedRectangle(int x, int y, int width, int height, int arcSize, int colour);
     void drawFilledRoundedRectangle(int x, int y, int width, int height, int arcSize,
                               int fillColour, int outlineColour);
+    void drawRoundedRectangle(int x, int y, int width, int height, int arcSize,
+                              int outlineColour);
 };
 
 #endif

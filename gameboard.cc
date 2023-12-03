@@ -122,6 +122,8 @@ void GameBoard::startNewTurn() {
     }
     currPlayerIndex = getNextPlayerIndex();
     currPlayerAbilityPlayed = false;
+    gd->notify(*players[getNextPlayerIndex()]);
+    gd->notify(*players[getCurrPlayerIndex()]);
 }
 
 void GameBoard::battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2) {
