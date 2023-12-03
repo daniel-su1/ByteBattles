@@ -19,41 +19,55 @@ void GraphicsDisplay::drawBoardSquare(int x, int y) {
 
 void GraphicsDisplay::drawPlayerInfoCircle(int x, int y, string info,
                                            bool virus) {
-    const int CIRCLE_RADIUS = 11;
+    const int CIRCLE_RADIUS = 24;
     theDisplay->fillCircle(x, y, CIRCLE_RADIUS,
-                           virus ? Xwindow::Red : Xwindow::LimeGreen);
+                           virus ? Xwindow::DarkRed : Xwindow::DarkGreen);
     theDisplay->setLargerFont("courier20r");
-    theDisplay->drawString(27, 747, info, Xwindow::White);
+    theDisplay->drawString(x-16, y+6, info, Xwindow::White);
 }
 
-void GraphicsDisplay::renderPlayerInfo() {
-    Player p1 = (gb->getPlayers())[gb->getCurrPlayerIndex()];
-    Player p2 = (gb->getPlayers())[gb->getNextPlayerIndex()];
-
-    vector<shared_ptr<Link>> player2Links = *gb->getPlayerLinks(p2);
-    
-    int p2LinksX = 256;
-    int p2LinksY = 712;
+void GraphicsDisplay::renderPlayerInfo(Player p) {
+    bool player = false;
+    if(p.getPlayerName() == "Player 1"){
+        player = true;
+    }
+    // vector<shared_ptr<Link>> player2Links = *gb->getPlayerLinks(p2);
     theDisplay->setLargerFont("courier25o");
     // theDisplay->drawString(32, 32, p1.getPlayerName(), Xwindow::White);
-    theDisplay->drawString(22, 690, p2.getPlayerName(), Xwindow::White);
-    string p2Downloads =
-        "Downloaded: " + std::to_string(p2.getNumDataDownloads()) + "D, " +
-        std::to_string(p2.getNumVirusDownloads()) + "V";
-    string p2Abilities = "Abilities: " + std::to_string(p2.getAbilityCount());
+    theDisplay->drawFilledRoundedRectangle(11, player ? 8 : 661, 478, 128, 15, Xwindow::NavyBlue, Xwindow::White);
+    theDisplay->drawString(22, player ? 40 : 690, p.getPlayerName(), Xwindow::White);
+    string pDownloads =
+        "Downloaded: " + std::to_string(p.getNumDataDownloads()) + "D, " +
+        std::to_string(p.getNumVirusDownloads()) + "V";
+    string pAbilities = "Abilities: " + std::to_string(p.getAbilityCount());
     theDisplay->setLargerFont("courier20r");
-    theDisplay->drawString(27, 717, p2Downloads.c_str(), Xwindow::White);
-    theDisplay->drawString(27, 747, p2Abilities.c_str(), Xwindow::White);
+    theDisplay->drawString(27, player ? 67 : 717, pDownloads.c_str(), Xwindow::White);
+    theDisplay->drawString(27, player ? 97 : 747, pAbilities.c_str(), Xwindow::White);
     std::cout << "test1" << endl;
-    std::cout << "Number of links: " << player2Links.size() << std::endl;
+    // std::cout << "Number of links: " << player2Links.size() << std::endl;
 
-    for (int i = 0; i < player2Links.size(); i++) {
-        shared_ptr<Link> curLink = player2Links[i];
-        drawPlayerInfoCircle(
-            p2LinksX, p2LinksY,
-            curLink->getDisplayName() + ":" + std::to_string(curLink->getStrength()),
-            curLink->getType() == LinkType::virus);
-            std::cout << "test" << endl;
+    // for (int i = 0; i < player2Links.size(); i++) {
+    //     shared_ptr<Link> curLink = player2Links[i];
+    //     drawPlayerInfoCircle(
+    //         p2LinksX, p2LinksY,
+    //         curLink->getDisplayName() + ":" +
+    //         std::to_string(curLink->getStrength()), curLink->getType() ==
+    //         LinkType::virus); std::cout << "test" << endl;
+    // }
+    int pLinksX = 290;
+    int pLinksY = player ? 45 : 695;
+    vector<string> tempDataStr = {"A:1", "B:4", "C:3", "D:2",
+                                  "E:4", "F:4", "G:2", "H:1"};
+    vector<bool> tempDataBool = {true,  false, true,  true,
+                                 false, true,  false, false};
+
+    for (int i = 0; i < 8; i++) {
+        if (i == 4) {
+            pLinksX = 290;
+            pLinksY = player ? 103 : 748;
+        }
+        drawPlayerInfoCircle(pLinksX, pLinksY, tempDataStr[i], tempDataBool[i]);
+        pLinksX += 55;
     }
 }
 
@@ -106,7 +120,10 @@ void GraphicsDisplay::init(GameBoard &gb) {
         int y = sp[i].getCoords().getY();
         renderSquare(x, y, sp[i]);
     }
-    renderPlayerInfo();
+    Player p1 = (this->gb->getPlayers())[this->gb->getCurrPlayerIndex()];
+    Player p2 = (this->gb->getPlayers())[this->gb->getNextPlayerIndex()];
+    renderPlayerInfo(p1);
+    renderPlayerInfo(p2);
 }
 
 void GraphicsDisplay::notify(GameBoard &gb) {}

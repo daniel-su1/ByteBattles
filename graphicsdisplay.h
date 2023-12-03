@@ -11,7 +11,7 @@ class GraphicsDisplay : public Observer {
     Xwindow *theDisplay;
     GameBoard *gb;
     void renderSquare(int x, int y, GamePiece& gp);
-    void renderPlayerInfo();
+    void renderPlayerInfo(Player p);
     void drawBoardSquare(int x, int y);
     void drawPlayerInfoCircle(int x, int y, string info, bool virus);
    public:

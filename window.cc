@@ -9,6 +9,59 @@
 
 using namespace std;
 
+
+void Xwindow::fillRoundedRectangle(int x, int y, int width, int height,
+                                   int arcSize, int colour) {
+    // Set the color
+    XSetForeground(d, gc, colours[colour]);
+
+    // Draw rectangles for top and bottom parts
+    XFillRectangle(d, w, gc, x + arcSize, y, width - 2 * arcSize, height);
+    XFillRectangle(d, w, gc, x, y + arcSize, width, height - 2 * arcSize);
+
+    // Draw filled arcs for the corners
+    XFillArc(d, w, gc, x, y, 2 * arcSize, 2 * arcSize, 90 * 64,
+             90 * 64);  // Top-left corner
+    XFillArc(d, w, gc, x + width - 2 * arcSize, y, 2 * arcSize, 2 * arcSize, 0,
+             90 * 64);  // Top-right corner
+    XFillArc(d, w, gc, x, y + height - 2 * arcSize, 2 * arcSize, 2 * arcSize,
+             180 * 64, 90 * 64);  // Bottom-left corner
+    XFillArc(d, w, gc, x + width - 2 * arcSize, y + height - 2 * arcSize,
+             2 * arcSize, 2 * arcSize, 270 * 64,
+             90 * 64);  // Bottom-right corner
+}
+
+void Xwindow::drawFilledRoundedRectangle(int x, int y, int width, int height,
+                                   int arcSize, int fillColour,
+                                   int outlineColour) {
+    // Draw the filled rounded rectangle
+    fillRoundedRectangle(x, y, width, height, arcSize, fillColour);
+
+    // Set the color for the outline
+    XSetForeground(d, gc, colours[outlineColour]);
+
+    // Draw the outline
+    // Top and bottom lines
+    XDrawLine(d, w, gc, x + arcSize, y, x + width - arcSize, y);  // Top
+    XDrawLine(d, w, gc, x + arcSize, y + height, x + width - arcSize,
+              y + height);  // Bottom
+
+    // Left and right lines
+    XDrawLine(d, w, gc, x, y + arcSize, x, y + height - arcSize);  // Left
+    XDrawLine(d, w, gc, x + width, y + arcSize, x + width,
+              y + height - arcSize);  // Right
+
+    // Corner arcs
+    XDrawArc(d, w, gc, x, y, 2 * arcSize, 2 * arcSize, 90 * 64,
+             90 * 64);  // Top-left
+    XDrawArc(d, w, gc, x + width - 2 * arcSize, y, 2 * arcSize, 2 * arcSize, 0,
+             90 * 64);  // Top-right
+    XDrawArc(d, w, gc, x, y + height - 2 * arcSize, 2 * arcSize, 2 * arcSize,
+             180 * 64, 90 * 64);  // Bottom-left
+    XDrawArc(d, w, gc, x + width - 2 * arcSize, y + height - 2 * arcSize,
+             2 * arcSize, 2 * arcSize, 270 * 64, 90 * 64);  // Bottom-right
+}
+
 void Xwindow::setLargerFont(const std::string& inFont) {
     string fontName;
     if (inFont == "courier34r") {
@@ -50,10 +103,11 @@ Xwindow::Xwindow(int width, int height) {
     // Set up colours.
     XColor xcolour;
     Colormap cmap = DefaultColormap(d, DefaultScreen(d));
-    static const int NumColors = 12;
+    static const int NumColors = 14;
     char color_vals[NumColors][20] = {
-        "white", "black",   "red",      "green",      "blue",        "yellow",
-        "cyan",  "magenta", "SkyBlue1", "RoyalBlue1", "chartreuse1", "DarkRed"};
+        "white",       "black",   "red",       "green",    "blue",
+        "#FFD800",      "cyan",    "magenta",   "SkyBlue1", "RoyalBlue1",
+        "chartreuse1", "DarkRed", "DarkGreen", "#000C2F"};
 
     cmap = DefaultColormap(d, DefaultScreen(d));
     for (int i = 0; i < NumColors; ++i) {
