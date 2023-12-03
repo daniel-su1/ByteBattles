@@ -1,9 +1,9 @@
 #include "abilitycard.h"
 
-AbilityCard::AbilityCard(int abilityID, Player &owner, string displayName, abilityType type): GamePiece(owner, displayName),
+AbilityCard::AbilityCard(int abilityID, Player &owner, string displayName, AbilityType type): GamePiece(owner, displayName),
     usedAbility{false}, abilityID{abilityID}, cardType{type} {}
 
-abilityType AbilityCard::getType() {
+AbilityType AbilityCard::getType() {
     return cardType;
 }
 
