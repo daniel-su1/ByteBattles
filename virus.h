@@ -4,6 +4,6 @@
 #include "link.h"
 class Virus: public Link {
     public:
-        Virus(int strength, Coords currCoords, string displayName, Player &owner);
+        Virus(int strength, Coords currCoords, string displayName, Player &owner, string typeAndStrength);
 };
 #endif

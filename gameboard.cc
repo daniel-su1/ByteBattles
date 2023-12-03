@@ -293,13 +293,15 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<
 
         // create links and place in board
         shared_ptr<Link> curLinkPtr;
-        if (link[0] == 'V') {
-            Virus curLink = Virus(strength, Coords(xCoord, yCoord), displayName, *player);
+        if (link[0] == VIRUS_DISPLAY_STR[0]) {
+            string typeAndStrength = VIRUS_DISPLAY_STR + to_string(strength);
+            Virus curLink = Virus(strength, Coords(xCoord, yCoord), displayName, *player, typeAndStrength);
             curLinkPtr = make_shared<Virus>(curLink);
             td->notify(*curLinkPtr);
             gd->notify(*curLinkPtr);
-        } else if (link[0] == 'D') {
-            Data curLink = Data(strength, Coords(xCoord, yCoord), displayName, *player);
+        } else if (link[0] == DATA_DISPLAY_STR[0]) {
+            string typeAndStrength = DATA_DISPLAY_STR + to_string(strength);
+            Data curLink = Data(strength, Coords(xCoord, yCoord), displayName, *player, typeAndStrength);
             curLinkPtr = make_shared<Data>(curLink);
             td->notify(*curLinkPtr);
             gd->notify(*curLinkPtr);
@@ -311,6 +313,8 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<
         // update position and name
         xCoord++;
         name++;
+
+        player->setLinksSet(true);
     }
     
     // not iterated towards the end
@@ -354,14 +358,12 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
             errorMsg += "\tS (Scan)\n\tW (WallWall)\n\tB (Bomb)\n\tH (HazeOfWar)";
             throw (logic_error(errorMsg));
         }
-
-        if (id == 5) {
-            id = 1;
-        } else {
-            id++;
-        }
+        id++;
     }
-    // or just deal with it lmao but maybe still cerr
+    if (id != ABILITY_COUNT + 1) {
+        throw (logic_error("Error: please give " + to_string(ABILITY_COUNT) + " abilities."));
+    } 
+    player->setAbilitiesSet(true);
 }
 
 // getters:

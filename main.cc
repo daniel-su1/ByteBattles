@@ -2,6 +2,9 @@
 #include <fstream>
 #include <vector>
 #include <memory>
+#include <random>
+#include <chrono>
+#include <algorithm>
 #include "link.h"
 #include "data.h"
 #include "virus.h"
@@ -68,7 +71,7 @@ unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb
     return gb;
 }
 
-unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
+unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSequence = false) {
     string cmd;
     while (in >> cmd) {
         try {
@@ -118,7 +121,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
                 if (sequenceFile.fail()) {
                     throw (logic_error("Error, file does not exist."));
                 } else {
-                    gb = parseCmds(sequenceFile, move(gb)); 
+                    gb = parseCmds(sequenceFile, move(gb), true); 
                 }
             } else if (cmd == "quit") {
                 throw QuitProgram(); // exit game and terminate program
@@ -126,13 +129,15 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb) {
                 string errorMsg = "Error, please use one of the following commands:\n";
                 errorMsg += "\tmove a <dir> where a is a link name (a-g or A-G)\n";
                 errorMsg += "\tabilities\n";
-                errorMsg += "\tability <N> <linkname> (link boost) or ability <N> <x> <y> (firewall)\n";
+                errorMsg += "\tability <N> <x> <y> (FireWall, WallWall, HazeOfWar) or ability <N> <linkName> (others)\n";
                 errorMsg += "\tboard\n";
                 errorMsg += "\tsequence <file>\n";
-                errorMsg += "\tquit\n"; 
-                // TODO: add more deets
-                // TODO: ensure nothing is missing from the additional three abilities
-                throw (invalid_argument(errorMsg)); // invalid arguments from text command mistakes are thrown into main
+                errorMsg += "\tquit\n";                 
+                if (isSequence) {
+                    throw (invalid_argument(errorMsg)); // invalid arguments from sequence mistakes are thrown into main
+                } else {
+                    throw (logic_error(errorMsg));
+                }
             }
         } catch (invalid_argument& err) {
             throw;
@@ -153,6 +158,30 @@ int main(int argc, char* argv[]) {
     } catch (logic_error& err) {
         cerr << err.what();
         return 1; // terminate program with incorrect args
+    }
+
+    // set links and abilities if not set by cmd line
+    for (shared_ptr<Player> player : gb->getPlayers()) {
+        if (!player->isAbilitiesSet()) {
+            gb->setAbilities("LFDSP", player); // set to default abilities
+        }
+        if (!player->isLinksSet()) {
+            // randomize the links' positions
+            unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
+            
+            for (int i = 1; i <= gb->BOARD_SIZE / 2; i++) {
+                linkPlacements->emplace_back(gb->DATA_DISPLAY_STR + to_string(i));
+                linkPlacements->emplace_back(gb->VIRUS_DISPLAY_STR + to_string(i));
+            }
+
+            // from shuffle.cc:
+            // use a time-based seed for the default seed value
+            unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+            std::default_random_engine rng{seed};
+            std::shuffle( linkPlacements->begin(), linkPlacements->end(), rng );
+
+            gb->setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
+        }
     }
 
     gb->notifyObservers();
