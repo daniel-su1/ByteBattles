@@ -181,19 +181,15 @@ void GameBoard::moveLink(string linkName, string direction) {
                 throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port\n"));
             } else { // other player downloads link
                 Player originalOwner = l->getOwner();
-                Player newOwner = players[0];
-                if (originalOwner.getPlayerName() == "Player 1") {
-                    newOwner = players[1];
-                } 
+                Player newOwner = players[getNextPlayerIndex()];
                 downloadIdentity(l, &newOwner);
+                startNewTurn();
                 return;
             }
         }
     }
     
     movePiece(l, dir);
-
-
     startNewTurn();
 }
 
