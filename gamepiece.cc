@@ -3,11 +3,7 @@
 GamePiece::GamePiece(Player &owner, string displayName): owner{&owner}, displayName{displayName}, appliedAbilites() {
 }
 
-void GamePiece::abilityApplied(AbilityCard& ability) {
-    appliedAbilites.emplace_back(ability);
-}
-
-vector<AbilityCard&>& GamePiece::getAppliedAbilities() { return appliedAbilites; }
+vector<AbilityCard*>& GamePiece::getAppliedAbilities() { return appliedAbilites; }
 
 string GamePiece::getDisplayName() { return displayName; }
 
