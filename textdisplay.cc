@@ -5,27 +5,29 @@ TextDisplay::TextDisplay(){
 }
 
 void TextDisplay::notify(Link &link) {
+
   int x = link.getCurrCoords().getX();
   int y = link.getCurrCoords().getY();
+  if (x != -1 && y != -1) {
   theDisplay[y][x] = link.getDisplayName()[0];
-
-
+  }
+  
   int prevX = link.getPreviousCoords().getX();
   int prevY = link.getPreviousCoords().getY();
-
   if (prevX != -1 && prevY != -1) {
-  theDisplay[prevY][prevX] = '.';
+    theDisplay[prevY][prevX] = '.';
   }
 
 }
 
 void TextDisplay::notify(GameBoard &gb) {
+    myGb = &gb;
 }
 
 void TextDisplay::init(GameBoard& gb) {
     myGb = &gb;
     vector<ServerPort> sp = gb.getServerPort();
-    for (size_t i = 0; i < sp.size(); i++) {
+    for (int i = 0; i < sp.size(); i++) {
       int x = sp[i].getCoords().getX();
       int y = sp[i].getCoords().getY();
       theDisplay[y][x] = sp[i].getDisplayName()[0];
@@ -37,7 +39,7 @@ void printPlayerInfo(Player& p, GameBoard* gb, ostream& out) {
   out << "Downloaded: " << p.getNumDataDownloads() << "D, " << p.getNumVirusDownloads() << "V" << endl;
   out << "Abilities: " << p.getAbilityCount() << endl;
   vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
-  for (size_t i = 0; i < playerLinks.size(); i++) {
+  for (int i = 0; i < playerLinks.size(); i++) {
     if (i == playerLinks.size() / 2) { // halfway point
       out << "\n";
     }
@@ -60,8 +62,8 @@ void printBoardBoundaries(int boundarySize, ostream& out) {
 }
 
 ostream &operator<<(ostream &out, const TextDisplay &td) {
-  Player &p1 = (td.myGb->getPlayers())[td.myGb->getCurrPlayerIndex()];
-  Player &p2 = (td.myGb->getPlayers())[td.myGb->getNextPlayerIndex()];
+  Player &p1 = *(td.myGb->getPlayers())[td.myGb->getCurrPlayerIndex()];
+  Player &p2 = *(td.myGb->getPlayers())[td.myGb->getNextPlayerIndex()];
   // player 1
   printPlayerInfo(p1, td.myGb, out);
   // board top edge

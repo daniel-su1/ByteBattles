@@ -9,10 +9,71 @@
 
 using namespace std;
 
-void Xwindow::setLargerFont() {
-    const char *fontName = "-*-times-*-r-*-*-34-*-*-*-*-*-*-*";
+
+void Xwindow::fillRoundedRectangle(int x, int y, int width, int height,
+                                   int arcSize, int colour) {
+    // Set the color
+    XSetForeground(d, gc, colours[colour]);
+
+    // Draw rectangles for top and bottom parts
+    XFillRectangle(d, w, gc, x + arcSize, y, width - 2 * arcSize, height);
+    XFillRectangle(d, w, gc, x, y + arcSize, width, height - 2 * arcSize);
+
+    // Draw filled arcs for the corners
+    XFillArc(d, w, gc, x, y, 2 * arcSize, 2 * arcSize, 90 * 64,
+             90 * 64);  // Top-left corner
+    XFillArc(d, w, gc, x + width - 2 * arcSize, y, 2 * arcSize, 2 * arcSize, 0,
+             90 * 64);  // Top-right corner
+    XFillArc(d, w, gc, x, y + height - 2 * arcSize, 2 * arcSize, 2 * arcSize,
+             180 * 64, 90 * 64);  // Bottom-left corner
+    XFillArc(d, w, gc, x + width - 2 * arcSize, y + height - 2 * arcSize,
+             2 * arcSize, 2 * arcSize, 270 * 64,
+             90 * 64);  // Bottom-right corner
+}
+
+void Xwindow::drawFilledRoundedRectangle(int x, int y, int width, int height,
+                                   int arcSize, int fillColour,
+                                   int outlineColour) {
+    // Draw the filled rounded rectangle
+    fillRoundedRectangle(x, y, width, height, arcSize, fillColour);
+
+    // Set the color for the outline
+    XSetForeground(d, gc, colours[outlineColour]);
+
+    // Draw the outline
+    // Top and bottom lines
+    XDrawLine(d, w, gc, x + arcSize, y, x + width - arcSize, y);  // Top
+    XDrawLine(d, w, gc, x + arcSize, y + height, x + width - arcSize,
+              y + height);  // Bottom
+
+    // Left and right lines
+    XDrawLine(d, w, gc, x, y + arcSize, x, y + height - arcSize);  // Left
+    XDrawLine(d, w, gc, x + width, y + arcSize, x + width,
+              y + height - arcSize);  // Right
+
+    // Corner arcs
+    XDrawArc(d, w, gc, x, y, 2 * arcSize, 2 * arcSize, 90 * 64,
+             90 * 64);  // Top-left
+    XDrawArc(d, w, gc, x + width - 2 * arcSize, y, 2 * arcSize, 2 * arcSize, 0,
+             90 * 64);  // Top-right
+    XDrawArc(d, w, gc, x, y + height - 2 * arcSize, 2 * arcSize, 2 * arcSize,
+             180 * 64, 90 * 64);  // Bottom-left
+    XDrawArc(d, w, gc, x + width - 2 * arcSize, y + height - 2 * arcSize,
+             2 * arcSize, 2 * arcSize, 270 * 64, 90 * 64);  // Bottom-right
+}
+
+void Xwindow::setLargerFont(const std::string& inFont) {
+    string fontName;
+    if (inFont == "courier34r") {
+        fontName = "-*-courier-*-r-*-*-34-*-*-*-*-*-*-*";
+    }
+    else if (inFont == "courier25o") {
+        fontName = "-*-courier-*-o-*-*-25-*-*-*-*-*-*-*";
+    } else if (inFont == "courier20r") {
+        fontName = "-*-courier-*-r-*-*-20-*-*-*-*-*-*-*";
+    }
     XFontStruct *font =
-        XLoadQueryFont(d, fontName);  // 'd' is a member of Xwindow
+        XLoadQueryFont(d, fontName.c_str());  // 'd' is a member of Xwindow
     if (font) {
         XSetFont(d, gc, font->fid);  // 'gc' is a member of Xwindow
     } else {
@@ -41,14 +102,22 @@ Xwindow::Xwindow(int width, int height) {
 
     // Set up colours.
     XColor xcolour;
-    Colormap cmap;
-    char color_vals[5][10] = {"white", "black", "red", "green", "blue"};
+    Colormap cmap = DefaultColormap(d, DefaultScreen(d));
+    static const int NumColors = 14;
+    char color_vals[NumColors][20] = {
+        "white",       "black",   "red",       "green",    "blue",
+        "#FFD800",      "cyan",    "magenta",   "SkyBlue1", "RoyalBlue1",
+        "chartreuse1", "DarkRed", "DarkGreen", "#000C2F"};
 
     cmap = DefaultColormap(d, DefaultScreen(d));
-    for (int i = 0; i < 5; ++i) {
-        XParseColor(d, cmap, color_vals[i], &xcolour);
-        XAllocColor(d, cmap, &xcolour);
-        colours[i] = xcolour.pixel;
+    for (int i = 0; i < NumColors; ++i) {
+        if (!XParseColor(d, cmap, color_vals[i], &xcolour)) {
+            cerr << "Failed to parse color " << color_vals[i] << endl;
+        } else if (!XAllocColor(d, cmap, &xcolour)) {
+            cerr << "Failed to allocate color " << color_vals[i] << endl;
+        } else {
+            colours[i] = xcolour.pixel;
+        }
     }
 
     XSetForeground(d, gc, colours[Black]);
@@ -64,8 +133,6 @@ Xwindow::Xwindow(int width, int height) {
     XSynchronize(d, True);
 
     usleep(1000);
-
-    setLargerFont();
 }
 
 
@@ -81,8 +148,17 @@ void Xwindow::fillRectangle(int x, int y, int width, int height, int colour) {
     XSetForeground(d, gc, colours[Black]);
 }
 
-void Xwindow::drawString(int x, int y, string msg) {
-    XSetForeground(d, gc, colours[White]);  // Set the color to white
+void Xwindow::drawString(int x, int y, string msg, int colour) {
+    XSetForeground(d, gc, colours[colour]);  // Set the color
     XDrawString(d, w, gc, x, y, msg.c_str(), msg.length());
     XSetForeground(d, gc, colours[Black]);  // Reset to default color if needed
+}
+
+void Xwindow::fillCircle(int x, int y, int radius, int colour) {
+    XSetForeground(d, gc, colours[colour]);
+    // Draw a full circle
+    XFillArc(d, w, gc, x - radius, y - radius, 2 * radius, 2 * radius, 0,
+             360 * 64);
+    XSetForeground(d, gc,
+                   colours[Black]);  // Reset color to default if necessary
 }

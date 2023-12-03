@@ -6,14 +6,27 @@
 #include "abilitycards/scan.h"
 #include "abilitycards/polarize.h"
 
-GameBoard::GameBoard(): td{nullptr}, gd{nullptr}, players(), allLinks(), allAbilityCards(),
-    currPlayerIndex{INVALID_PLAYER}, currPlayerAbilityPlayed{false}, winnerIndex{INVALID_PLAYER}, 
-    isWon{false}, boardBoundaries(), edgeCoords(), serverPorts(), activeFirewalls() {}
+GameBoard::GameBoard()
+    : td(nullptr),
+      gd(nullptr),
+      players(),
+      allLinks(),
+      allAbilityCards(),
+      currPlayerIndex(INVALID_PLAYER),
+      currPlayerAbilityPlayed(false),
+      winnerIndex(INVALID_PLAYER),
+      isWon(false),
+      graphicsEnabled(false),
+      boardBoundaries(),
+      edgeCoords(),
+      serverPorts(),
+      activeFirewalls() {}
 
 GameBoard::~GameBoard() {
     delete td;
     delete gd;
 }
+
 
 ostream &operator<<(ostream &out, const GameBoard &gb) {
     cout << *gb.td;
@@ -47,14 +60,14 @@ void GameBoard::init() {
     for (int i = 1; i <= PLAYER_COUNT; i++) {
         string playerName = "Player " + to_string(i);
         int abilityCount = ABILITY_COUNT;
-        players.emplace_back(Player(playerName, abilityCount));
+        players.emplace_back(make_shared<Player>(playerName, abilityCount));
     }
     
     // intialize server ports; middle of board
-    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, 0), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, 0), players[0], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, BOARD_SIZE - 1), players[1], SP_DISPLAY_STR));
-    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, BOARD_SIZE - 1 ), players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, 0), *players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, 0), *players[0], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_1, BOARD_SIZE - 1), *players[1], SP_DISPLAY_STR));
+    serverPorts.emplace_back(ServerPort(Coords(SP_X_COORD_2, BOARD_SIZE - 1 ), *players[1], SP_DISPLAY_STR));
 
     // adding board boundaries based on board sizes
     for (int stepSize = 1; stepSize <= MAX_STEPSIZE; stepSize++) {
@@ -70,9 +83,9 @@ void GameBoard::init() {
             // and server ports x coords can only win at distance of 1
             if (((i != SP_X_COORD_1) && (i != SP_X_COORD_2)) || stepSize == 1) { 
                 // player 2's target/winning areas
-                edgeCoords.emplace_back(EdgeCoord(Coords(i, 0 - stepSize), players[1], BORDER_DISPLAY_STR)); 
+                edgeCoords.emplace_back(EdgeCoord(Coords(i, 0 - stepSize), *players[1], BORDER_DISPLAY_STR)); 
                 // player 1's target/winning areas
-                edgeCoords.emplace_back(EdgeCoord(Coords(i, BOARD_SIZE - 1 + stepSize), players[0], BORDER_DISPLAY_STR));
+                edgeCoords.emplace_back(EdgeCoord(Coords(i, BOARD_SIZE - 1 + stepSize), *players[0], BORDER_DISPLAY_STR));
             }
         }
     }
@@ -84,6 +97,23 @@ void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
     link->movePiece(dir);
     td->notify(*link);
     gd->notify(*link);
+}
+
+// player downloads link1 (becomes the new owner)
+void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player *player) {
+    cout << player->getPlayerName() << " has downloaded " << link1->getDisplayName() << ":" <<  endl;
+    string linkType = (link1->getType() == LinkType::virus) ? "Virus" : "Data";
+    cout << "A " << linkType << " of strength " << link1->getStrength() << "." << endl;
+    link1->setDownloaded(true); 
+    link1->downloadLink();
+    if (linkType == "Data") {
+        player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
+    } else if (linkType == "Virus") {
+        player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
+    }
+    td->notify(*link1);
+    gd->notify(*link1);
+
 }
 
 void GameBoard::startNewTurn() {
@@ -101,7 +131,7 @@ void GameBoard::moveLink(string linkName, string direction) {
     shared_ptr<Link> l;
     Direction dir = Direction::Up;
     bool notFound = true;
-    Player& p = getPlayers()[getCurrPlayerIndex()];
+    Player& p = *players[currPlayerIndex];
 
     // find the link with name linkName owned by current player
     vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(p));
@@ -113,7 +143,7 @@ void GameBoard::moveLink(string linkName, string direction) {
     }
 
     if (notFound) {
-        string errorMsg = "Error: " + linkName + " is not owned by " + p.getPlayerName() + ".";
+        string errorMsg = "Error: " + linkName + " is not owned by " + p.getPlayerName() + ".\n";
         throw(logic_error(errorMsg));
     }
 
@@ -133,7 +163,7 @@ void GameBoard::moveLink(string linkName, string direction) {
         dir = Direction::Left;
         newX = l->getCurrCoords().getX() - stepSize;
     } else {
-        throw(logic_error("Error: Not a valid move direction!"));
+        throw(logic_error("Error: Not a valid move direction!\n"));
     }
     //———————— checking move legality ——————— //
     Coords newCoord{newX, newY};
@@ -141,7 +171,7 @@ void GameBoard::moveLink(string linkName, string direction) {
     // checking if moved off edge
     for (size_t i = 0; i < boardBoundaries.size(); i++) {
         if (newCoord == boardBoundaries[i]) {
-            throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!"));
+            throw(logic_error("Error: Illegal Move - you cannot move your piece off this edge!\n"));
         }
     }
 
@@ -150,29 +180,30 @@ void GameBoard::moveLink(string linkName, string direction) {
         Coords pieceCoords = allLinks[i]->getCurrCoords();
         if (newCoord == pieceCoords) {
             if (&allLinks[i]->getOwner() == &l->getOwner()) {
-                throw(logic_error("Error: Illegal Move — one of your pieces occupies this space!"));
+                throw(logic_error("Error: Illegal Move — one of your pieces occupies this space!\n"));
             } else {
                 // do battle
             }
         }
     }
-
     // checking if moved onto one's own server ports / into opponents 
     for (size_t i = 0; i < serverPorts.size(); i++) {
         Coords serverPortCoord = serverPorts[i].getCoords();
         if (newCoord == serverPortCoord) {
             if (&(serverPorts[i].getOwner()) == &l->getOwner()) {
-                throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port."));
-            } else {
-                // do download 
+                throw(logic_error("Error: Illegal Move - cannot move piece onto your own server port\n"));
+            } else { // other player downloads link
+                Player originalOwner = l->getOwner();
+                Player& newOwner = *players[getNextPlayerIndex()];
+                downloadIdentity(l, &newOwner);
+                startNewTurn();
+                gd->notify(*this);
+                return;
             }
         }
     }
-
-
+    
     movePiece(l, dir);
-
-
     startNewTurn();
 }
 
@@ -187,7 +218,7 @@ string GameBoard::playerAbilities(Player& player) {
         abilitiesStr += "#" + to_string(id) + "." + displayName + " " + isUsed;
     }
     message += abilitiesStr;
-    return message;
+    return (message + "\n");
 }
 
 void GameBoard::useAbility(int abilityID) {
@@ -227,7 +258,7 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
 
 // setters
 // ——————————————
-void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *player) {
+void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<Player> player) {
     bool isPlayer1 = player->getPlayerName() == "Player 1";
     int xCoord = 0;
     int yCoord = isPlayer1 ? 0 : BOARD_SIZE - 1;
@@ -257,7 +288,7 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
             td->notify(*curLinkPtr);
             gd->notify(*curLinkPtr);
         } else { // not V or D
-            throw (logic_error("Error, incorrect link placements: please follow <type1><strength1> <type2><strength2> ... , where type is V or D."));
+            throw (logic_error("Error, incorrect link placements: please follow <type1><strength1> <type2><strength2> ... , where type is V or D.\n"));
         }
         allLinks.emplace_back(move(curLinkPtr));
 
@@ -268,12 +299,12 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, Player *pla
     
     // not iterated towards the end
     if ((isPlayer1 && yCoord != 0) || (!isPlayer1 && yCoord != BOARD_SIZE - 1)) {
-        string errorMsg = "Error, incorrect link placements: please place " + to_string(BOARD_SIZE) + " links.";
+        string errorMsg = "Error, incorrect link placements: please place " + to_string(BOARD_SIZE) + " links.\n";
         throw (logic_error(errorMsg));
     }
 }
 
-void GameBoard::setAbilities(string abilities, Player *player) {
+void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     int id = 1;
 
     for (char c: abilities) {
@@ -304,7 +335,7 @@ void GameBoard::setAbilities(string abilities, Player *player) {
 
 // getters:
 // ——————————————
-vector<Player>& GameBoard::getPlayers() {
+vector<shared_ptr<Player>>& GameBoard::getPlayers() {
     return players;
 }
 
