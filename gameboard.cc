@@ -197,6 +197,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                 Player& newOwner = *players[getNextPlayerIndex()];
                 downloadIdentity(l, &newOwner);
                 startNewTurn();
+                gd->notify(*this);
                 return;
             }
         }
