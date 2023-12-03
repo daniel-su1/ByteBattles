@@ -6,14 +6,27 @@
 #include "abilitycards/scan.h"
 #include "abilitycards/polarize.h"
 
-GameBoard::GameBoard(): td{nullptr}, gd{nullptr}, players(), allLinks(), allAbilityCards(),
-    currPlayerIndex{INVALID_PLAYER}, currPlayerAbilityPlayed{false}, winnerIndex{INVALID_PLAYER}, 
-    isWon{false}, boardBoundaries(), edgeCoords(), serverPorts(), activeFirewalls() {}
+GameBoard::GameBoard()
+    : td(nullptr),
+      gd(nullptr),
+      players(),
+      allLinks(),
+      allAbilityCards(),
+      currPlayerIndex(INVALID_PLAYER),
+      currPlayerAbilityPlayed(false),
+      winnerIndex(INVALID_PLAYER),
+      isWon(false),
+      boardBoundaries(),
+      edgeCoords(),
+      serverPorts(),
+      graphicsEnabled(false),
+      activeFirewalls() {}
 
 GameBoard::~GameBoard() {
     delete td;
     delete gd;
 }
+
 
 ostream &operator<<(ostream &out, const GameBoard &gb) {
     cout << *gb.td;
@@ -184,6 +197,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                 Player& newOwner = *players[getNextPlayerIndex()];
                 downloadIdentity(l, &newOwner);
                 startNewTurn();
+                gd->notify(*this);
                 return;
             }
         }
@@ -289,6 +303,8 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<
         string errorMsg = "Error, incorrect link placements: please place " + to_string(BOARD_SIZE) + " links.\n";
         throw (logic_error(errorMsg));
     }
+
+    gd->notify(*this);
 }
 
 void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
