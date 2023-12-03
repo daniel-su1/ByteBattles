@@ -6,9 +6,9 @@
 #include "abilitycards/scan.h"
 #include "abilitycards/polarize.h"
 
-GameBoard::GameBoard(): td{nullptr}, players(), allLinks(), allAbilityCards(),
-    currPlayerIndex{0}, winnerIndex{-1}, boardBoundaries(), edgeCoords(),
-    serverPorts(), activeFirewalls(), gd{} {}
+GameBoard::GameBoard(): td{nullptr}, gd{nullptr}, players(), allLinks(), allAbilityCards(),
+    currPlayerIndex{INVALID_PLAYER}, currPlayerAbilityPlayed{false}, winnerIndex{INVALID_PLAYER}, 
+    isWon{false}, boardBoundaries(), edgeCoords(), serverPorts(), activeFirewalls() {}
 
 GameBoard::~GameBoard() {
     delete td;
@@ -16,7 +16,7 @@ GameBoard::~GameBoard() {
 }
 
 ostream &operator<<(ostream &out, const GameBoard &gb) {
-    cout << *gb.td << endl;
+    cout << *gb.td;
     return out;
 }
 
@@ -85,23 +85,38 @@ void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
     td->notify(*link);
     gd->notify(*link);
 }
+
+void GameBoard::startNewTurn() {
+    if (winnerIndex != INVALID_PLAYER) {
+        isWon = true; // where do we check this lol TODO: check if christina did this already
+    }
+    currPlayerIndex = getNextPlayerIndex();
+    currPlayerAbilityPlayed = false;
+}
+
 // interaction commands
 // ——————————————
 
 void GameBoard::moveLink(string linkName, string direction) {
     shared_ptr<Link> l;
     Direction dir = Direction::Up;
-    bool notfound = true;
-    for (int i = 0; i < allLinks.size(); i++) {
-        if (linkName == allLinks[i]->getDisplayName()) {
-            l = allLinks[i];
-            notfound = false;
+    bool notFound = true;
+    Player& p = getPlayers()[getCurrPlayerIndex()];
+
+    // find the link with name linkName owned by current player
+    vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(p));
+    for (auto link : playerLinks) {
+        if (linkName == link->getDisplayName()) {
+            l = link;
+            notFound = false;
         }
     }
 
-    if (notfound) {
-        throw(logic_error("Error: Could not find piece to move."));
+    if (notFound) {
+        string errorMsg = "Error: " + linkName + " is not owned by " + p.getPlayerName() + ".\n";
+        throw(logic_error(errorMsg));
     }
+
     int newX = l->getCurrCoords().getX();
     int newY = l->getCurrCoords().getY();
     int stepSize = l->getStepSize();
@@ -157,26 +172,8 @@ void GameBoard::moveLink(string linkName, string direction) {
 
     movePiece(l, dir);
 
-}
 
-unique_ptr<vector<shared_ptr<AbilityCard>>> GameBoard::getPlayerAbilities(Player& player) {
-    vector<shared_ptr<AbilityCard>> result;
-    for (auto ac : allAbilityCards) {
-        if (player.getPlayerName() == ac->getOwner().getPlayerName()) {
-            result.emplace_back(ac);
-        }
-    }
-    return make_unique<vector<shared_ptr<AbilityCard>>>(result);
-}
-
-unique_ptr<vector<shared_ptr<Link>>> GameBoard::getPlayerLinks(Player& player) {
-    vector<shared_ptr<Link>> result;
-    for (auto link : allLinks) {
-        if (player.getPlayerName() == link->getOwner().getPlayerName()) {
-            result.emplace_back(link);
-        }
-    }
-    return make_unique<vector<shared_ptr<Link>>>(result);
+    startNewTurn();
 }
 
 string GameBoard::playerAbilities(Player& player) {
@@ -194,6 +191,10 @@ string GameBoard::playerAbilities(Player& player) {
 }
 
 void GameBoard::useAbility(int abilityID) {
+    if (currPlayerAbilityPlayed) {
+        throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
+    }
+    currPlayerAbilityPlayed = true;
     // TODO: actually implement
     bool hasError = true;
     if (hasError) {
@@ -202,6 +203,10 @@ void GameBoard::useAbility(int abilityID) {
 }
 
 void GameBoard::useAbility(int abilityID, string linkName) { // for link boost
+    if (currPlayerAbilityPlayed) {
+        throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
+    }
+    currPlayerAbilityPlayed = true;
     // TODO: actually implement
     bool hasError = true;
     if (hasError) {
@@ -210,6 +215,10 @@ void GameBoard::useAbility(int abilityID, string linkName) { // for link boost
 }
 
 void GameBoard::useAbility(int abilityId, int xCoord, int yCoord) { // for firewall
+    if (currPlayerAbilityPlayed) {
+        throw (logic_error("Error: a ability has already been used this turn. Please move a link to proceed."));
+    }
+    currPlayerAbilityPlayed = true;
     // TODO: actually implement
     bool hasError = true;
     if (hasError) {
@@ -300,6 +309,26 @@ vector<Player>& GameBoard::getPlayers() {
     return players;
 }
 
+unique_ptr<vector<shared_ptr<AbilityCard>>> GameBoard::getPlayerAbilities(Player& player) {
+    vector<shared_ptr<AbilityCard>> result;
+    for (auto ac : allAbilityCards) {
+        if (player.getPlayerName() == ac->getOwner().getPlayerName()) {
+            result.emplace_back(ac);
+        }
+    }
+    return make_unique<vector<shared_ptr<AbilityCard>>>(result);
+}
+
+unique_ptr<vector<shared_ptr<Link>>> GameBoard::getPlayerLinks(Player& player) {
+    vector<shared_ptr<Link>> result;
+    for (auto link : allLinks) {
+        if (player.getPlayerName() == link->getOwner().getPlayerName()) {
+            result.emplace_back(link);
+        }
+    }
+    return make_unique<vector<shared_ptr<Link>>>(result);
+}
+
 // vector<std::shared_ptr<Link>> GameBoard::allLinks() {
 //     return allBoardPieces;
 // }
@@ -323,6 +352,10 @@ int GameBoard::getNextPlayerIndex() {
 
 int GameBoard::getWinnerIndex() {
     return winnerIndex;
+}
+
+bool GameBoard::getIsWon() {
+    return isWon;
 }
 
 vector<Coords>& GameBoard::getBoardBoundaries() {
