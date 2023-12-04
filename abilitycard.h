@@ -2,6 +2,8 @@
 #define ABILITYCARD_H
 #include "gamepiece.h"
 
+class GameBoard;
+
 enum AbilityType {LINKBOOST, FIREWALL, DOWNLOAD, POLARIZE, SCAN, WALLWALL, BOMB, HAZEOFWAR};
 
 class AbilityCard: public GamePiece {
@@ -9,8 +11,9 @@ class AbilityCard: public GamePiece {
     AbilityType cardType;
     protected:
         bool usedAbility;
+        GameBoard* gb;
     public:
-        AbilityCard(int abilityID, Player &owner, string displayName, AbilityType type);
+        AbilityCard(int abilityID, Player &owner, string displayName, AbilityType type, GameBoard* gb);
         AbilityType getType();
         bool isUsed();
         int getAbilityId();

@@ -1,7 +1,7 @@
 #include "abilitycard.h"
 
-AbilityCard::AbilityCard(int abilityID, Player &owner, string displayName, AbilityType type): GamePiece(owner, displayName),
-    abilityID{abilityID}, cardType{type}, usedAbility{false} {}
+AbilityCard::AbilityCard(int abilityID, Player &owner, string displayName, AbilityType type, GameBoard* gb): GamePiece(owner, displayName),
+    abilityID{abilityID}, cardType{type}, usedAbility{false}, gb{gb} {}
 
 AbilityType AbilityCard::getType() {
     return cardType;
