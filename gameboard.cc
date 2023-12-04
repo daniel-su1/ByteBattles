@@ -433,6 +433,12 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     player->setAbilitiesSet(true);
 }
 
+bool GameBoard::checkSquareOccupancy(int x, int y){
+    for (auto i : allLinks) {
+        if(i->getCurrCoords().getX() == card.get)
+    }
+}
+
 void GameBoard::addFireWall(FireWall firewall) {
     activeFirewalls.emplace_back(firewall);
     notifyObservers();
