@@ -1,8 +1,13 @@
 #include "graphicsdisplay.h"
 
-GraphicsDisplay::GraphicsDisplay() {
-    theDisplay = new Xwindow(BOARD_WINDOW_SIZE, 800);
-    theDisplay->fillRectangle(0, 0, BOARD_WINDOW_SIZE, 800, Xwindow::Black);
+GraphicsDisplay::GraphicsDisplay(Xwindow *w): theDisplay{w} {
+    if(w) theDisplay->fillRectangle(0, 0, BOARD_WINDOW_SIZE, 800, Xwindow::Black);
+
+    std::cout << "ctor" << std::endl;
+}
+
+GraphicsDisplay::GraphicsDisplay(){
+
 }
 
 GraphicsDisplay::~GraphicsDisplay() { delete theDisplay; }
@@ -15,23 +20,71 @@ void GraphicsDisplay::drawBoardSquare(int x, int y) {
 }
 
 void GraphicsDisplay::drawPlayerInfoCircle(int x, int y, string info,
-                                           bool virus) {
+                                           bool isRevealed, bool virus) {
     const int CIRCLE_RADIUS = 24;
     theDisplay->fillCircle(x, y, CIRCLE_RADIUS,
-                           virus ? Xwindow::DarkRed : Xwindow::DarkGreen);
+                           isRevealed
+                               ? (virus ? Xwindow::DarkRed : Xwindow::DarkGreen)
+                               : Xwindow::Black);
     theDisplay->setLargerFont("courier20r");
     theDisplay->drawString(x - 16, y + 6, info, Xwindow::White);
 }
 
+void GraphicsDisplay::notify(Player &p) {
+    bool player = false;
+    if (p.getPlayerName() == "Player 1") {
+        player = true;
+    }
+    theDisplay->drawRoundedRectangle(
+        11, player ? 8 : 661, 478, 128, 15,
+        (p.getPlayerName() ==
+         (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName())
+            ? Xwindow::Yellow
+            : Xwindow::White);
+    vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
+    int pLinksX = 290;
+    int pLinksY = player ? 45 : 695;
+    for (size_t i = 0; i < playerLinks.size(); i++) {
+        shared_ptr<Link> curLink = playerLinks[i];
+        if (i == 4) {
+            pLinksX = 290;
+            pLinksY = player ? 103 : 748;
+        }
+        if (p.getPlayerName() ==
+            (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName()) {
+            drawPlayerInfoCircle(pLinksX, pLinksY,
+                                 curLink->getDisplayName() + ":" +
+                                     std::to_string(curLink->getStrength()),
+                                 true, curLink->getType() == LinkType::virus);
+        } else {
+            drawPlayerInfoCircle(
+                pLinksX, pLinksY,
+                curLink->isIdentityRevealed()
+                    ? curLink->getDisplayName() + ":" +
+                          std::to_string(curLink->getStrength())
+                    : "?",
+                curLink->isIdentityRevealed(),
+                curLink->getType() == LinkType::virus);
+        }
+
+        pLinksX += 55;
+    }
+}
+
 void GraphicsDisplay::renderPlayerInfo(Player p) {
+    std::cout <<"renderplayerinfo" << std::endl;
     bool player = false;
     if (p.getPlayerName() == "Player 1") {
         player = true;
     }
     vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
     theDisplay->setLargerFont("courier25o");
-    theDisplay->drawFilledRoundedRectangle(11, player ? 8 : 661, 478, 128, 15,
-                                           Xwindow::NavyBlue, Xwindow::White);
+    theDisplay->drawFilledRoundedRectangle(
+        11, player ? 8 : 661, 478, 128, 15, Xwindow::NavyBlue,
+        (p.getPlayerName() ==
+         (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName())
+            ? Xwindow::Yellow
+            : Xwindow::White);
     theDisplay->drawString(22, player ? 40 : 690, p.getPlayerName(),
                            Xwindow::White);
     string pDownloads =
@@ -43,16 +96,6 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
                            Xwindow::White);
     theDisplay->drawString(27, player ? 97 : 747, pAbilities.c_str(),
                            Xwindow::White);
-    // std::cout << "Number of links: " << player2Links.size() << std::endl;
-
-    // for (int i = 0; i < player2Links.size(); i++) {
-    //     shared_ptr<Link> curLink = player2Links[i];
-    //     drawPlayerInfoCircle(
-    //         p2LinksX, p2LinksY,
-    //         curLink->getDisplayName() + ":" +
-    //         std::to_string(curLink->getStrength()), curLink->getType() ==
-    //         LinkType::virus); std::cout << "test" << endl;
-    // }
     int pLinksX = 290;
     int pLinksY = player ? 45 : 695;
 
@@ -62,21 +105,37 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
             pLinksX = 290;
             pLinksY = player ? 103 : 748;
         }
-        drawPlayerInfoCircle(pLinksX, pLinksY,
-                             curLink->getDisplayName() + ":" +
-                                 std::to_string(curLink->getStrength()),
-                             curLink->getType() == LinkType::virus);
+        if (p.getPlayerName() ==
+            (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName()) {
+            drawPlayerInfoCircle(pLinksX, pLinksY,
+                                 curLink->getDisplayName() + ":" +
+                                     std::to_string(curLink->getStrength()),
+                                 true, curLink->getType() == LinkType::virus);
+        } else {
+            drawPlayerInfoCircle(pLinksX, pLinksY,
+                                 curLink->isIdentityRevealed() ? curLink->getDisplayName() + ":" +
+                                     std::to_string(curLink->getStrength()) : "?",
+                                 curLink->isIdentityRevealed(),
+                                 curLink->getType() == LinkType::virus);
+        }
+
         pLinksX += 55;
     }
 }
 
 void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
+    std::cout << "rendersquare" << std::endl;
     const int BUFFER_SIZE = 23;
     int text_x = SQUARE_SIZE * x + BUFFER_SIZE;
     int text_y = SQUARE_SIZE * y + SQUARE_SIZE / 2 + BUFFER_SIZE;
     theDisplay->setLargerFont("courier34r");
     string displayName = gp.getDisplayName();
-    if (displayName == "S") {
+    std::cout << "dis" << displayName << endl;
+    if(gb == nullptr){
+        std::cout << "null" << endl;
+    }
+    std::cout << "sp" << gb->SP_DISPLAY_STR << endl;
+    if (displayName == gb->SP_DISPLAY_STR) {  // server ports
         theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
                                   SQUARE_SIZE, SQUARE_SIZE, Xwindow::Yellow);
         theDisplay->drawString(text_x, text_y + 140, displayName,
@@ -91,6 +150,7 @@ void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
 }
 
 void GraphicsDisplay::notify(Link &link) {
+    std::cout << "notify link" << std::endl;
     int x = link.getCurrCoords().getX();
     int y = link.getCurrCoords().getY();
     drawBoardSquare(link.getPreviousCoords().getX(),
@@ -99,10 +159,10 @@ void GraphicsDisplay::notify(Link &link) {
         return;
     }
     renderSquare(x, y, link);
-    
 }
 
 void GraphicsDisplay::init(GameBoard &gb) {
+    std::cout << "init" << std::endl;
     this->gb = &gb;
     vector<ServerPort> sp = gb.getServerPort();
     for (int x = 0; x < gb.BOARD_SIZE; x++) {
@@ -130,7 +190,7 @@ void GraphicsDisplay::init(GameBoard &gb) {
     // renderPlayerInfo(p2);
 }
 
-void GraphicsDisplay::notify(GameBoard &gb) { 
+void GraphicsDisplay::notify(GameBoard &gb) {
     renderPlayerInfo(*gb.getPlayers()[gb.getCurrPlayerIndex()]);
     renderPlayerInfo(*gb.getPlayers()[gb.getNextPlayerIndex()]);
 }

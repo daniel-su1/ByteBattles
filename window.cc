@@ -62,6 +62,35 @@ void Xwindow::drawFilledRoundedRectangle(int x, int y, int width, int height,
              2 * arcSize, 2 * arcSize, 270 * 64, 90 * 64);  // Bottom-right
 }
 
+void Xwindow::drawRoundedRectangle(int x, int y, int width, int height,
+                                         int arcSize,
+                                         int outlineColour) {
+
+    // Set the color for the outline
+    XSetForeground(d, gc, colours[outlineColour]);
+
+    // Draw the outline
+    // Top and bottom lines
+    XDrawLine(d, w, gc, x + arcSize, y, x + width - arcSize, y);  // Top
+    XDrawLine(d, w, gc, x + arcSize, y + height, x + width - arcSize,
+              y + height);  // Bottom
+
+    // Left and right lines
+    XDrawLine(d, w, gc, x, y + arcSize, x, y + height - arcSize);  // Left
+    XDrawLine(d, w, gc, x + width, y + arcSize, x + width,
+              y + height - arcSize);  // Right
+
+    // Corner arcs
+    XDrawArc(d, w, gc, x, y, 2 * arcSize, 2 * arcSize, 90 * 64,
+             90 * 64);  // Top-left
+    XDrawArc(d, w, gc, x + width - 2 * arcSize, y, 2 * arcSize, 2 * arcSize, 0,
+             90 * 64);  // Top-right
+    XDrawArc(d, w, gc, x, y + height - 2 * arcSize, 2 * arcSize, 2 * arcSize,
+             180 * 64, 90 * 64);  // Bottom-left
+    XDrawArc(d, w, gc, x + width - 2 * arcSize, y + height - 2 * arcSize,
+             2 * arcSize, 2 * arcSize, 270 * 64, 90 * 64);  // Bottom-right
+}
+
 void Xwindow::setLargerFont(const std::string& inFont) {
     string fontName;
     if (inFont == "courier34r") {
