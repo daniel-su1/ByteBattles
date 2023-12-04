@@ -7,4 +7,4 @@ void WallWall::activate() {
 }
 
 WallWall::WallWall(int abilityID, Player &owner, string displayName):
-    AbilityCard(abilityID, owner, displayName, AbilityType::WALLWALL) {}
+    AbilityCard(abilityID, owner, displayName, AbilityType::WALLWALL, nullptr) {}

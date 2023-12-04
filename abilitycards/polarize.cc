@@ -7,4 +7,4 @@ void Polarize::activate() {
 }
 
 Polarize::Polarize(int abilityID, Player &owner, string displayName):
-    AbilityCard(abilityID, owner, displayName, AbilityType::POLARIZE) {}
+    AbilityCard(abilityID, owner, displayName, AbilityType::POLARIZE, nullptr) {}

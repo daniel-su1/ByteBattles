@@ -7,4 +7,4 @@ void HazeOfWar::activate() {
 }
 
 HazeOfWar::HazeOfWar(int abilityID, Player &owner, string displayName):
-    AbilityCard(abilityID, owner, displayName, AbilityType::HAZEOFWAR) {}
+    AbilityCard(abilityID, owner, displayName, AbilityType::HAZEOFWAR, nullptr) {}

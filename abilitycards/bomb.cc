@@ -7,4 +7,4 @@ void Bomb::activate() {
 }
 
 Bomb::Bomb(int abilityID, Player &owner, string displayName):
-    AbilityCard(abilityID, owner, displayName, AbilityType::BOMB) {}
+    AbilityCard(abilityID, owner, displayName, AbilityType::BOMB, nullptr) {}
