@@ -22,48 +22,41 @@ using namespace std;
 
 class QuitProgram : public exception {};
 
-unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb, bool& graphicsEnabled) {
-    const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <order> -graphics -enhancements\n";
+void parseArgs(int argc, char* argv[], vector<string>& abilities, vector<vector<string>>& links, bool& graphicsEnabled) {
+    const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <file> -graphics\n";
     for (int i = 1; i < argc; i++) {
         string curArg = argv[i];
         if (curArg[0] == '-') { // is a flag
             if (curArg == "-ability1") {
                 i++; // next argument should be the order of abilities
                 string abilitiesOrder = argv[i];
-                shared_ptr<Player> player= gb->getPlayers()[0];
-                gb->setAbilities(abilitiesOrder, player);
+                abilities[0] = abilitiesOrder;
             } else if (curArg == "-ability2") {
                 i++; // next argument should be the order of abilities
                 string abilitiesOrder = argv[i];
-                shared_ptr<Player> player= gb->getPlayers()[1];
-                gb->setAbilities(abilitiesOrder, player);
+                abilities[1] = abilitiesOrder;
             } else if (curArg == "-link1") {
                 i++; // next arg should be a file containing placements
 
                 // take all possible string pos from placementFile, then place into vector linkPlacements
                 ifstream placementFile{argv[i]};
                 string pos;
-                unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
-                while (placementFile >> pos) { linkPlacements->emplace_back(pos); }
+                vector<string> linkPlacements; 
+                while (placementFile >> pos) { linkPlacements.emplace_back(pos); }
 
-                shared_ptr<Player> player= gb->getPlayers()[0];
-                gb->setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
+                links[0] = linkPlacements;
             } else if (curArg == "-link2") {
                 i++; // next arg should be a file containing placements
 
                 // take all possible string pos from placementFile, then place into vector linkPlacements
                 ifstream placementFile{argv[i]};
                 string pos;
-                unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
-                while (placementFile >> pos) { linkPlacements->emplace_back(pos); }
+                vector<string> linkPlacements; 
+                while (placementFile >> pos) { linkPlacements.emplace_back(pos); }
 
-                shared_ptr<Player> player= gb->getPlayers()[1];
-                gb->setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
+                links[1] = linkPlacements;
             } else if (curArg == "-graphics") {
                 graphicsEnabled = true;
-            } else if (curArg == "-enhancements") {
-                // TODO: enhance!
-                cout << "EMNHANCE" << endl;
             } else { // incorrect flag
                 throw (logic_error(ARG_ERROR_MSG));
             }
@@ -71,7 +64,6 @@ unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb
             throw (logic_error(ARG_ERROR_MSG));
         }
     } 
-    return gb;
 }
 
 unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSequence = false) {
@@ -152,48 +144,60 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
 }
 
 int main(int argc, char* argv[]) {
-    bool graphicsEnabled = false;
     unique_ptr<GameBoard> gb = make_unique<GameBoard>();
     gb->init();
 
+    const int PLAYER_COUNT = gb->PLAYER_COUNT;
+    vector<string> abilities(PLAYER_COUNT);
+    vector<vector<string>> links(PLAYER_COUNT);
+    bool graphicsEnabled = false;
+    
     // cmd line args
     try {
-        gb = parseArgs(argc, argv, move(gb), graphicsEnabled); // temporarily pass ownership of gb to parseArgs, then back to gb.
+        // set abilities, links, and graphicsEnabled
+        parseArgs(argc, argv, abilities, links, graphicsEnabled);
     } catch (logic_error& err) {
         cerr << err.what();
         return 1; // terminate program with incorrect args
     }
 
+    // init graphics
     unique_ptr<Xwindow> xw = nullptr;
     unique_ptr<GraphicsDisplay> gd = nullptr;
-    if(graphicsEnabled){
+    if (graphicsEnabled){
         xw = make_unique<Xwindow>(500,800);
         gd = make_unique<GraphicsDisplay>(xw.get());
         gb->setGraphicsDisplay(gd.get());
     }
     
-    // set links and abilities if not set by cmd line
-    for (shared_ptr<Player> player : gb->getPlayers()) {
-        if (!player->isAbilitiesSet()) {
-            gb->setAbilities("LFDSP", player); // set to default abilities
-        }
-        if (!player->isLinksSet()) {
+    // set abilities and links in gb
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+        shared_ptr<Player> currPlayer = gb->getPlayers()[i];
+        // abilities
+        if (abilities[i].empty()) {
+            abilities[i] = "LFDSP";
+        } // else, it was set by cmd line args
+        gb->setAbilities(abilities[i], currPlayer);
+
+        // links
+        if (links[i].empty()) {
             // randomize the links' positions
-            unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
+            vector<string> linkPlacements; 
             
             for (int i = 1; i <= gb->BOARD_SIZE / 2; i++) {
-                linkPlacements->emplace_back(gb->DATA_DISPLAY_STR + to_string(i));
-                linkPlacements->emplace_back(gb->VIRUS_DISPLAY_STR + to_string(i));
+                linkPlacements.emplace_back(gb->DATA_DISPLAY_STR + to_string(i));
+                linkPlacements.emplace_back(gb->VIRUS_DISPLAY_STR + to_string(i));
             }
 
             // from shuffle.cc:
             // use a time-based seed for the default seed value
             unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
             std::default_random_engine rng{seed};
-            std::shuffle( linkPlacements->begin(), linkPlacements->end(), rng );
-
-            gb->setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
+            std::shuffle( linkPlacements.begin(), linkPlacements.end(), rng );
+            links[i] = linkPlacements;
         }
+        unique_ptr <vector<string>> pLink = make_unique<vector<string>>(links[i]);
+        gb->setLinks(move(pLink), currPlayer); // pLink is now nullptr from ownership transfer
     }
 
     gb->notifyObservers();
