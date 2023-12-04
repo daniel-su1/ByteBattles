@@ -135,7 +135,7 @@ void GraphicsDisplay::renderPlayerInfo(Player &p) {
 
         pLinksX += 55;
     }
-    renderAbilityCards(p);
+    // renderAbilityCards(p);
 }
 
 void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
