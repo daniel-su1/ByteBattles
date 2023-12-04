@@ -447,11 +447,14 @@ vector<FireWall>& GameBoard::getActiveFirewalls() {
 }
 
 shared_ptr<AbilityCard> GameBoard::getAbilityCard(int abilityID) {
-    for (shared_ptr<AbilityCard> ac : allAbilityCards) {
+    shared_ptr<Player> currPlayer = players[currPlayerIndex];
+    vector<shared_ptr<AbilityCard>> cards = *getPlayerAbilities(*currPlayer);
+    for (shared_ptr<AbilityCard> ac : cards) {
         if (ac->getAbilityId() == abilityID) {
             return ac;
         }
     }
-    string errorMsg = "Error, unable to find ability card with id " + to_string(abilityID) + ". See all abilities with the \"abilities\" command.";
+    string errorMsg = "Error, unable to find ability card with id " + to_string(abilityID) 
+        + " owned by " + currPlayer->getPlayerName() + ".\nSee all abilities with the \"abilities\" command.";
     throw (logic_error(errorMsg));
 }

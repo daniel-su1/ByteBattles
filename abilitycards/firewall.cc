@@ -3,7 +3,13 @@
 using namespace std;
 
 void FireWall::activate() {
-    cout << "FIREWALL WOOSH" << endl; 
+    usedAbility = true;
+    notifyObservers();
+}
+
+void FireWall::setCoords(int x, int y) {
+    coords.setX(x);
+    coords.setY(y);
 }
 
 Coords FireWall::getCoords() {
