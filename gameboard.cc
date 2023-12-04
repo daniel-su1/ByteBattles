@@ -296,6 +296,7 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     currPlayerAbilityPlayed = true;
 
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+    ac->setCoords(xCoord, yCoord);
     ac->activate();
 }
 
