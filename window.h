@@ -17,7 +17,7 @@ class Xwindow {
             int height = 500);  // Constructor; displays the window.
     ~Xwindow();                 // Destructor; destroys the window.
 
-    enum {
+    enum color {
         White = 0,
         Black,
         Red,
