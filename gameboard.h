@@ -12,6 +12,8 @@
 #include "abilitycards/firewall.h"
 #include "textdisplay.h"
 #include "graphicsdisplay.h"
+#include "window.h"
+
 using namespace std;
 class TextDisplay; 
 class GraphicsDisplay;
@@ -72,6 +74,7 @@ class GameBoard: public Subject {
         // setters
         void setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<Player> player);
         void setAbilities(string abilities, shared_ptr<Player> player);
+        void setGraphicsDisplay(GraphicsDisplay *gd);
 
         // getters
         vector<shared_ptr<Player>>& getPlayers();

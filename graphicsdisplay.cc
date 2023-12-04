@@ -1,8 +1,13 @@
 #include "graphicsdisplay.h"
 
-GraphicsDisplay::GraphicsDisplay() {
-    theDisplay = new Xwindow(BOARD_WINDOW_SIZE, 800);
-    theDisplay->fillRectangle(0, 0, BOARD_WINDOW_SIZE, 800, Xwindow::Black);
+GraphicsDisplay::GraphicsDisplay(Xwindow *w): theDisplay{w} {
+    if(w) theDisplay->fillRectangle(0, 0, BOARD_WINDOW_SIZE, 800, Xwindow::Black);
+
+    std::cout << "ctor" << std::endl;
+}
+
+GraphicsDisplay::GraphicsDisplay(){
+
 }
 
 GraphicsDisplay::~GraphicsDisplay() { delete theDisplay; }
@@ -67,6 +72,7 @@ void GraphicsDisplay::notify(Player &p) {
 }
 
 void GraphicsDisplay::renderPlayerInfo(Player p) {
+    std::cout <<"renderplayerinfo" << std::endl;
     bool player = false;
     if (p.getPlayerName() == "Player 1") {
         player = true;
@@ -118,11 +124,17 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
 }
 
 void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
+    std::cout << "rendersquare" << std::endl;
     const int BUFFER_SIZE = 23;
     int text_x = SQUARE_SIZE * x + BUFFER_SIZE;
     int text_y = SQUARE_SIZE * y + SQUARE_SIZE / 2 + BUFFER_SIZE;
     theDisplay->setLargerFont("courier34r");
     string displayName = gp.getDisplayName();
+    std::cout << "dis" << displayName << endl;
+    if(gb == nullptr){
+        std::cout << "null" << endl;
+    }
+    std::cout << "sp" << gb->SP_DISPLAY_STR << endl;
     if (displayName == gb->SP_DISPLAY_STR) {  // server ports
         theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
                                   SQUARE_SIZE, SQUARE_SIZE, Xwindow::Yellow);
@@ -138,6 +150,7 @@ void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
 }
 
 void GraphicsDisplay::notify(Link &link) {
+    std::cout << "notify link" << std::endl;
     int x = link.getCurrCoords().getX();
     int y = link.getCurrCoords().getY();
     drawBoardSquare(link.getPreviousCoords().getX(),
@@ -149,6 +162,7 @@ void GraphicsDisplay::notify(Link &link) {
 }
 
 void GraphicsDisplay::init(GameBoard &gb) {
+    std::cout << "init" << std::endl;
     this->gb = &gb;
     vector<ServerPort> sp = gb.getServerPort();
     for (int x = 0; x < gb.BOARD_SIZE; x++) {

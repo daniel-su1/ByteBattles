@@ -12,12 +12,14 @@
 #include "coords.h"
 #include "abilitycard.h"
 #include "gameboard.h"
+#include "window.h"
+#include "graphicsdisplay.h"
 
 using namespace std;
 
 class QuitProgram : public exception {};
 
-unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb) {
+unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb, bool& graphicsEnabled) {
     const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <order> -graphics -enhancements\n";
     for (int i = 1; i < argc; i++) {
         string curArg = argv[i];
@@ -55,9 +57,7 @@ unique_ptr<GameBoard> parseArgs(int argc, char* argv[], unique_ptr<GameBoard> gb
                 shared_ptr<Player> player= gb->getPlayers()[1];
                 gb->setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
             } else if (curArg == "-graphics") {
-                // TODO: deal w graphics
-                // do not need i++ bc theres no args
-                cout << "graphics!!" << endl;
+                graphicsEnabled = true;
             } else if (curArg == "-enhancements") {
                 // TODO: enhance!
                 cout << "EMNHANCE" << endl;
@@ -149,16 +149,26 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
 }
 
 int main(int argc, char* argv[]) {
+    bool graphicsEnabled = false;
     unique_ptr<GameBoard> gb = make_unique<GameBoard>();
     gb->init();
-    
+
     // cmd line args
     try {
-        gb = parseArgs(argc, argv, move(gb)); // temporarily pass ownership of gb to parseArgs, then back to gb.
+        gb = parseArgs(argc, argv, move(gb), graphicsEnabled); // temporarily pass ownership of gb to parseArgs, then back to gb.
     } catch (logic_error& err) {
         cerr << err.what();
         return 1; // terminate program with incorrect args
     }
+
+    unique_ptr<Xwindow> xw = nullptr;
+    unique_ptr<GraphicsDisplay> gd = nullptr;
+    if(graphicsEnabled){
+        xw = make_unique<Xwindow>(500,800);
+        gd = make_unique<GraphicsDisplay>(xw.get());
+        gb->setGraphicsDisplay(gd.get());
+    }
+    
 
     // set links and abilities if not set by cmd line
     for (shared_ptr<Player> player : gb->getPlayers()) {

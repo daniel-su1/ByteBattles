@@ -17,6 +17,7 @@ class GraphicsDisplay : public Observer {
    public:
     const int BOARD_WINDOW_SIZE = 500;
     const int SQUARE_SIZE = BOARD_WINDOW_SIZE /8;
+    GraphicsDisplay(Xwindow *w);
     GraphicsDisplay();
     ~GraphicsDisplay();
     void notify(Link &link) override;
