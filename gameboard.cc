@@ -153,6 +153,9 @@ void GameBoard::moveLink(string linkName, string direction) {
     for (shared_ptr<Link> link : playerLinks) {
         if (linkName == link->getDisplayName()) {
             l = link;
+            if (l->isDownloaded()) {
+                throw(logic_error("This piece has already been downloaded!"));
+            }
             notFound = false;
         }
     }
@@ -215,6 +218,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                 battlePieces(l, allLinks[i]);
                 movePiece(l, dir);
                 gd->notify(*this);
+                startNewTurn();
                 return;
             }
         }
