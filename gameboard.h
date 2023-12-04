@@ -74,7 +74,7 @@ class GameBoard: public Subject {
         void setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<Player> player);
         void setAbilities(string abilities, shared_ptr<Player> player);
         void setGraphicsDisplay(GraphicsDisplay *gd);
-        void addFirewall(FireWall firewall);
+        void addFireWall(FireWall firewall);
 
         // getters
         vector<shared_ptr<Player>>& getPlayers();
