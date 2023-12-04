@@ -5,6 +5,9 @@
 #include <random>
 #include <chrono>
 #include <algorithm>
+#include <random>
+#include <chrono>
+#include <algorithm>
 #include "link.h"
 #include "data.h"
 #include "virus.h"
@@ -169,6 +172,30 @@ int main(int argc, char* argv[]) {
         gb->setGraphicsDisplay(gd.get());
     }
     
+
+    // set links and abilities if not set by cmd line
+    for (shared_ptr<Player> player : gb->getPlayers()) {
+        if (!player->isAbilitiesSet()) {
+            gb->setAbilities("LFDSP", player); // set to default abilities
+        }
+        if (!player->isLinksSet()) {
+            // randomize the links' positions
+            unique_ptr <vector<string>> linkPlacements = make_unique<vector<string>>(); 
+            
+            for (int i = 1; i <= gb->BOARD_SIZE / 2; i++) {
+                linkPlacements->emplace_back(gb->DATA_DISPLAY_STR + to_string(i));
+                linkPlacements->emplace_back(gb->VIRUS_DISPLAY_STR + to_string(i));
+            }
+
+            // from shuffle.cc:
+            // use a time-based seed for the default seed value
+            unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+            std::default_random_engine rng{seed};
+            std::shuffle( linkPlacements->begin(), linkPlacements->end(), rng );
+
+            gb->setLinks(std::move(linkPlacements), player); // linkPlacements is now nullptr from ownership transfer
+        }
+    }
 
     // set links and abilities if not set by cmd line
     for (shared_ptr<Player> player : gb->getPlayers()) {
