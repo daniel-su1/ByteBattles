@@ -71,8 +71,22 @@ void GraphicsDisplay::notify(Player &p) {
     }
 }
 
-void GraphicsDisplay::renderPlayerInfo(Player p) {
-    std::cout <<"renderplayerinfo" << std::endl;
+void GraphicsDisplay::renderAbilityCards(Player &p){
+    bool player = false;
+    if (p.getPlayerName() == "Player 1") {
+        player = true;
+    }
+    theDisplay->drawFilledRoundedRectangle(
+        11, player ? 8 : 661, 478, 128, 15, Xwindow::NavyBlue,
+        (p.getPlayerName() ==
+         (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName())
+            ? Xwindow::Yellow
+            : Xwindow::White);
+    theDisplay->fillRoundedRectangle(
+        23, 15, 80, 116, 10, Xwindow::LinkBoost);
+}
+
+void GraphicsDisplay::renderPlayerInfo(Player &p) {
     bool player = false;
     if (p.getPlayerName() == "Player 1") {
         player = true;
@@ -121,6 +135,7 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
 
         pLinksX += 55;
     }
+    renderAbilityCards(p);
 }
 
 void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
