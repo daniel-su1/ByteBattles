@@ -10,7 +10,7 @@ class Link: public BoardPiece{
         LinkType type;
         bool identityRevealed;
         bool downloaded; 
-        Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type);
+        Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type, string typeAndStrength);
     public:
         bool isDownloaded();
         void setDownloaded(bool d);

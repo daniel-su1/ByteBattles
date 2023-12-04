@@ -36,7 +36,7 @@ void TextDisplay::init(GameBoard& gb) {
 
 void printPlayerInfo(Player& p, GameBoard* gb, ostream& out) {
   out << p.getPlayerName() << ":" << endl;
-  out << "Downloaded: " << p.getNumDataDownloads() << "D, " << p.getNumVirusDownloads() << "V" << endl;
+  out << "Downloaded: " << p.getNumDataDownloads() << gb->DATA_DISPLAY_STR << ", " << p.getNumVirusDownloads() << gb->VIRUS_DISPLAY_STR << endl;
   out << "Abilities: " << p.getAbilityCount() << endl;
   vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
   for (size_t i = 0; i < playerLinks.size(); i++) {
