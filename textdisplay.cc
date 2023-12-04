@@ -45,10 +45,12 @@ void printPlayerInfo(Player& p, GameBoard* gb, ostream& out) {
     }
     shared_ptr<Link> curLink = playerLinks[i];
     out << curLink->getDisplayName() << ": ";
-    if (curLink->isIdentityRevealed()) {
-      out << curLink->typeAndStrength << " ";
+    if (curLink->isIdentityRevealed() ||
+        p.getPlayerName() ==
+            (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName()) {
+        out << curLink->typeAndStrength << " ";
     } else {
-      out << "? ";
+        out << "? ";
     }
   }
   out << endl;
