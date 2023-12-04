@@ -5,7 +5,7 @@ using namespace std;
 
 void FireWall::activate() {
     usedAbility = true;
-    owner->abilityUsed();
+    owner->abilityUsed(); // decrease abilityCount for displays
     gb->addFireWall(*this);
 }
 
