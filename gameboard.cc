@@ -30,8 +30,8 @@ GameBoard::GameBoard()
       activeFirewalls() {}
 
 GameBoard::~GameBoard() {
-    delete td;
-    if (graphicsEnabled) delete gd;
+    // delete td;
+    // if (graphicsEnabled) delete gd;
 }
 
 ostream& operator<<(ostream& out, const GameBoard& gb) {
