@@ -5,6 +5,9 @@
 #include "abilitycards/download.h"
 #include "abilitycards/scan.h"
 #include "abilitycards/polarize.h"
+#include "abilitycards/bomb.h"
+#include "abilitycards/hazeofwar.h"
+#include "abilitycards/wallwall.h"
 
 GameBoard::GameBoard()
     : td(nullptr),
@@ -305,13 +308,15 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<
 
         // create links and place in board
         shared_ptr<Link> curLinkPtr;
-        if (link[0] == 'V') {
-            Virus curLink = Virus(strength, Coords(xCoord, yCoord), displayName, *player);
+        if (link[0] == VIRUS_DISPLAY_STR[0]) {
+            string typeAndStrength = VIRUS_DISPLAY_STR + to_string(strength);
+            Virus curLink = Virus(strength, Coords(xCoord, yCoord), displayName, *player, typeAndStrength);
             curLinkPtr = make_shared<Virus>(curLink);
             td->notify(*curLinkPtr);
             gd->notify(*curLinkPtr);
-        } else if (link[0] == 'D') {
-            Data curLink = Data(strength, Coords(xCoord, yCoord), displayName, *player);
+        } else if (link[0] == DATA_DISPLAY_STR[0]) {
+            string typeAndStrength = DATA_DISPLAY_STR + to_string(strength);
+            Data curLink = Data(strength, Coords(xCoord, yCoord), displayName, *player, typeAndStrength);
             curLinkPtr = make_shared<Data>(curLink);
             td->notify(*curLinkPtr);
             gd->notify(*curLinkPtr);
@@ -323,6 +328,8 @@ void GameBoard::setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<
         // update position and name
         xCoord++;
         name++;
+
+        player->setLinksSet(true);
     }
     
     // not iterated towards the end
@@ -345,20 +352,33 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
         } else if (c == 'D') {
             string displayName = "Download";
             allAbilityCards.emplace_back(make_shared<Download>(id, *player, displayName));
-        } else if (c == 'S') {
-            string displayName = "Scan";
-            allAbilityCards.emplace_back(make_shared<Scan>(id, *player, displayName));
         } else if (c == 'P') {
             string displayName = "Polarize";
             allAbilityCards.emplace_back(make_shared<Polarize>(id, *player, displayName));
-        } 
-        if (id == 5) {
-            id = 1;
+        } else if (c == 'S') {
+            string displayName = "Scan";
+            allAbilityCards.emplace_back(make_shared<Scan>(id, *player, displayName));
+        } else if (c == 'W') {
+            string displayName = "WallWall";
+            allAbilityCards.emplace_back(make_shared<WallWall>(id, *player, displayName));
+        } else if (c == 'B') {
+            string displayName = "Bomb";
+            allAbilityCards.emplace_back(make_shared<Bomb>(id, *player, displayName));
+        } else if (c == 'H') {
+            string displayName = "HazeOfWar";
+            allAbilityCards.emplace_back(make_shared<HazeOfWar>(id, *player, displayName));
         } else {
-            id++;
+            string errorMsg = "Incorrect ability type: please use one of:\n";
+            errorMsg += "\tL (LinkBoost)\n\tF (FireWall)\n\tD (Download)\n\tP (Polarize)\n";
+            errorMsg += "\tS (Scan)\n\tW (WallWall)\n\tB (Bomb)\n\tH (HazeOfWar)";
+            throw (logic_error(errorMsg));
         }
+        id++;
     }
-    // or just deal with it lmao but maybe still cerr
+    if (id != ABILITY_COUNT + 1) {
+        throw (logic_error("Error: please give " + to_string(ABILITY_COUNT) + " abilities."));
+    } 
+    player->setAbilitiesSet(true);
 }
 
 // getters:
