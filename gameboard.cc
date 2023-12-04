@@ -127,6 +127,19 @@ void GameBoard::startNewTurn() {
     currPlayerAbilityPlayed = false;
 }
 
+void GameBoard::battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2) {
+    cout << "BATTLE:" << endl;
+    cout << "——————" << endl;
+    cout << "Initiated by: " << linkp1->getDisplayName() << endl;
+    cout << "Link " << linkp1->getDisplayName() << " Strength:" << linkp1->getStrength() << endl;
+    cout << "Link " << linkp2->getDisplayName() << " Strength:" << linkp2->getStrength() << endl;
+    if (linkp2->getStrength() > linkp1->getStrength()) {
+        downloadIdentity(linkp1, &(linkp2->getOwner()));
+    } else {
+        downloadIdentity(linkp2, &(linkp1->getOwner()));
+    }
+}
+
 // interaction commands
 // ——————————————
 
@@ -200,7 +213,9 @@ void GameBoard::moveLink(string linkName, string direction) {
             if (&allLinks[i]->getOwner() == &l->getOwner()) {
                 throw(logic_error("Error: Illegal Move — one of your pieces occupies this space!\n"));
             } else {
-                // do battle
+                battlePieces(l, allLinks[i]);
+                gd->notify(*this);
+                return;
             }
         }
     }
