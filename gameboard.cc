@@ -135,8 +135,10 @@ void GameBoard::battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2) {
     cout << "Link " << linkp2->getDisplayName() << " Strength:" << linkp2->getStrength() << endl;
     if (linkp2->getStrength() > linkp1->getStrength()) {
         downloadIdentity(linkp1, &(linkp2->getOwner()));
+        linkp2->setIdentityRevealed(true);
     } else {
         downloadIdentity(linkp2, &(linkp1->getOwner()));
+        linkp1->setIdentityRevealed(true);
     }
 }
 
@@ -154,6 +156,9 @@ void GameBoard::moveLink(string linkName, string direction) {
     for (shared_ptr<Link> link : playerLinks) {
         if (linkName == link->getDisplayName()) {
             l = link;
+            if (l->isDownloaded()) {
+                throw(logic_error("This piece has already been downloaded!"));
+            }
             notFound = false;
         }
     }
@@ -214,7 +219,9 @@ void GameBoard::moveLink(string linkName, string direction) {
                 throw(logic_error("Error: Illegal Move — one of your pieces occupies this space!\n"));
             } else {
                 battlePieces(l, allLinks[i]);
+                movePiece(l, dir);
                 gd->notify(*this);
+                startNewTurn();
                 return;
             }
         }
