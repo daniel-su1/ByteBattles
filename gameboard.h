@@ -65,9 +65,8 @@ class GameBoard: public Subject {
         // all methods other than playerAbilities() return a string with the error message if the method fails
         void moveLink(string linkName, string direction);
         string playerAbilities(Player& player); // unlikely to fail since there is no user input
-        void useAbility(int abilityID);
-        void useAbility(int abilityID, string linkName); // for link boost
-        void useAbility(int abilityId, int xCoord, int yCoord); // for firewall
+        void useAbility(int abilityId, int xCoord, int yCoord); // for firewall, wallwall, hazeofwar
+        void useAbility(int abilityID, string linkName); // for remaining abilities
 
         // setters
         void setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<Player> player);

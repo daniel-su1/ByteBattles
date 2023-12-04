@@ -237,31 +237,20 @@ string GameBoard::playerAbilities(Player& player) {
     return (message + "\n");
 }
 
-void GameBoard::useAbility(int abilityID) {
-    // max one ability per turn
-    if (currPlayerAbilityPlayed) {
-        throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
-    }
-    currPlayerAbilityPlayed = true;
-
-    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
-    ac->activate();
-}
-
-// for link boost
-void GameBoard::useAbility(int abilityID, string linkName) {
-    // max one ability per turn
-    if (currPlayerAbilityPlayed) {
-        throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
-    }
-    currPlayerAbilityPlayed = true;
-
-    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
-    ac->activate();
-}
-
-// for firewall
+// for firewall, wallwall, hazeofwar
 void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
+    // max one ability per turn
+    if (currPlayerAbilityPlayed) {
+        throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
+    }
+    currPlayerAbilityPlayed = true;
+
+    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+    ac->activate();
+}
+
+// for remaining abilities
+void GameBoard::useAbility(int abilityID, string linkName) {
     // max one ability per turn
     if (currPlayerAbilityPlayed) {
         throw (logic_error("Error: an ability has already been used this turn. Please move a link to proceed."));
