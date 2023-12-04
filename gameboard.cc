@@ -390,7 +390,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
         } else if (c == 'F') {
             string displayName = "FireWall";
             allAbilityCards.emplace_back(
-                make_shared<FireWall>(id, *player, displayName));
+                make_shared<FireWall>(id, *player, displayName, this));
         } else if (c == 'D') {
             string displayName = "Download";
             allAbilityCards.emplace_back(
@@ -431,6 +431,11 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
                           " abilities."));
     }
     player->setAbilitiesSet(true);
+}
+
+void GameBoard::addFireWall(FireWall firewall) {
+    activeFirewalls.emplace_back(firewall);
+    notifyObservers();
 }
 
 // getters:

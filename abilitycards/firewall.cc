@@ -1,10 +1,12 @@
 #include "firewall.h"
-#include "iostream"
+#include "../gameboard.h"
+
 using namespace std;
 
 void FireWall::activate() {
     usedAbility = true;
-    notifyObservers();
+    owner->abilityUsed();
+    gb->addFireWall(*this);
 }
 
 void FireWall::setCoords(int x, int y) {
@@ -16,6 +18,6 @@ Coords FireWall::getCoords() {
     return coords;
 }
 
-FireWall::FireWall(int abilityID, Player &owner, string displayName): 
-    AbilityCard(abilityID, owner, displayName,AbilityType::FIREWALL, nullptr),
+FireWall::FireWall(int abilityID, Player &owner, string displayName, GameBoard* gb): 
+    AbilityCard(abilityID, owner, displayName,AbilityType::FIREWALL, gb),
     coords{Coords(-100,-100)} {}

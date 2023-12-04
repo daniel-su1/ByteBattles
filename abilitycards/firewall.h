@@ -9,7 +9,7 @@ class FireWall: public AbilityCard {
         void activate() override;
         void setCoords(int x, int y) override;
         Coords getCoords();
-        FireWall(int abilityID, Player &owner, string displayName);
+        FireWall(int abilityID, Player &owner, string displayName, GameBoard* gb);
 };
 
 #endif

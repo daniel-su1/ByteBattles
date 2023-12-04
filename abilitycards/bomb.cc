@@ -1,5 +1,5 @@
 #include "bomb.h"
-#include "iostream"
+
 using namespace std;
 
 void Bomb::activate() {

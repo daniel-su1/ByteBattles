@@ -24,5 +24,6 @@ class Player {
         void setNumDataDownloaded(int newNum);
         void setLinksSet(bool isSet);
         void setAbilitiesSet(bool isSet);
+        void abilityUsed();
 };
 #endif

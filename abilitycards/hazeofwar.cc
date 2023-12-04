@@ -1,5 +1,5 @@
 #include "hazeofwar.h"
-#include "iostream"
+
 using namespace std;
 
 void HazeOfWar::activate() {
