@@ -313,20 +313,6 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     ac->activate();
 }
 
-// for firewall
-void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
-    // max one ability per turn
-    if (currPlayerAbilityPlayed) {
-        throw(
-            logic_error("Error: an ability has already been used this turn. "
-                        "Please move a link to proceed."));
-    }
-    currPlayerAbilityPlayed = true;
-
-    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
-    ac->activate();
-}
-
 // setters
 // ——————————————
 void GameBoard::setGraphicsDisplay(GraphicsDisplay* gd) {
