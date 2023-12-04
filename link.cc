@@ -1,9 +1,9 @@
 #include "link.h"
 
-Link::Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type):
+Link::Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type, string typeAndStrength):
     BoardPiece(stepSize, currCoords, owner, displayName),
     strength{strength}, type{type}, identityRevealed{false}, downloaded{false},
-    typeAndStrength{((type == LinkType::data) ? "D" : "V") + to_string(strength)} {}
+    typeAndStrength{typeAndStrength} {}
 
 Link::~Link(){}
 

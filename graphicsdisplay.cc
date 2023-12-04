@@ -82,8 +82,8 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
     theDisplay->drawString(22, player ? 40 : 690, p.getPlayerName(),
                            Xwindow::White);
     string pDownloads =
-        "Downloaded: " + std::to_string(p.getNumDataDownloads()) + "D, " +
-        std::to_string(p.getNumVirusDownloads()) + "V";
+        "Downloaded: " + std::to_string(p.getNumDataDownloads()) + gb->DATA_DISPLAY_STR + ", " +
+        std::to_string(p.getNumVirusDownloads()) + gb->VIRUS_DISPLAY_STR;
     string pAbilities = "Abilities: " + std::to_string(p.getAbilityCount());
     theDisplay->setLargerFont("courier20r");
     theDisplay->drawString(27, player ? 67 : 717, pDownloads.c_str(),

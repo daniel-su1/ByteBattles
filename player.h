@@ -8,6 +8,8 @@ class Player {
     int numDataDownloaded;
     int abilityCount;
     bool won;
+    bool linksSet;
+    bool abilitiesSet;
     public:
         Player(string playerName, int abilityCount);
         // gettor/accessor functions
@@ -16,7 +18,11 @@ class Player {
         int getNumDataDownloads();
         int getAbilityCount();
         bool isWon();
+        bool isLinksSet();
+        bool isAbilitiesSet();
         void setNumVirusDownloaded(int newNum);
-        void setNumDataDownloaded(int newNum); 
+        void setNumDataDownloaded(int newNum);
+        void setLinksSet(bool isSet);
+        void setAbilitiesSet(bool isSet);
 };
 #endif

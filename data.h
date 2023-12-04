@@ -4,6 +4,6 @@
 #include "link.h"
 class Data: public Link {
     public:
-        Data(int strength, Coords currCoords, string displayName, Player &owner);
+        Data(int strength, Coords currCoords, string displayName, Player &owner, string typeAndStrength);
 };
 #endif

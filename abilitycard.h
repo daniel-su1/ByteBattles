@@ -2,7 +2,7 @@
 #define ABILITYCARD_H
 #include "gamepiece.h"
 
-enum AbilityType {FIREWALL, SCAN, POLARIZE, DOWNLOAD, LINKBOOST};
+enum AbilityType {LINKBOOST, FIREWALL, DOWNLOAD, POLARIZE, SCAN, WALLWALL, BOMB, HAZEOFWAR};
 
 class AbilityCard: public GamePiece {
     bool usedAbility;
@@ -15,5 +15,5 @@ class AbilityCard: public GamePiece {
         int getAbilityId();
         virtual void activate() = 0; // TO DO: implement all the activate() functions for diff cards
 };
-#endif
 
+#endif
