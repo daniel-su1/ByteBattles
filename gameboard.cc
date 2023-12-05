@@ -33,20 +33,30 @@ ostream& operator<<(ostream& out, const GameBoard& gb) {
     return out;
 }
 
+// update both players' info
 void GameBoard::notifyObservers() {
     td->notify(*this);
     if (graphicsEnabled) gd->notify(*this);
 }
 
+// player info has updated
+void GameBoard::notifyObservers(Player& player) {
+    if (graphicsEnabled) gd->notify(player);
+}
+
+// link position has moved
+void GameBoard::notifyObservers(Link& link) {
+    td->notify(link);
+    if (graphicsEnabled) gd->notify(link);
+}
+
+// draw firewall
 void GameBoard::notifyObservers(FireWall firewall) {
     td->notify(firewall);
     if (graphicsEnabled) gd->notify(firewall);
 }
 
-void GameBoard::notifyObservers(Link& link) {
-    td->notify(link);
-    if (graphicsEnabled) gd->notify(link);
-}
+// draw wall
 void GameBoard::notifyObservers(Wall wall) {
     td->notify(wall);
     if (graphicsEnabled) gd->notify(wall);
@@ -112,7 +122,9 @@ void GameBoard::init() {
 }
 
 void GameBoard::movePiece(Link& link, Direction dir) {
+    // set coords
     link.movePiece(dir);
+    // update view
     notifyObservers(link);
 }
 
@@ -149,7 +161,7 @@ void GameBoard::downloadLink(Link& link1, Player* player) {
         }
     }
 
-    notifyObservers(link1);
+    // notifyObservers(link1);
 }
 
 void GameBoard::battlePieces(Link& link1, Link& link2) {
@@ -172,7 +184,11 @@ void GameBoard::battlePieces(Link& link1, Link& link2) {
 void GameBoard::revealIdentity(Link& link) {
     string linkType = (link.getType() == LinkType::VIRUS) ? "Virus" : "Data";
     string out = link.getDisplayName() + " is a " + linkType + " of strength " + to_string(link.getStrength()) + ".";
+    // update link
     link.setIdentityRevealed(true);
+    // update view
+    notifyObservers(link.getOwner());
+    // print reveal
     cout << out << endl;
 }
 
@@ -227,7 +243,7 @@ void GameBoard::moveLink(string linkName, string direction) {
             if (nextPlayer.getPlayerName() !=
                 edgeCoords[i].getOwner().getPlayerName()) {
                 downloadLink(l, &currPlayer);
-                if (graphicsEnabled) gd->notify(*this);
+                notifyObservers(currPlayer);
                 return;
             } else {
                 throw(
@@ -346,7 +362,7 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     cout << " was used at (" << to_string(xCoord) << "," << to_string(yCoord)
          << ")." << endl;
     if (graphicsEnabled) {
-        gd->redrawBoard(ac.get()->getOwner());
+        //gd->redrawBoard(ac.get()->getOwner());
         gd->renderPlayerInfo(ac.get()->getOwner());
     }
     currPlayerAbilityPlayed = true;
@@ -392,15 +408,15 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     Link& link = *findLink(linkName, links);
     ac->activate(link);
     if (graphicsEnabled) {
-        gd->redrawBoard(ac.get()->getOwner());
+        //gd->redrawBoard(ac.get()->getOwner());
         gd->renderPlayerInfo(ac.get()->getOwner());
     }
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used on Link " << linkName << "." << endl;
 
-    if ((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
-        gd->notify(*players[getNextPlayerIndex()]);
-    }
+    //if ((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
+     //   gd->notify(*players[getNextPlayerIndex()]);
+   // }
     
     
     currPlayerAbilityPlayed = true;
@@ -672,12 +688,11 @@ void GameBoard::startNewTurn() {
     }
     currPlayerIndex = getNextPlayerIndex();
     currPlayerAbilityPlayed = false;
-    if (graphicsEnabled) gd->notify(*players[getNextPlayerIndex()]);
-    if (graphicsEnabled) gd->notify(*players[getCurrPlayerIndex()]);
+    notifyObservers();
 }
 
 void GameBoard::endTurn() {
-    if (graphicsEnabled) gd->notify(*this);
+    //notifyObservers();
     if (canMoveTwice) {
         canMoveTwice = false;
     } else {

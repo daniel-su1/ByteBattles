@@ -4,9 +4,12 @@
 using namespace std;
 
 void FireWall::activate(int x, int y) {
+    // use values
     coords.setX(x);
     coords.setY(y);
+    // try to implement
     gb->addFireWall(*this);
+    // update self
     usedAbility = true;
     owner->abilityUsed();  // decrease abilityCount for displays
 }

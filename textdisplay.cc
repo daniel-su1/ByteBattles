@@ -5,6 +5,10 @@ TextDisplay::TextDisplay(){
     links = vector<vector<char>>(8, vector<char>(8, EMPTY_SQUARE));
 }
 
+void TextDisplay::notify(GameBoard &gb) {}
+
+void TextDisplay::notify(Player& p) {}
+
 void TextDisplay::notify(Link &link) {
 
   int x = link.getCurrCoords().getX();
@@ -19,10 +23,6 @@ void TextDisplay::notify(Link &link) {
     links[prevY][prevX] = EMPTY_SQUARE;
   }
 
-}
-
-void TextDisplay::notify(GameBoard &gb) {
-    myGb = &gb;
 }
 
 void TextDisplay::notify(FireWall& firewall) {

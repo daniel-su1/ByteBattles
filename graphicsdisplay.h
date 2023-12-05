@@ -9,7 +9,6 @@
 #include "observer.h"
 #include "window.h"
 class GameBoard;
-class Wall;
 
 class GraphicsDisplay : public Observer {
     Xwindow *theDisplay;
@@ -20,20 +19,23 @@ class GraphicsDisplay : public Observer {
     void drawPlayerInfoCircle(int x, int y, string info, bool isRevealed, bool virus);
     void drawAbilityCard(int x, int y, Xwindow::color color, int number, bool used);
     public: 
-    void renderAbilityCards(Player &p);
-    void renderPlayerInfo(Player &p);
-    void redrawBoard(Player &p);
-    const int BOARD_WINDOW_SIZE = 500;
-    const int SQUARE_SIZE = BOARD_WINDOW_SIZE /8;
-    GraphicsDisplay(Xwindow *w);
-    GraphicsDisplay();
-    ~GraphicsDisplay();
-    void notify(Link &link) override;
-    void notify(GameBoard &gb) override;
-    void init(GameBoard &gb);
-    void notify(Player &p);
-    void notify(FireWall &firewall);
-    void notify(Wall &wall);
+        const int BOARD_WINDOW_SIZE = 500;
+        const int SQUARE_SIZE = BOARD_WINDOW_SIZE /8;
+        
+        GraphicsDisplay(Xwindow *w);
+        GraphicsDisplay();
+        ~GraphicsDisplay();
+        void init(GameBoard &gb);
+
+        void notify(Link &link) override;
+        void notify(GameBoard &gb) override;
+        void notify(Player &p) override;
+        void notify(FireWall &firewall) override;
+        void notify(Wall &wall) override;
+        
+        void renderAbilityCards(Player &p);
+        void renderPlayerInfo(Player &p);
+        void redrawBoard(Player &p);
 };
 
 #endif

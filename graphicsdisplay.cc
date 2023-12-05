@@ -397,14 +397,7 @@ void GraphicsDisplay::init(GameBoard &gb) {
         int y = sp[i].getCoords().getY();
         renderSquare(x, y, sp[i].getDisplayName());
     }
-
-    // Player &p1 = *(this->gb->getPlayers())[this->gb->getCurrPlayerIndex()];
-    // Player &p2 = *(this->gb->getPlayers())[this->gb->getNextPlayerIndex()];
-    // renderPlayerInfo(p1);
-    // renderPlayerInfo(p2);
 }
-
-
 
 void GraphicsDisplay::notify(GameBoard &gb) {
     renderPlayerInfo(*gb.getPlayers()[gb.getCurrPlayerIndex()]);

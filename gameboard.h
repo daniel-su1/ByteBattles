@@ -69,10 +69,16 @@ class GameBoard {
     GameBoard();
     ~GameBoard();
     friend ostream& operator<<(ostream& out, const GameBoard& gb);
+    // update both players' info
     void notifyObservers();
-    void notifyObservers(FireWall firewall);
-    void notifyObservers(Wall wall);    
+    // update player info
+    void notifyObservers(Player& player);
+    // link was moved
     void notifyObservers(Link& link);
+    // draw firewall
+    void notifyObservers(FireWall firewall);
+    // draw wall
+    void notifyObservers(Wall wall);    
 
     void init();
     void enableGraphics();

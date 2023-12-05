@@ -6,7 +6,6 @@
 #include "abilitycards/firewall.h"
 #include "abilitycards/wall.h"
 class GameBoard;
-class Wall;
 
 class TextDisplay: public Observer {
     vector<vector<char>> theDisplay; // contains empty squares, firewalls, walls, serverports
@@ -15,12 +14,15 @@ class TextDisplay: public Observer {
     const char EMPTY_SQUARE = '.';
  public:
     TextDisplay();
-    void init(GameBoard& gb);
     ~TextDisplay() = default;
-    void notify(Link& link) override;
-    void notify(GameBoard& gb) override;
-    void notify(FireWall& firewall);
-    void notify(Wall& wall);
+    void init(GameBoard& gb);
+
+    void notify(Link &link) override;
+    void notify(GameBoard &gb) override; // do nothing bc << regenerates each time
+    void notify(Player &p) override; // do nothing bc << regenerates each time
+    void notify(FireWall &firewall) override;
+    void notify(Wall &wall) override;
+    
     void updateGrid(int x, int y, char c);
     friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);
 };
