@@ -2,7 +2,7 @@
 
 #include "abilitycards/bomb.h"
 #include "abilitycards/download.h"
-#include "abilitycards/haze.h"
+#include "abilitycards/skip.h"
 #include "abilitycards/linkboost.h"
 #include "abilitycards/polarize.h"
 #include "abilitycards/scan.h"
@@ -308,7 +308,7 @@ string GameBoard::playerAbilities(Player& player) {
     return (message + "\n");
 }
 
-// for firewall, wall, haze
+// for firewall, wall
 void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     // max one ability per turn
     if (currPlayerAbilityPlayed) {
@@ -316,13 +316,19 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
             logic_error("Error: an ability has already been used this turn. "
                         "Please move a link to proceed."));
     }
-    currPlayerAbilityPlayed = true;
 
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+    
+    // ability already used
+    if (ac->isUsed()) {
+        throw (logic_error("Error: ability has already been used."));
+    }
+
     ac->activate(xCoord, yCoord);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used at (" << to_string(xCoord) << "," << to_string(yCoord)
          << ")." << endl;
+    currPlayerAbilityPlayed = true;
 }
 
 // for remaining abilities
@@ -336,6 +342,11 @@ void GameBoard::useAbility(int abilityID, string linkName) {
 
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
 
+    // ability already used
+    if (ac->isUsed()) {
+        throw (logic_error("Error: ability has already been used."));
+    }
+    
     // check link type:
     // link boost must be applied to a link that is owned by currPlayer
     // download must be applied to an opponent's link
@@ -458,16 +469,16 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
             string displayName = "Bomb";
             allAbilityCards.emplace_back(
                 make_shared<Bomb>(id, *player, displayName));
-        } else if (c == 'H') {
-            string displayName = "Haze";
+        } else if (c == 'T') {
+            string displayName = "SkipTurn";
             allAbilityCards.emplace_back(
-                make_shared<Haze>(id, *player, displayName));
+                make_shared<Skip>(id, *player, displayName, this));
         } else {
             string errorMsg = "Incorrect ability type: please use one of:\n";
             errorMsg +=
                 "\tL (LinkBoost)\n\tF (FireWall)\n\tD (Download)\n\tP "
                 "(Polarize)\n";
-            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (Bomb)\n\tH (Haze)";
+            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (Bomb)\n\tT (SkipTurn)";
             throw(logic_error(errorMsg));
         }
         id++;

@@ -76,8 +76,9 @@ class GameBoard : public Subject {
     void moveLink(string linkName, string direction);
     string playerAbilities(Player& player);
     void useAbility(int abilityId, int xCoord,
-                    int yCoord);  // for firewall, wall, haze
-    void useAbility(int abilityID, string linkName);  // for remaining abilities
+                    int yCoord);  // for firewall and wall
+    void useAbility(int abilityID, string linkName = "");  // for remaining abilities
+    // default to empty for skip turn ability
 
     // setters
     void setLinks(unique_ptr<vector<string>> linkPlacements,
