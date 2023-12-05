@@ -11,9 +11,10 @@ class GraphicsDisplay : public Observer {
     Xwindow *theDisplay;
     GameBoard *gb;
     void renderSquare(int x, int y, GamePiece& gp);
-    void renderPlayerInfo(Player p);
+    void renderPlayerInfo(Player &p);
     void drawBoardSquare(int x, int y);
     void drawPlayerInfoCircle(int x, int y, string info, bool isRevealed, bool virus);
+    void renderAbilityCards(Player &p);
    public:
     const int BOARD_WINDOW_SIZE = 500;
     const int SQUARE_SIZE = BOARD_WINDOW_SIZE /8;
