@@ -6,12 +6,16 @@ enum LinkType {DATA, VIRUS};
 
 class Link: public BoardPiece{
     protected:
+        Player* downloader;
         int strength;  
         LinkType type;
         bool identityRevealed;
         bool downloaded; 
         Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type, string typeAndStrength);
     public:
+        // attaches a player (downloader) to the piece
+        void attachDownloader(Player *p);
+        Player& getDownloader();
         bool isDownloaded();
         void setDownloaded(bool d);
         void setStepSize(int stepSize);

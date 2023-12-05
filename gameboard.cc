@@ -145,6 +145,7 @@ void GameBoard::downloadLink(Link& link1, Player* player) {
     revealIdentity(link1);
     link1.setDownloaded(true);
     link1.downloadLink();
+    link1.attachDownloader(player);
     if (link1.getType() == LinkType::DATA) {
         player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
     } else { // must be virus
@@ -543,7 +544,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
             string displayName = "BackUp";
             allAbilityCards.emplace_back(
                 make_shared<BackUp>(id, *player, displayName, this));
-        } else if (c == 'N') {
+        } else if (c == 'M') {
             string displayName = "MoveTwice";
             allAbilityCards.emplace_back(
                 make_shared<MoveTwice>(id, *player, displayName, this));
@@ -552,7 +553,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
             errorMsg +=
                 "\tL (LinkBoost)\n\tF (FireWall)\n\tD (Download)\n\tP "
                 "(Polarize)\n";
-            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (BackUp)\n\tN (MoveTwice)";
+            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (BackUp)\n\tM (MoveTwice)";
             throw(logic_error(errorMsg));
         }
         id++;

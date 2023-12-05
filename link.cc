@@ -1,7 +1,7 @@
 #include "link.h"
 
 Link::Link(int strength, Coords currCoords, string displayName, Player &owner, LinkType type, string typeAndStrength):
-    BoardPiece(stepSize, currCoords, owner, displayName),
+    BoardPiece(stepSize, currCoords, owner, displayName), downloader{nullptr},
     strength{strength}, type{type}, identityRevealed{false}, downloaded{false},
     typeAndStrength{typeAndStrength} {}
 
@@ -9,6 +9,10 @@ Link::~Link(){}
 
 bool Link::isDownloaded() {
     return downloaded;
+}
+
+Player& Link::getDownloader() {
+    return *downloader;
 }
 
 void Link::setDownloaded(bool d) {
@@ -28,6 +32,8 @@ void Link::polarize(string virusStr, string dataStr) {
         typeAndStrength[0] = dataStr[0];
     }
 }
+
+void Link::attachDownloader(Player* p) { downloader = p; }
 
 bool Link::isIdentityRevealed() { return identityRevealed; }
 

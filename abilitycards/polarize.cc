@@ -8,18 +8,22 @@ using namespace std;
 
 void Polarize::activate(Link& l) {
     l.polarize(gb->VIRUS_DISPLAY_STR, gb->DATA_DISPLAY_STR);
-    LinkType newType = l.getType();
-    int prevNumData = owner->getNumDataDownloads();
-    int prevNumVirus = owner->getNumVirusDownloads();
+    LinkType prevType = l.getType();
     if (l.isDownloaded()) { // update counts for player
-        if (newType == LinkType::DATA) {
-            owner->setNumDataDownloaded(prevNumData++);
-            owner->setNumVirusDownloaded(prevNumVirus--);
+        int numData = l.getDownloader().getNumDataDownloads();
+        int numVirus = l.getDownloader().getNumVirusDownloads();
+        if (prevType == LinkType::DATA) {
+            numData++;
+            numVirus--;
+            l.getDownloader().setNumDataDownloaded(numData);
+            l.getDownloader().setNumVirusDownloaded(numVirus);
         } else {
-            owner->setNumDataDownloaded(prevNumData--);
-            owner->setNumVirusDownloaded(prevNumVirus++);
+            numData--;
+            numVirus++;
+            l.getDownloader().setNumDataDownloaded(numData);
+            l.getDownloader().setNumVirusDownloaded(numVirus);
         }
-        gb->notifyObservers(*owner);
+        gb->notifyObservers();
     } else {
         for (FireWall fw : gb->getActiveFirewalls()) {
             if ((fw.getCoords().getX() == l.getCurrCoords().getX()) && (fw.getCoords().getY() == l.getCurrCoords().getY())) {
