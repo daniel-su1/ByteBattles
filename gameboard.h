@@ -34,6 +34,7 @@ class GameBoard : public Subject {
     bool currPlayerAbilityPlayed;
     int winnerIndex;
     bool isWon;
+    bool canMoveTwice = false;
     bool graphicsEnabled;
     bool bonusEnabled;
 
@@ -78,7 +79,6 @@ class GameBoard : public Subject {
     void drawAbilities();
     void redrawPlayerInfo(int index);
 
-    void startNewTurn();
     void battlePieces(Link& linkp1, Link& linkp2);
     void downloadLink(Link& link1, Player *player = nullptr);
     void updateIdentity(Link& link);
@@ -96,10 +96,12 @@ class GameBoard : public Subject {
     void setLinks(unique_ptr<vector<string>> linkPlacements,
                   shared_ptr<Player> player);
     void setAbilities(string abilities, shared_ptr<Player> player);
+    void enableMoveTwice();
     void enableBonus();
     void setGraphicsDisplay(GraphicsDisplay* gd);
     void addFireWall(FireWall firewall);
     void addWall(Wall wall);
+
     // getters
     vector<shared_ptr<Player>>& getPlayers();
     unique_ptr<vector<shared_ptr<Link>>> getPlayerLinks(Player& player);
@@ -121,5 +123,7 @@ class GameBoard : public Subject {
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);
     void checkSquareOccupancy(int x, int y);
     shared_ptr<Link> findLink(string linkName, vector<shared_ptr<Link>> links);
+    void startNewTurn();
+    void endTurn();
 };
 #endif

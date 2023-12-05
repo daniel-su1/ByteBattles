@@ -20,6 +20,11 @@ void AbilityCard::activate(int x, int y) {
     throw (logic_error("AC activate on x and y error: this should not run"));
 }
 
+// movetwice
+void AbilityCard::activate() {
+    throw (logic_error("AC activate error: this should not run"));
+}
+
 // for others
 void AbilityCard::activate(Link& l) {
     throw (logic_error("AC active on link error: this should not run"));

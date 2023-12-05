@@ -113,7 +113,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb,
                             throw (logic_error("Error, please follow:\n\tability <ID> <x> <y>"));
                         }
                         break;
-                    } case AbilityType::NEXTTURN: {
+                    } case AbilityType::MOVETWICE: {
                         gb->useAbility(abilityId);
                         break;
                     } default: {

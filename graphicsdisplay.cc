@@ -166,7 +166,7 @@ void GraphicsDisplay::renderAbilityCards(Player &p) {
                 drawAbilityCard(x, player ? 18 : 668, Xwindow::color::Scan,
                                 i + 1, a.at(i)->isUsed());
                 break;
-            case AbilityType::NEXTTURN:
+            case AbilityType::MOVETWICE:
                 drawAbilityCard(x, player ? 18 : 668, Xwindow::color::Scan,
                                 i + 1, a.at(i)->isUsed());
                 break;
