@@ -115,12 +115,6 @@ void GameBoard::redrawPlayerInfo(int index){
     }
 }
 
-void GameBoard::redrawPlayerInfo(int index){
-    if(graphicsEnabled){
-        gd->renderPlayerInfo(*players.at(index).get());
-    }
-}
-
 // player downloads link1 (becomes the new owner)
 void GameBoard::downloadLink(Link& link1, Player* player) {
     if (player == nullptr) { // called from download's activate function
@@ -386,6 +380,9 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     ac->activate(link);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used on link " << linkName << "." << endl;
+    if((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
+        gd->notify(*players[getNextPlayerIndex()]);
+    }
     if (graphicsEnabled) {
         gd->renderPlayerInfo(ac.get()->getOwner());
     }

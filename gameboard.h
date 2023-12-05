@@ -100,13 +100,15 @@ class GameBoard : public Subject {
     vector<EdgeCoord>& getEdgeCoords();
     vector<ServerPort>& getServerPort();
     vector<FireWall>& getActiveFirewalls();
+    unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(
+        Player& player);
+    
     void enableGraphics();
     bool getGraphicsEnabled();
     void drawAbilities();
     void redrawPlayerInfo(int index);
    private:
     void movePiece(Link& link, Direction dir);
-    unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);
     void checkSquareOccupancy(int x, int y);
     shared_ptr<Link> findLink(string linkName, vector<shared_ptr<Link>> links);
