@@ -1,5 +1,5 @@
+#include <map>
 #include "gameboard.h"
-
 #include "abilitycards/backup.h"
 #include "abilitycards/download.h"
 #include "abilitycards/nextturn.h"
@@ -440,6 +440,7 @@ void GameBoard::setLinks(unique_ptr<vector<string>> linkPlacements,
 
 void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     int id = 1;
+    map <char, int> abilitiesCount;
 
     for (char c : abilities) {
         if (c == 'L') {
@@ -483,6 +484,10 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
             throw(logic_error(errorMsg));
         }
         id++;
+        abilitiesCount[c]++;
+        if (abilitiesCount[c] > 2) {
+            throw (logic_error("Error: maximum 2 abilities per type."));
+        }
     }
     if (id != ABILITY_COUNT + 1) {
         throw(logic_error("Error: please give " + to_string(ABILITY_COUNT) +

@@ -193,44 +193,48 @@ int main(int argc, char* argv[]) {
         gb->setGraphicsDisplay(gd.get());
     }
     
-    // set abilities and links in gb
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        shared_ptr<Player> currPlayer = gb->getPlayers()[i];
-        // abilities
-        if (abilities[i].empty()) {
-            abilities[i] = "LFDSP";
-        } // else, it was set by cmd line args
-        gb->setAbilities(abilities[i], currPlayer);
-
-        // links
-        if (links[i].empty()) {
-            // randomize the links' positions
-            vector<string> linkPlacements; 
-            
-            for (int i = 1; i <= gb->BOARD_SIZE / 2; i++) {
-                linkPlacements.emplace_back(gb->DATA_DISPLAY_STR + to_string(i));
-                linkPlacements.emplace_back(gb->VIRUS_DISPLAY_STR + to_string(i));
-            }
-
-            // from shuffle.cc:
-            // use a time-based seed for the default seed value
-            unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-            std::default_random_engine rng{seed};
-            std::shuffle( linkPlacements.begin(), linkPlacements.end(), rng );
-            links[i] = linkPlacements;
-        }
-        unique_ptr <vector<string>> pLink = make_unique<vector<string>>(links[i]);
-        gb->setLinks(move(pLink), currPlayer); // pLink is now nullptr from ownership transfer
-    }
-
-    gb->notifyObservers();
-
-    // text commands
     try {
-        gb = parseCmds(cin, move(gb));
-    } catch (invalid_argument& e) { // if the text commands are incorrect
-        cerr << e.what();
-    } catch (QuitProgram& q) {
-        return 0; // exit program on quit command
+        // set abilities and links in gb
+        for (int i = 0; i < PLAYER_COUNT; i++) {
+            shared_ptr<Player> currPlayer = gb->getPlayers()[i];
+            // abilities
+            if (abilities[i].empty()) {
+                abilities[i] = "LFDSP";
+            } // else, it was set by cmd line args
+            gb->setAbilities(abilities[i], currPlayer);
+
+            // links
+            if (links[i].empty()) {
+                // randomize the links' positions
+                vector<string> linkPlacements; 
+                
+                for (int i = 1; i <= gb->BOARD_SIZE / 2; i++) {
+                    linkPlacements.emplace_back(gb->DATA_DISPLAY_STR + to_string(i));
+                    linkPlacements.emplace_back(gb->VIRUS_DISPLAY_STR + to_string(i));
+                }
+
+                // from shuffle.cc:
+                // use a time-based seed for the default seed value
+                unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+                std::default_random_engine rng{seed};
+                std::shuffle( linkPlacements.begin(), linkPlacements.end(), rng );
+                links[i] = linkPlacements;
+            }
+            unique_ptr <vector<string>> pLink = make_unique<vector<string>>(links[i]);
+            gb->setLinks(move(pLink), currPlayer); // pLink is now nullptr from ownership transfer
+        }
+        
+        gb->notifyObservers();
+
+        // text commands
+        try {
+            gb = parseCmds(cin, move(gb));
+        } catch (invalid_argument& e) { // if the text commands are incorrect
+            cerr << e.what();
+        } catch (QuitProgram& q) {
+            return 0; // exit program on quit command
+        }
+    } catch (logic_error& e) {
+        cerr << e.what() << endl;
     }
 }
