@@ -3,7 +3,7 @@
 #include "../abilitycard.h"
 class WallWall: public AbilityCard {
     public:
-        void activate() override;
+        void activate(Link& l) override;
         WallWall(int abilityID, Player &owner, string displayName);
 };
 

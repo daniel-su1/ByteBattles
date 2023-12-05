@@ -1,10 +1,10 @@
 #include "scan.h"
-#include "iostream"
+
 using namespace std;
 
-void Scan::activate() {
+void Scan::activate(Link& l) {
     cout << "scaaaan!!" << endl; 
 }
 
 Scan::Scan(int abilityID, Player &owner, string displayName):
-    AbilityCard(abilityID, owner, displayName, AbilityType::SCAN) {}
+    AbilityCard(abilityID, owner, displayName, AbilityType::SCAN, nullptr) {}

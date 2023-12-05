@@ -1,10 +1,10 @@
 #include "hazeofwar.h"
-#include "iostream"
+
 using namespace std;
 
-void HazeOfWar::activate() {
+void HazeOfWar::activate(int x, int y) {
     cout << "HAZEOFWAR!!" << endl; 
 }
 
 HazeOfWar::HazeOfWar(int abilityID, Player &owner, string displayName):
-    AbilityCard(abilityID, owner, displayName, AbilityType::HAZEOFWAR) {}
+    AbilityCard(abilityID, owner, displayName, AbilityType::HAZEOFWAR, nullptr) {}

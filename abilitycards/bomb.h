@@ -3,7 +3,7 @@
 #include "../abilitycard.h"
 class Bomb: public AbilityCard {
     public:
-        void activate() override;
+        void activate(Link& l) override;
         Bomb(int abilityID, Player &owner, string displayName);
 };
 

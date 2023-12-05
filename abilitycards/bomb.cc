@@ -1,10 +1,10 @@
 #include "bomb.h"
-#include "iostream"
+
 using namespace std;
 
-void Bomb::activate() {
+void Bomb::activate(Link& l) {
     cout << "BOOOMB!!" << endl; 
 }
 
 Bomb::Bomb(int abilityID, Player &owner, string displayName):
-    AbilityCard(abilityID, owner, displayName, AbilityType::BOMB) {}
+    AbilityCard(abilityID, owner, displayName, AbilityType::BOMB, nullptr) {}

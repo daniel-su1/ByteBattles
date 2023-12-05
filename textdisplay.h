@@ -13,6 +13,7 @@ class TextDisplay: public Observer {
     ~TextDisplay() = default;
     void notify(Link& link) override;
     void notify(GameBoard& gb) override;
+    void updateGrid(int x, int y, char c);
     friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);
 };
 

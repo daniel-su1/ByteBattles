@@ -67,14 +67,14 @@ class GameBoard: public Subject {
         // all methods other than playerAbilities() return a string with the error message if the method fails
         void moveLink(string linkName, string direction);
         string playerAbilities(Player& player); // unlikely to fail since there is no user input
-        void useAbility(int abilityID);
-        void useAbility(int abilityID, string linkName); // for link boost
-        void useAbility(int abilityId, int xCoord, int yCoord); // for firewall
+        void useAbility(int abilityId, int xCoord, int yCoord); // for firewall, wallwall, hazeofwar
+        void useAbility(int abilityID, string linkName); // for remaining abilities
 
         // setters
         void setLinks(unique_ptr <vector<string>> linkPlacements, shared_ptr<Player> player);
         void setAbilities(string abilities, shared_ptr<Player> player);
         void setGraphicsDisplay(GraphicsDisplay *gd);
+        void addFireWall(FireWall firewall);
 
         // getters
         vector<shared_ptr<Player>>& getPlayers();
@@ -94,5 +94,6 @@ class GameBoard: public Subject {
     private:
         unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player); // possibly deletable
         shared_ptr<AbilityCard> getAbilityCard(int abilityID);
+        shared_ptr<Link> findLink(string linkName, vector<shared_ptr<Link>> links);
 };
 #endif

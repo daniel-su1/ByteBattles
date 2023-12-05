@@ -45,3 +45,7 @@ void Player::setAbilitiesSet(bool isSet) {
 void Player::setLinksSet(bool isSet) {
     linksSet = isSet;
 }
+
+void Player::abilityUsed() {
+    abilityCount--;
+}

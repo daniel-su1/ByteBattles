@@ -14,6 +14,7 @@ class Link: public BoardPiece{
     public:
         bool isDownloaded();
         void setDownloaded(bool d);
+        void setStepSize(int stepSize);
         string typeAndStrength;
         // returns the strength of the link
         int getStrength();

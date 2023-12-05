@@ -85,15 +85,9 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                 in >> abilityId;
                 AbilityType type = gb->getAbilityType(abilityId);
                 switch (type) {
-                    case AbilityType::LINKBOOST: {
-                        string linkName;
-                        if (in >> linkName) {
-                            gb->useAbility(abilityId, linkName);
-                        } else {
-                            throw (logic_error("Error, please follow:\n\tability <ID> <linkname> for link boosts"));
-                        }
-                        break;
-                    } case AbilityType::FIREWALL: {
+                    case AbilityType::FIREWALL: 
+                    case AbilityType::WALLWALL:
+                    case AbilityType::HAZEOFWAR: {
                         int xCoord, yCoord;
                         if (in >> xCoord && in >> yCoord) {
                             gb->useAbility(abilityId, xCoord, yCoord);
@@ -102,7 +96,12 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                         }
                         break;
                     } default: {
-                        gb->useAbility(abilityId);
+                        string linkName;
+                        if (in >> linkName) {
+                            gb->useAbility(abilityId, linkName);
+                        } else {
+                            throw (logic_error("Error, please follow:\n\tability <ID> <linkname> for link boosts"));
+                        }
                         break;
                     }
                 }
