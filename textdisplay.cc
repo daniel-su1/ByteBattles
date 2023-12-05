@@ -1,7 +1,8 @@
 #include "textdisplay.h"
 
 TextDisplay::TextDisplay(){
-    theDisplay = vector<vector<char>>(8, vector<char>(8, '.'));
+    theDisplay = vector<vector<char>>(8, vector<char>(8, EMPTY_SQUARE));
+    links = vector<vector<char>>(8, vector<char>(8, EMPTY_SQUARE));
 }
 
 void TextDisplay::notify(Link &link) {
@@ -9,13 +10,13 @@ void TextDisplay::notify(Link &link) {
   int x = link.getCurrCoords().getX();
   int y = link.getCurrCoords().getY();
   if (x != -1 && y != -1) {
-  theDisplay[y][x] = link.getDisplayName()[0];
+    links[y][x] = link.getDisplayName()[0];
   }
   
   int prevX = link.getPreviousCoords().getX();
   int prevY = link.getPreviousCoords().getY();
   if (prevX != -1 && prevY != -1) {
-    theDisplay[prevY][prevX] = '.';
+    links[prevY][prevX] = EMPTY_SQUARE;
   }
 
 }
@@ -89,7 +90,12 @@ ostream &operator<<(ostream &out, const TextDisplay &td) {
   // board
   for (int i = 0; i < td.myGb->BOARD_SIZE; i++) { 
     for (int j = 0; j < td.myGb->BOARD_SIZE; j++) {
-      out << td.theDisplay[i][j];
+      if (td.links[i][j] != td.EMPTY_SQUARE) {
+        // place links on top of empty squares/firewalls
+        out << td.links[i][j];
+      } else {
+        out << td.theDisplay[i][j];
+      }
     }
     out << endl;
   }

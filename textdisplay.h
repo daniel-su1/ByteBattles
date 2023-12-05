@@ -9,8 +9,10 @@ class GameBoard;
 class Wall;
 
 class TextDisplay: public Observer {
-    vector<vector<char>> theDisplay; 
+    vector<vector<char>> theDisplay; // contains empty squares, firewalls, walls, serverports
+    vector<vector<char>> links; // contains the moving links
     GameBoard *myGb;
+    const char EMPTY_SQUARE = '.';
  public:
     TextDisplay();
     void init(GameBoard& gb);
