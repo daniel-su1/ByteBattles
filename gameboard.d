@@ -1,8 +1,7 @@
-gameboard.o: gameboard.cc gameboard.h player.h link.h boardpiece.h \
- gamepiece.h subject.h coords.h abilitycard.h edgecoord.h specialcoord.h \
- serverport.h abilitycards/firewall.h abilitycards/../abilitycard.h \
- abilitycards/../coords.h textdisplay.h observer.h graphicsdisplay.h \
- window.h abilitycards/bomb.h abilitycards/download.h \
- abilitycards/hazeofwar.h abilitycards/linkboost.h \
- abilitycards/polarize.h abilitycards/scan.h abilitycards/wallwall.h \
- data.h virus.h
+gameboard.o: gameboard.cc gameboard.h abilitycard.h gamepiece.h player.h \
+ subject.h abilitycards/firewall.h abilitycards/../abilitycard.h \
+ abilitycards/../coords.h coords.h edgecoord.h specialcoord.h \
+ graphicsdisplay.h observer.h window.h link.h boardpiece.h serverport.h \
+ textdisplay.h abilitycards/bomb.h abilitycards/download.h \
+ abilitycards/haze.h abilitycards/linkboost.h abilitycards/polarize.h \
+ abilitycards/scan.h abilitycards/wall.h data.h virus.h

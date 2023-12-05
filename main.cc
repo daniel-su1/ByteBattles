@@ -69,6 +69,17 @@ void parseArgs(int argc, char* argv[], vector<string>& abilities, vector<vector<
 unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSequence = false) {
     string cmd;
     while (in >> cmd) {
+        if (gb->getIsWon()) {
+            std::vector<std::shared_ptr<Player>> players = gb->getPlayers();
+            cout << "WINNER: ";
+            for (size_t i = 0; i < players.size(); i++) {
+                if (players[i]->isWon()) {
+                    cout << players[i]->getPlayerName() << endl;
+                }
+            }
+            throw QuitProgram();
+        }
+
         try {
             if (cmd == "move") {
                 // the next inputs should be the name of the link (a-g, A-G) followed by its direction (up, down, left, right)
@@ -86,8 +97,8 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                 AbilityType type = gb->getAbilityType(abilityId);
                 switch (type) {
                     case AbilityType::FIREWALL: 
-                    case AbilityType::WALLWALL:
-                    case AbilityType::HAZEOFWAR: {
+                    case AbilityType::WALL:
+                    case AbilityType::HAZE: {
                         int xCoord, yCoord;
                         if (in >> xCoord && in >> yCoord) {
                             gb->useAbility(abilityId, xCoord, yCoord);
@@ -123,7 +134,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                 string errorMsg = "Error, please use one of the following commands:\n";
                 errorMsg += "\tmove a <dir> where a is a link name (a-g or A-G)\n";
                 errorMsg += "\tabilities\n";
-                errorMsg += "\tability <N> <x> <y> (FireWall, WallWall, HazeOfWar) or ability <N> <linkName> (others)\n";
+                errorMsg += "\tability <N> <x> <y> (FireWall, Wall, Haze) or ability <N> <linkName> (others)\n";
                 errorMsg += "\tboard\n";
                 errorMsg += "\tsequence <file>\n";
                 errorMsg += "\tquit\n";                 
@@ -133,6 +144,17 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                     throw (logic_error(errorMsg));
                 }
             }
+          if (gb->getIsWon()) {
+            std::vector<std::shared_ptr<Player>> players = gb->getPlayers();
+            cout << "WINNER ";
+            for (size_t i = 0; i < players.size(); i++) {
+                if (players[i]->isWon()) {
+                    cout << players[i]->getPlayerName() << endl;
+                }
+            }
+            throw QuitProgram();
+        }
+
         } catch (invalid_argument& err) {
             throw;
         } catch (logic_error& e) {

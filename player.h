@@ -25,5 +25,6 @@ class Player {
         void setLinksSet(bool isSet);
         void setAbilitiesSet(bool isSet);
         void abilityUsed();
+        void setIsWon(bool w);
 };
 #endif
