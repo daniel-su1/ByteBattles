@@ -38,7 +38,9 @@ class Xwindow {
         Polarize,
         Scan,
         Grey,
-        Wall
+        Wall,
+        Backup,
+        NextTurn
     };  // Available colours.
 
     // Draws a rectangle

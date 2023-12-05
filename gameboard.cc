@@ -119,6 +119,7 @@ void GameBoard::movePiece(Link& link, Direction dir) {
 void GameBoard::redrawPlayerInfo(int index){
     if(graphicsEnabled){
         gd->renderPlayerInfo(*players.at(index).get());
+        gd->redrawBoard(*players.at(index).get());
     }
 }
 
@@ -345,6 +346,7 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     cout << " was used at (" << to_string(xCoord) << "," << to_string(yCoord)
          << ")." << endl;
     if (graphicsEnabled) {
+        gd->redrawBoard(ac.get()->getOwner());
         gd->renderPlayerInfo(ac.get()->getOwner());
     }
     currPlayerAbilityPlayed = true;
@@ -389,15 +391,17 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     // links are either found in above clauses or default to allLinks
     Link& link = *findLink(linkName, links);
     ac->activate(link);
+    if (graphicsEnabled) {
+        gd->redrawBoard(ac.get()->getOwner());
+        gd->renderPlayerInfo(ac.get()->getOwner());
+    }
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used on Link " << linkName << "." << endl;
 
     if ((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
         gd->notify(*players[getNextPlayerIndex()]);
     }
-    if (graphicsEnabled) {
-        gd->renderPlayerInfo(ac.get()->getOwner());
-    }
+    
     
     currPlayerAbilityPlayed = true;
 }
@@ -535,6 +539,21 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
 void GameBoard::checkSquareOccupancy(int x, int y) {
     for (auto i : allLinks) {
         if (i->getCurrCoords().getX() == x && i->getCurrCoords().getY() == y) {
+            throw std::logic_error("Error: please place on empty square");
+        }
+    }
+    for (auto i : getActiveFirewalls()) {
+        if (i.getCoords().getX() == x && i.getCoords().getY() == y) {
+            throw std::logic_error("Error: please place on empty square");
+        }
+    }
+    for (auto i : getActiveWalls()) {
+        if (i.getCoords().getX() == x && i.getCoords().getY() == y) {
+            throw std::logic_error("Error: please place on empty square");
+        }
+    }
+    for (auto i : getServerPort()) {
+        if (i.getCoords().getX() == x && i.getCoords().getY() == y) {
             throw std::logic_error("Error: please place on empty square");
         }
     }

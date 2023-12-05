@@ -156,7 +156,7 @@ Xwindow::Xwindow(int width, int height) {
         "#FFD800",     "cyan",    "magenta",   "SkyBlue1", "RoyalBlue1",
         "chartreuse1", "DarkRed", "DarkGreen", "#000C2F",  "#00CAC3",
         "#E87B2B",     "#32B000", "#3C005B",   "#AC0000",  "#B0B0B0",
-        "#001260"};
+        "#001260",     "#D234FF",    "#651F00"};
 
     cmap = DefaultColormap(d, DefaultScreen(d));
     for (int i = 0; i < NumColors; ++i) {
