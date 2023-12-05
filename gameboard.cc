@@ -1,5 +1,4 @@
 #include "gameboard.h"
-
 #include "abilitycards/bomb.h"
 #include "abilitycards/download.h"
 #include "abilitycards/hazeofwar.h"
@@ -282,6 +281,8 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
 
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
     ac->activate(xCoord, yCoord);
+    cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
+    cout << " was used at (" << to_string(xCoord) << "," << to_string(yCoord) << ")." << endl;
 }
 
 // for remaining abilities
@@ -297,6 +298,8 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
     Link& link = *findLink(linkName, allLinks);
     ac->activate(link);
+    cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
+    cout << " was used at on link " << linkName << "." << endl;
 }
 
 // setters
