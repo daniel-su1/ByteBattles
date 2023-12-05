@@ -116,6 +116,8 @@ void Xwindow::setLargerFont(const std::string& inFont) {
         fontName = "-*-courier-*-o-*-*-25-*-*-*-*-*-*-*";
     } else if (inFont == "courier20r") {
         fontName = "-*-courier-*-r-*-*-20-*-*-*-*-*-*-*";
+    } else if (inFont == "courier17r") {
+        fontName = "-*-courier-*-r-*-*-17-*-*-*-*-*-*-*";
     }
     XFontStruct *font =
         XLoadQueryFont(d, fontName.c_str());  // 'd' is a member of Xwindow
@@ -148,12 +150,13 @@ Xwindow::Xwindow(int width, int height) {
     // Set up colours.
     XColor xcolour;
     Colormap cmap = DefaultColormap(d, DefaultScreen(d));
-    static const int NumColors = 19;
+    static const int NumColors = 23;
     char color_vals[NumColors][20] = {
         "white",       "black",   "red",       "green",    "blue",
         "#FFD800",     "cyan",    "magenta",   "SkyBlue1", "RoyalBlue1",
         "chartreuse1", "DarkRed", "DarkGreen", "#000C2F",  "#00CAC3",
-        "#E87B2B",     "#32B000", "#3C005B",   "AC0000"};
+        "#E87B2B",     "#32B000", "#3C005B",   "#AC0000",  "#B0B0B0",
+        "#001260"};
 
     cmap = DefaultColormap(d, DefaultScreen(d));
     for (int i = 0; i < NumColors; ++i) {

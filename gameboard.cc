@@ -47,6 +47,10 @@ void GameBoard::notifyObservers(Link& link) {
     td->notify(link);
     if (graphicsEnabled) gd->notify(link);
 }
+void GameBoard::notifyObservers(Wall wall) {
+    td->notify(wall);
+    if (graphicsEnabled) gd->notify(wall);
+}
 
 void GameBoard::init() {
     // reset
@@ -60,6 +64,7 @@ void GameBoard::init() {
     edgeCoords.clear();
     serverPorts.clear();
     activeFirewalls.clear();
+    activeWalls.clear();
     observers.clear();
 
     td = new TextDisplay;
@@ -111,6 +116,12 @@ void GameBoard::init() {
 void GameBoard::movePiece(Link& link, Direction dir) {
     link.movePiece(dir);
     notifyObservers(link);
+}
+
+void GameBoard::redrawPlayerInfo(int index){
+    if(graphicsEnabled){
+        gd->renderPlayerInfo(*players.at(index).get());
+    }
 }
 
 // player downloads link1 (becomes the new owner)
@@ -258,6 +269,15 @@ void GameBoard::moveLink(string linkName, string direction) {
         }
     }
 
+    for (size_t i = 0; i < activeWalls.size(); i++) {
+        Wall currWall = activeWalls[i];
+        Coords wallCoords = currWall.getCoords();
+        if (newCoord == wallCoords) {
+                throw(
+                    logic_error("Error: Illegal Move - Cannot move onto a wall\n"));
+        }
+    }
+
     // checking if moved on top of another piece
     for (size_t i = 0; i < allLinks.size(); i++) {
         Coords pieceCoords = allLinks[i]->getCurrCoords();
@@ -331,7 +351,14 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used at (" << to_string(xCoord) << "," << to_string(yCoord)
          << ")." << endl;
+    if (graphicsEnabled) {
+        gd->renderPlayerInfo(ac.get()->getOwner());
+    }
     currPlayerAbilityPlayed = true;
+}
+
+void GameBoard::drawAbilities(){
+    gd->renderAbilityCards(*players.at(getCurrPlayerIndex()));
 }
 
 // for remaining abilities
@@ -370,6 +397,12 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     ac->activate(link);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used on Link " << linkName << "." << endl;
+    if((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
+        gd->notify(*players[getNextPlayerIndex()]);
+    }
+    if (graphicsEnabled) {
+        gd->renderPlayerInfo(ac.get()->getOwner());
+    }
     
     currPlayerAbilityPlayed = true;
 }
@@ -438,6 +471,10 @@ void GameBoard::setLinks(unique_ptr<vector<string>> linkPlacements,
     }
 }
 
+void GameBoard::enableBonus(){
+    bonusEnabled = true;
+}
+
 void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     int id = 1;
     map <char, int> abilitiesCount;
@@ -466,7 +503,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
         } else if (c == 'W') {
             string displayName = "Wall";
             allAbilityCards.emplace_back(
-                make_shared<Wall>(id, *player, displayName));
+                make_shared<Wall>(id, *player, displayName, this));
         } else if (c == 'B') {
             string displayName = "BackUp";
             allAbilityCards.emplace_back(
@@ -509,6 +546,13 @@ void GameBoard::addFireWall(FireWall firewall) {
                          firewall.getCoords().getY());
     activeFirewalls.emplace_back(firewall);
     notifyObservers(firewall);
+}
+
+void GameBoard::addWall(Wall wall) {
+    checkSquareOccupancy(wall.getCoords().getX(),
+                         wall.getCoords().getY());
+    activeWalls.emplace_back(wall);
+    notifyObservers(wall);
 }
 
 // getters:
@@ -554,6 +598,8 @@ AbilityType GameBoard::getAbilityType(int id) {
 //     return result;
 // }
 
+bool GameBoard::getGraphicsEnabled() {return graphicsEnabled;}
+
 int GameBoard::getCurrPlayerIndex() { return currPlayerIndex; }
 
 int GameBoard::getNextPlayerIndex() { return currPlayerIndex ? 0 : 1; }
@@ -569,6 +615,8 @@ vector<EdgeCoord>& GameBoard::getEdgeCoords() { return edgeCoords; }
 vector<ServerPort>& GameBoard::getServerPort() { return serverPorts; }
 
 vector<FireWall>& GameBoard::getActiveFirewalls() { return activeFirewalls; }
+
+vector<Wall>& GameBoard::getActiveWalls() { return activeWalls; }
 
 shared_ptr<AbilityCard> GameBoard::getAbilityCard(int abilityID) {
     shared_ptr<Player> currPlayer = players[currPlayerIndex];

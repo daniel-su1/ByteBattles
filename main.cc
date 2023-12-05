@@ -22,8 +22,8 @@ using namespace std;
 
 class QuitProgram : public exception {};
 
-void parseArgs(int argc, char* argv[], vector<string>& abilities, vector<vector<string>>& links, bool& graphicsEnabled) {
-    const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <file> -graphics\n";
+void parseArgs(int argc, char* argv[], vector<string>& abilities, vector<vector<string>>& links, bool& graphicsEnabled, bool& bonusEnabled) {
+    const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <file> -graphics -enablebonus\n";
     for (int i = 1; i < argc; i++) {
         string curArg = argv[i];
         if (curArg[0] == '-') { // is a flag
@@ -57,7 +57,10 @@ void parseArgs(int argc, char* argv[], vector<string>& abilities, vector<vector<
                 links[1] = linkPlacements;
             } else if (curArg == "-graphics") {
                 graphicsEnabled = true;
-            } else { // incorrect flag
+            } else if (curArg == "-enablebonus") {
+                bonusEnabled = true;
+            }
+            else { // incorrect flag
                 throw (logic_error(ARG_ERROR_MSG));
             }
         } else { // passed in argument without a flag
@@ -66,7 +69,9 @@ void parseArgs(int argc, char* argv[], vector<string>& abilities, vector<vector<
     } 
 }
 
-unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSequence = false) {
+unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb,
+                                bool isSequence = false,
+                                const bool& bonusEnabled = false) {
     string cmd;
     while (in >> cmd) {
         if (gb->getIsWon()) {
@@ -91,16 +96,19 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                 cout << *gb;
             } else if (cmd == "abilities") {
                 cout << gb->playerAbilities(*gb->getPlayers()[gb->getCurrPlayerIndex()]);
+                if(bonusEnabled) gb->drawAbilities();
+
             } else if (cmd == "ability") {
                 int abilityId;
                 in >> abilityId;
                 AbilityType type = gb->getAbilityType(abilityId);
                 switch (type) {
-                    case AbilityType::FIREWALL: 
+                    case AbilityType::FIREWALL:
                     case AbilityType::WALL: {
                         int xCoord, yCoord;
                         if (in >> xCoord && in >> yCoord) {
                             gb->useAbility(abilityId, xCoord, yCoord);
+                            
                         } else {
                             throw (logic_error("Error, please follow:\n\tability <ID> <x> <y>"));
                         }
@@ -120,6 +128,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                 }
             } else if (cmd == "board") {
                 cout << *gb;
+                if(bonusEnabled) gb->redrawPlayerInfo(gb->getCurrPlayerIndex());
             } else if (cmd == "sequence") {
                 // next input should be a file name containing commands
                 string fileName;
@@ -174,16 +183,19 @@ int main(int argc, char* argv[]) {
     vector<string> abilities(PLAYER_COUNT);
     vector<vector<string>> links(PLAYER_COUNT);
     bool graphicsEnabled = false;
+    bool bonusEnabled = false;
     
     // cmd line args
     try {
-        // set abilities, links, and graphicsEnabled
-        parseArgs(argc, argv, abilities, links, graphicsEnabled);
+        // set abilities, links, and graphicsEnabled and bonusEnabled
+        parseArgs(argc, argv, abilities, links, graphicsEnabled, bonusEnabled);
     } catch (logic_error& err) {
         cerr << err.what();
         return 1; // terminate program with incorrect args
     }
-
+    if(bonusEnabled){
+        gb->enableBonus();
+    }
     // init graphics
     unique_ptr<Xwindow> xw = nullptr;
     unique_ptr<GraphicsDisplay> gd = nullptr;
@@ -228,7 +240,7 @@ int main(int argc, char* argv[]) {
 
         // text commands
         try {
-            gb = parseCmds(cin, move(gb));
+            gb = parseCmds(cin, move(gb), false, bonusEnabled);
         } catch (invalid_argument& e) { // if the text commands are incorrect
             cerr << e.what();
         } catch (QuitProgram& q) {
