@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 
+#include "abilitycards/firewall.h"
 #include "gameboard.h"
 #include "observer.h"
 #include "window.h"
@@ -10,10 +11,11 @@
 class GraphicsDisplay : public Observer {
     Xwindow *theDisplay;
     GameBoard *gb;
-    void renderSquare(int x, int y, GamePiece& gp);
-    void renderPlayerInfo(Player p);
+    void renderSquare(int x, int y, string displayName, Xwindow::color color = Xwindow::color::Black);
+    void renderPlayerInfo(Player &p);
     void drawBoardSquare(int x, int y);
     void drawPlayerInfoCircle(int x, int y, string info, bool isRevealed, bool virus);
+    void renderAbilityCards(Player &p);
    public:
     const int BOARD_WINDOW_SIZE = 500;
     const int SQUARE_SIZE = BOARD_WINDOW_SIZE /8;
@@ -24,6 +26,7 @@ class GraphicsDisplay : public Observer {
     void notify(GameBoard &gb) override;
     void init(GameBoard &gb);
     void notify(Player &p);
+    void notify(FireWall &firewall);
 };
 
 #endif

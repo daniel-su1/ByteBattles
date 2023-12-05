@@ -9,6 +9,22 @@
 
 using namespace std;
 
+void Xwindow::fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3,
+                           int colour) {
+    XSetForeground(d, gc, colours[colour]);
+
+    XPoint points[3];
+    points[0].x = x1;
+    points[0].y = y1;
+    points[1].x = x2;
+    points[1].y = y2;
+    points[2].x = x3;
+    points[2].y = y3;
+
+    XFillPolygon(d, w, gc, points, 3, Convex, CoordModeOrigin);
+
+    XSetForeground(d, gc, colours[Black]);  // Reset to default color if needed
+}
 
 void Xwindow::fillRoundedRectangle(int x, int y, int width, int height,
                                    int arcSize, int colour) {
@@ -132,11 +148,12 @@ Xwindow::Xwindow(int width, int height) {
     // Set up colours.
     XColor xcolour;
     Colormap cmap = DefaultColormap(d, DefaultScreen(d));
-    static const int NumColors = 14;
+    static const int NumColors = 19;
     char color_vals[NumColors][20] = {
         "white",       "black",   "red",       "green",    "blue",
-        "#FFD800",      "cyan",    "magenta",   "SkyBlue1", "RoyalBlue1",
-        "chartreuse1", "DarkRed", "DarkGreen", "#000C2F"};
+        "#FFD800",     "cyan",    "magenta",   "SkyBlue1", "RoyalBlue1",
+        "chartreuse1", "DarkRed", "DarkGreen", "#000C2F",  "#00CAC3",
+        "#E87B2B",     "#32B000", "#3C005B",   "AC0000"};
 
     cmap = DefaultColormap(d, DefaultScreen(d));
     for (int i = 0; i < NumColors; ++i) {

@@ -1,7 +1,9 @@
 #include "graphicsdisplay.h"
 
+#include "abilitycards/firewall.h"
+
 GraphicsDisplay::GraphicsDisplay(Xwindow *w): theDisplay{w} {
-    if(w) theDisplay->fillRectangle(0, 0, BOARD_WINDOW_SIZE, 800, Xwindow::Black);
+    if(w) theDisplay->fillRectangle(0, 0, BOARD_WINDOW_SIZE, 800, Xwindow::color::Black);
 
     std::cout << "ctor" << std::endl;
 }
@@ -15,8 +17,8 @@ GraphicsDisplay::~GraphicsDisplay() {
      }
 
 void GraphicsDisplay::drawBoardSquare(int x, int y) {
-    int color = (y % 2) ? ((x % 2) ? Xwindow::SkyBlue : Xwindow::RoyalBlue)
-                        : ((x % 2) ? Xwindow::RoyalBlue : Xwindow::SkyBlue);
+    int color = (y % 2) ? ((x % 2) ? Xwindow::color::SkyBlue : Xwindow::color::RoyalBlue)
+                        : ((x % 2) ? Xwindow::color::RoyalBlue : Xwindow::color::SkyBlue);
     theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
                               SQUARE_SIZE, SQUARE_SIZE, color);
 }
@@ -26,10 +28,10 @@ void GraphicsDisplay::drawPlayerInfoCircle(int x, int y, string info,
     const int CIRCLE_RADIUS = 24;
     theDisplay->fillCircle(x, y, CIRCLE_RADIUS,
                            isRevealed
-                               ? (virus ? Xwindow::DarkRed : Xwindow::DarkGreen)
-                               : Xwindow::Black);
+                               ? (virus ? Xwindow::color::DarkRed : Xwindow::color::DarkGreen)
+                               : Xwindow::color::Black);
     theDisplay->setLargerFont("courier20r");
-    theDisplay->drawString(x - 16, y + 6, info, Xwindow::White);
+    theDisplay->drawString(x - 16, y + 6, info, Xwindow::color::White);
 }
 
 void GraphicsDisplay::notify(Player &p) {
@@ -41,8 +43,8 @@ void GraphicsDisplay::notify(Player &p) {
         11, player ? 8 : 661, 478, 128, 15,
         (p.getPlayerName() ==
          (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName())
-            ? Xwindow::Yellow
-            : Xwindow::White);
+            ? Xwindow::color::Yellow
+            : Xwindow::color::White);
     vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
     int pLinksX = 290;
     int pLinksY = player ? 45 : 695;
@@ -73,8 +75,26 @@ void GraphicsDisplay::notify(Player &p) {
     }
 }
 
-void GraphicsDisplay::renderPlayerInfo(Player p) {
-    std::cout <<"renderplayerinfo" << std::endl;
+
+
+
+
+void GraphicsDisplay::renderAbilityCards(Player &p){
+    bool player = false;
+    if (p.getPlayerName() == "Player 1") {
+        player = true;
+    }
+    theDisplay->drawFilledRoundedRectangle(
+        11, player ? 8 : 661, 478, 128, 15, Xwindow::color::NavyBlue,
+        (p.getPlayerName() ==
+         (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName())
+            ? Xwindow::color::Yellow
+            : Xwindow::color::White);
+    theDisplay->fillRoundedRectangle(
+        23, 15, 80, 116, 10, Xwindow::color::LinkBoost);
+}
+
+void GraphicsDisplay::renderPlayerInfo(Player &p) {
     bool player = false;
     if (p.getPlayerName() == "Player 1") {
         player = true;
@@ -82,22 +102,22 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
     vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
     theDisplay->setLargerFont("courier25o");
     theDisplay->drawFilledRoundedRectangle(
-        11, player ? 8 : 661, 478, 128, 15, Xwindow::NavyBlue,
+        11, player ? 8 : 661, 478, 128, 15, Xwindow::color::NavyBlue,
         (p.getPlayerName() ==
          (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName())
-            ? Xwindow::Yellow
-            : Xwindow::White);
+            ? Xwindow::color::Yellow
+            : Xwindow::color::White);
     theDisplay->drawString(22, player ? 40 : 690, p.getPlayerName(),
-                           Xwindow::White);
+                           Xwindow::color::White);
     string pDownloads =
         "Downloaded: " + std::to_string(p.getNumDataDownloads()) + gb->DATA_DISPLAY_STR + ", " +
         std::to_string(p.getNumVirusDownloads()) + gb->VIRUS_DISPLAY_STR;
     string pAbilities = "Abilities: " + std::to_string(p.getAbilityCount());
     theDisplay->setLargerFont("courier20r");
     theDisplay->drawString(27, player ? 67 : 717, pDownloads.c_str(),
-                           Xwindow::White);
+                           Xwindow::color::White);
     theDisplay->drawString(27, player ? 97 : 747, pAbilities.c_str(),
-                           Xwindow::White);
+                           Xwindow::color::White);
     int pLinksX = 290;
     int pLinksY = player ? 45 : 695;
 
@@ -123,33 +143,43 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
 
         pLinksX += 55;
     }
+    // renderAbilityCards(p);
 }
 
-void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
-    std::cout << "rendersquare" << std::endl;
+void GraphicsDisplay::renderSquare(int x, int y, string displayName, Xwindow::color color) {
     const int BUFFER_SIZE = 23;
     int text_x = SQUARE_SIZE * x + BUFFER_SIZE;
     int text_y = SQUARE_SIZE * y + SQUARE_SIZE / 2 + BUFFER_SIZE;
     theDisplay->setLargerFont("courier34r");
-    string displayName = gp.getDisplayName();
-    std::cout << "dis" << displayName << endl;
-    if(gb == nullptr){
-        std::cout << "null" << endl;
-    }
-    std::cout << "sp" << gb->SP_DISPLAY_STR << endl;
-    if (displayName == gb->SP_DISPLAY_STR) {  // server ports
-        theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
-                                  SQUARE_SIZE, SQUARE_SIZE, Xwindow::Yellow);
-        theDisplay->drawString(text_x, text_y + 140, displayName,
-                               Xwindow::Black);
-    } else {
+    if (displayName == "a" || displayName == "b" || displayName == "c" ||
+        displayName == "d" || displayName == "e" || displayName == "f" ||
+        displayName == "g" || displayName == "h" || displayName == "A" ||
+        displayName == "B" || displayName == "C" || displayName == "D" ||
+        displayName == "E" || displayName == "F" || displayName == "G" ||
+        displayName == "H") {
         drawBoardSquare(x, y);
         theDisplay->fillCircle(SQUARE_SIZE * x + (SQUARE_SIZE / 2),
                                SQUARE_SIZE * y + 150 + (SQUARE_SIZE / 2),
-                               SQUARE_SIZE / 2 - 5, Xwindow::Black);
+                               SQUARE_SIZE / 2 - 5, Xwindow::color::Black);
+
         theDisplay->drawString(text_x, text_y + 140, displayName);
+    } else if (displayName == gb->SP_DISPLAY_STR) {  // server ports
+        theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
+                                  SQUARE_SIZE, SQUARE_SIZE, Xwindow::color::Yellow);
+        theDisplay->drawString(text_x, text_y + 140, displayName,
+                               Xwindow::color::Black);
+    } else {
+        theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
+                                  SQUARE_SIZE, SQUARE_SIZE, color);
+        theDisplay->drawString(text_x, text_y + 140, displayName,
+                               Xwindow::color::Black);
     }
 }
+
+void GraphicsDisplay::notify(FireWall &firewall) {
+    renderSquare(firewall.getCoords().getX(), firewall.getCoords().getY(), firewall.getOwner().getPlayerName() == "Player 1" ? "m" : "w", Xwindow::color::Firewall);
+}
+
 
 void GraphicsDisplay::notify(Link &link) {
     std::cout << "notify link" << std::endl;
@@ -160,7 +190,7 @@ void GraphicsDisplay::notify(Link &link) {
     if (x == -1 || y == -1) {
         return;
     }
-    renderSquare(x, y, link);
+    renderSquare(x, y, link.getDisplayName());
 }
 
 void GraphicsDisplay::init(GameBoard &gb) {
@@ -172,18 +202,18 @@ void GraphicsDisplay::init(GameBoard &gb) {
             if (y % 2) {
                 theDisplay->fillRectangle(
                     SQUARE_SIZE * x, SQUARE_SIZE * y + 150, SQUARE_SIZE,
-                    SQUARE_SIZE, x % 2 ? Xwindow::SkyBlue : Xwindow::RoyalBlue);
+                    SQUARE_SIZE, x % 2 ? Xwindow::color::SkyBlue : Xwindow::color::RoyalBlue);
             } else {
                 theDisplay->fillRectangle(
                     SQUARE_SIZE * x, SQUARE_SIZE * y + 150, SQUARE_SIZE,
-                    SQUARE_SIZE, x % 2 ? Xwindow::RoyalBlue : Xwindow::SkyBlue);
+                    SQUARE_SIZE, x % 2 ? Xwindow::color::RoyalBlue : Xwindow::color::SkyBlue);
             }
         }
     }
     for (size_t i = 0; i < sp.size(); i++) {
         int x = sp[i].getCoords().getX();
         int y = sp[i].getCoords().getY();
-        renderSquare(x, y, sp[i]);
+        renderSquare(x, y, sp[i].getDisplayName());
     }
 
     // Player &p1 = *(this->gb->getPlayers())[this->gb->getCurrPlayerIndex()];

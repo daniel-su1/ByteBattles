@@ -99,8 +99,8 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                 AbilityType type = gb->getAbilityType(abilityId);
                 switch (type) {
                     case AbilityType::FIREWALL: 
-                    case AbilityType::WALLWALL:
-                    case AbilityType::HAZEOFWAR: {
+                    case AbilityType::WALL:
+                    case AbilityType::HAZE: {
                         int xCoord, yCoord;
                         if (in >> xCoord && in >> yCoord) {
                             gb->useAbility(abilityId, xCoord, yCoord);
@@ -136,7 +136,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                 string errorMsg = "Error, please use one of the following commands:\n";
                 errorMsg += "\tmove a <dir> where a is a link name (a-g or A-G)\n";
                 errorMsg += "\tabilities\n";
-                errorMsg += "\tability <N> <x> <y> (FireWall, WallWall, HazeOfWar) or ability <N> <linkName> (others)\n";
+                errorMsg += "\tability <N> <x> <y> (FireWall, Wall, Haze) or ability <N> <linkName> (others)\n";
                 errorMsg += "\tboard\n";
                 errorMsg += "\tsequence <file>\n";
                 errorMsg += "\tquit\n";                 
