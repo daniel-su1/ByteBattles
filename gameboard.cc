@@ -1,5 +1,4 @@
 #include "gameboard.h"
-
 #include "abilitycards/bomb.h"
 #include "abilitycards/download.h"
 #include "abilitycards/hazeofwar.h"
@@ -163,6 +162,10 @@ void GameBoard::battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2) {
     }
 }
 
+void revealLink(Link& l) {
+
+}
+
 // interaction commands
 // ——————————————
 
@@ -215,6 +218,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                 edgeCoords[i].getOwner().getPlayerName()) {
                 downloadIdentity(l, &newOwner);
                 if (graphicsEnabled) gd->notify(*this);
+                return;
             } else {
                 throw(
                     logic_error("Error: Illegal Move - you cannot move your "
@@ -240,6 +244,7 @@ void GameBoard::moveLink(string linkName, string direction) {
             }
         }
     }
+
     // checking if moved onto one's own server ports / into opponents
     for (size_t i = 0; i < serverPorts.size(); i++) {
         Coords serverPortCoord = serverPorts[i].getCoords();
@@ -253,6 +258,17 @@ void GameBoard::moveLink(string linkName, string direction) {
                 startNewTurn();
                 if (graphicsEnabled) gd->notify(*this);
                 return;
+            }
+        }
+    }
+
+    // check if moved onto firewall
+    for (size_t i = 0; i < activeFirewalls.size(); i++) {
+        FireWall currFireWall = activeFirewalls[i];
+        Coords fireWallCoords = currFireWall.getCoords();
+        if (newCoord == fireWallCoords) {
+            if (&currFireWall.getOwner() != &l->getOwner()) {
+                // if firewall isn't owned by the link's owner, reveal the link and download if virus
             }
         }
     }
@@ -287,6 +303,8 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
 
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
     ac->activate(xCoord, yCoord);
+    cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
+    cout << " was used at (" << to_string(xCoord) << "," << to_string(yCoord) << ")." << endl;
 }
 
 // for remaining abilities
@@ -302,6 +320,8 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
     Link& link = *findLink(linkName, allLinks);
     ac->activate(link);
+    cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
+    cout << " was used on link " << linkName << "." << endl;
 }
 
 // setters
