@@ -5,7 +5,7 @@
 class Download: public AbilityCard {
     public:
     void activate(Link& l) override;
-    Download(int abilityID, Player &owner, string displayName);
+    Download(int abilityID, Player &owner, string displayName, GameBoard* gb);
 };
 
 #endif

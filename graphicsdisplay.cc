@@ -38,7 +38,7 @@ void GraphicsDisplay::drawPlayerInfoCircle(int x, int y, string info,
 
 void GraphicsDisplay::notify(Player &p) {
     bool player = false;
-    if (p.getPlayerName() == "Player 1") {
+    if (p.getPlayerName() == gb->P1_NAME) {
         player = true;
     }
     if(justOnAbilities){
@@ -122,7 +122,7 @@ void GraphicsDisplay::drawAbilityCard(int x, int y, Xwindow::color color, int nu
 void GraphicsDisplay::renderAbilityCards(Player &p) {
     justOnAbilities = true;
     bool player = false;
-    if (p.getPlayerName() == "Player 1") {
+    if (p.getPlayerName() == gb->P1_NAME) {
         player = true;
     }
     theDisplay->drawFilledRoundedRectangle(
@@ -175,7 +175,7 @@ void GraphicsDisplay::renderAbilityCards(Player &p) {
 
 void GraphicsDisplay::renderPlayerInfo(Player &p) {
     bool player = false;
-    if (p.getPlayerName() == "Player 1") {
+    if (p.getPlayerName() == gb->P1_NAME) {
         player = true;
     }
     vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
@@ -262,7 +262,9 @@ void GraphicsDisplay::renderSquare(int x, int y, string displayName,
 
 void GraphicsDisplay::notify(FireWall &firewall) {
     renderSquare(firewall.getCoords().getX(), firewall.getCoords().getY(),
-                 firewall.getOwner().getPlayerName() == "Player 1" ? "m" : "w",
+                 (firewall.getOwner().getPlayerName() == gb->P1_NAME)
+                     ? gb->FIREWALL_P1_STR
+                     : gb->FIREWALL_P2_STR,
                  Xwindow::color::Firewall);
 }
 
@@ -279,6 +281,8 @@ void GraphicsDisplay::notify(Link &link) {
                 owner = i.getOwner().getPlayerName();
             }
     }
+    
+
     if(firewall){
         renderSquare(prevX, prevY, owner == "Player 1" ? "m" : "w", Xwindow::color::Firewall);
     }
@@ -286,7 +290,7 @@ void GraphicsDisplay::notify(Link &link) {
         drawBoardSquare(link.getPreviousCoords().getX(),
                         link.getPreviousCoords().getY());
     }
-    
+
     if (x == -1 || y == -1) {
         return;
     }
