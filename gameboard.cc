@@ -182,12 +182,14 @@ string GameBoard::revealIdentity(Link& link) {
 void GameBoard::moveLink(string linkName, string direction) {
     shared_ptr<Link> l;
     Direction dir = Direction::Up;
-    Player& p = *players[currPlayerIndex];
+    Player& currPlayer = *players[getCurrPlayerIndex()];
+    Player& nextPlayer = *players[getNextPlayerIndex()];
 
     // find the link with name linkName owned by current player
-    vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(p));
+    vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(currPlayer));
     l = findLink(linkName, playerLinks);
 
+    // set new coords
     int newX = l->getCurrCoords().getX();
     int newY = l->getCurrCoords().getY();
     int stepSize = l->getStepSize();
@@ -206,6 +208,7 @@ void GameBoard::moveLink(string linkName, string direction) {
     } else {
         throw(logic_error("Error: Not a valid move direction!\n"));
     }
+
     // ———————— checking move legality ——————— //
     Coords newCoord{newX, newY};
 
@@ -217,14 +220,12 @@ void GameBoard::moveLink(string linkName, string direction) {
                             "off this edge!\n"));
         }
     }
-    Player& currPlayer = *players[getCurrPlayerIndex()];
-    Player& newOwner = *players[getNextPlayerIndex()];
 
     // checking if moved into winning edge pieces
     for (size_t i = 0; i < edgeCoords.size(); i++) {
         Coords edgeCoord = edgeCoords[i].getCoords();
         if (newCoord == edgeCoord) {
-            if (newOwner.getPlayerName() !=
+            if (nextPlayer.getPlayerName() !=
                 edgeCoords[i].getOwner().getPlayerName()) {
                 downloadLink(l, &currPlayer);
                 if (graphicsEnabled) gd->notify(*this);
@@ -237,7 +238,26 @@ void GameBoard::moveLink(string linkName, string direction) {
         }
     }
 
-    // checking if moved on top of own piece
+    // check if moved onto firewall
+    for (size_t i = 0; i < activeFirewalls.size(); i++) {
+        FireWall currFireWall = activeFirewalls[i];
+        Coords fireWallCoords = currFireWall.getCoords();
+        if (newCoord == fireWallCoords) {
+            if (&currFireWall.getOwner() != &l->getOwner()) {
+                // if firewall isn't owned by the link's owner, reveal the link
+                // and download if virus
+                cout << "Firewall passed!" << endl;
+                if (l->getType() == LinkType::virus) {
+                    downloadLink(l, &(*players[currPlayerIndex]));
+                } else {
+                    cout << "Identity revealed for " << l->getDisplayName() << ":" << endl;
+                    cout << revealIdentity(*l) << endl;
+                }
+            }
+        }
+    }
+
+    // checking if moved on top of another piece
     for (size_t i = 0; i < allLinks.size(); i++) {
         Coords pieceCoords = allLinks[i]->getCurrCoords();
         if (newCoord == pieceCoords) {
@@ -268,18 +288,6 @@ void GameBoard::moveLink(string linkName, string direction) {
                 startNewTurn();
                 if (graphicsEnabled) gd->notify(*this);
                 return;
-            }
-        }
-    }
-
-    // check if moved onto firewall
-    for (size_t i = 0; i < activeFirewalls.size(); i++) {
-        FireWall currFireWall = activeFirewalls[i];
-        Coords fireWallCoords = currFireWall.getCoords();
-        if (newCoord == fireWallCoords) {
-            if (&currFireWall.getOwner() != &l->getOwner()) {
-                // if firewall isn't owned by the link's owner, reveal the link
-                // and download if virus
             }
         }
     }
