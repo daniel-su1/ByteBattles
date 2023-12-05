@@ -22,6 +22,8 @@ using namespace std;
 
 class QuitProgram : public exception {};
 
+class Won: public exception {};
+
 void parseArgs(int argc, char* argv[], vector<string>& abilities, vector<vector<string>>& links, bool& graphicsEnabled) {
     const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <file> -graphics\n";
     for (int i = 1; i < argc; i++) {
@@ -69,6 +71,17 @@ void parseArgs(int argc, char* argv[], vector<string>& abilities, vector<vector<
 unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSequence = false) {
     string cmd;
     while (in >> cmd) {
+        if (gb->getIsWon()) {
+            std::vector<std::shared_ptr<Player>> players = gb->getPlayers();
+            cout << "WINNER: ";
+            for (size_t i = 0; i < players.size(); i++) {
+                if (players[i]->isWon()) {
+                    cout << players[i]->getPlayerName() << endl;
+                }
+            }
+            throw QuitProgram();
+        }
+
         try {
             if (cmd == "move") {
                 // the next inputs should be the name of the link (a-g, A-G) followed by its direction (up, down, left, right)
@@ -133,6 +146,17 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
                     throw (logic_error(errorMsg));
                 }
             }
+          if (gb->getIsWon()) {
+            std::vector<std::shared_ptr<Player>> players = gb->getPlayers();
+            cout << "WINNER";
+            for (size_t i = 0; i < players.size(); i++) {
+                if (players[i]->isWon()) {
+                    cout << players[i]->getPlayerName() << endl;
+                }
+            }
+            throw QuitProgram();
+        }
+
         } catch (invalid_argument& err) {
             throw;
         } catch (logic_error& e) {
@@ -207,6 +231,9 @@ int main(int argc, char* argv[]) {
     } catch (invalid_argument& e) { // if the text commands are incorrect
         cerr << e.what();
     } catch (QuitProgram& q) {
+        gd = nullptr;
         return 0; // exit program on quit command
+    } catch (Won &w) {
+        return 0;
     }
 }

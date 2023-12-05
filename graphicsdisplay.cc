@@ -10,7 +10,9 @@ GraphicsDisplay::GraphicsDisplay(){
 
 }
 
-GraphicsDisplay::~GraphicsDisplay() { delete theDisplay; }
+GraphicsDisplay::~GraphicsDisplay() {
+    //  delete theDisplay; 
+     }
 
 void GraphicsDisplay::drawBoardSquare(int x, int y) {
     int color = (y % 2) ? ((x % 2) ? Xwindow::SkyBlue : Xwindow::RoyalBlue)

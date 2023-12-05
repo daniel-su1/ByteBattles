@@ -30,8 +30,8 @@ GameBoard::GameBoard()
       activeFirewalls() {}
 
 GameBoard::~GameBoard() {
-    delete td;
-    if (graphicsEnabled) delete gd;
+    // delete td;
+    // if (graphicsEnabled) delete gd;
 }
 
 ostream& operator<<(ostream& out, const GameBoard& gb) {
@@ -125,15 +125,26 @@ void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player* player) {
     } else if (linkType == "Virus") {
         player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
     }
-    link1->setIdentityRevealed(true);
+    if (player->getNumDataDownloads() == 4) {
+        player->setIsWon(true);
+    } 
+    if (player->getNumVirusDownloads() == 4) {
+        for (size_t i = 0; i < players.size(); i++) {
+            if (players[i]->getPlayerName() != player->getPlayerName()) {
+                player->setIsWon(true);
+            }
+        }
+    }
+
     td->notify(*link1);
     if (graphicsEnabled) gd->notify(*link1);
 }
 
 void GameBoard::startNewTurn() {
-    if (winnerIndex != INVALID_PLAYER) {
-        isWon = true;  // where do we check this lol TODO: check if christina
-                       // did this already
+    for (size_t i = 0; i < players.size(); i++) {
+        if (players[i]->isWon()) {
+            isWon = true;
+        }
     }
     currPlayerIndex = getNextPlayerIndex();
     currPlayerAbilityPlayed = false;
