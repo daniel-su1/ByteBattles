@@ -4,6 +4,8 @@
 using namespace std;
 
 void Download::activate(Link& l) {
+    usedAbility = true;
+    owner->abilityUsed(); // decrease abilityCount for displays
     gb->downloadLink(l);
 }
 
