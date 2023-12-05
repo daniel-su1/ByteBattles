@@ -325,13 +325,14 @@ void GameBoard::useAbility(int abilityID, string linkName) {
             logic_error("Error: an ability has already been used this turn. "
                         "Please move a link to proceed."));
     }
-    currPlayerAbilityPlayed = true;
 
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
     Link& link = *findLink(linkName, allLinks);
     ac->activate(link);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used on link " << linkName << "." << endl;
+    
+    currPlayerAbilityPlayed = true;
 }
 
 // setters
@@ -344,7 +345,7 @@ void GameBoard::setGraphicsDisplay(GraphicsDisplay* gd) {
 
 void GameBoard::setLinks(unique_ptr<vector<string>> linkPlacements,
                          shared_ptr<Player> player) {
-    bool isPlayer1 = player->getPlayerName() == "Player 1";
+    bool isPlayer1 = player->getPlayerName() == P1_NAME;
     int xCoord = 0;
     int yCoord = isPlayer1 ? 0 : BOARD_SIZE - 1;
     char name = isPlayer1 ? 'a' : 'A';

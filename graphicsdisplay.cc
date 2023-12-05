@@ -36,7 +36,7 @@ void GraphicsDisplay::drawPlayerInfoCircle(int x, int y, string info,
 
 void GraphicsDisplay::notify(Player &p) {
     bool player = false;
-    if (p.getPlayerName() == "Player 1") {
+    if (p.getPlayerName() == gb->P1_NAME) {
         player = true;
     }
     theDisplay->drawRoundedRectangle(
@@ -81,7 +81,7 @@ void GraphicsDisplay::notify(Player &p) {
 
 void GraphicsDisplay::renderAbilityCards(Player &p){
     bool player = false;
-    if (p.getPlayerName() == "Player 1") {
+    if (p.getPlayerName() == gb->P1_NAME) {
         player = true;
     }
     theDisplay->drawFilledRoundedRectangle(
@@ -96,7 +96,7 @@ void GraphicsDisplay::renderAbilityCards(Player &p){
 
 void GraphicsDisplay::renderPlayerInfo(Player &p) {
     bool player = false;
-    if (p.getPlayerName() == "Player 1") {
+    if (p.getPlayerName() == gb->P1_NAME) {
         player = true;
     }
     vector<shared_ptr<Link>> playerLinks = *gb->getPlayerLinks(p);
@@ -177,7 +177,7 @@ void GraphicsDisplay::renderSquare(int x, int y, string displayName, Xwindow::co
 }
 
 void GraphicsDisplay::notify(FireWall &firewall) {
-    renderSquare(firewall.getCoords().getX(), firewall.getCoords().getY(), firewall.getOwner().getPlayerName() == "Player 1" ? "m" : "w", Xwindow::color::Firewall);
+    renderSquare(firewall.getCoords().getX(), firewall.getCoords().getY(), (firewall.getOwner().getPlayerName() == gb->P1_NAME) ? gb->FIREWALL_P1_STR : gb->FIREWALL_P2_STR, Xwindow::color::Firewall);
 }
 
 

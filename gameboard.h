@@ -40,6 +40,8 @@ class GameBoard : public Subject {
 
    public:
     const int PLAYER_COUNT = 2;
+    const string P1_NAME = "Player 1";
+    const string P2_NAME = "Player 2";
     const int INVALID_PLAYER = -1;
     const int ABILITY_COUNT = 5;
 
@@ -48,9 +50,13 @@ class GameBoard : public Subject {
     const int BOARD_SIZE = 8;
     const int SP_X_COORD_1 = 3;
     const int SP_X_COORD_2 = 4;
+
     const string SP_DISPLAY_STR = "S";
     const string DATA_DISPLAY_STR = "D";
     const string VIRUS_DISPLAY_STR = "V";
+    const string FIREWALL_P1_STR = "m";
+    const string FIREWALL_P2_STR = "w";
+    
     const string BORDER_DISPLAY_STR = "=";
 
     GameBoard();
