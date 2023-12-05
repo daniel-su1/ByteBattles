@@ -70,7 +70,7 @@ class GameBoard : public Subject {
     void startNewTurn();
     void downloadLink(Link& link1, Player *player = nullptr);
     void updateIdentity(Link& link);
-    string revealIdentity(Link& link);
+    void revealIdentity(Link& link);
 
     // text command interactions
     void moveLink(string linkName, string direction);

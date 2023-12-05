@@ -116,7 +116,7 @@ void GameBoard::downloadLink(Link& link1, Player* player) {
     }
     cout << player->getPlayerName() << " has downloaded "
          << link1.getDisplayName() << ":" << endl;
-    cout << revealIdentity(link1) << endl;
+    revealIdentity(link1);
     link1.setDownloaded(true);
     link1.downloadLink();
     if (link1.getType() == LinkType::data) {
@@ -168,11 +168,11 @@ void GameBoard::battlePieces(Link& link1, Link& link2) {
     }
 }
 
-string GameBoard::revealIdentity(Link& link) {
+void GameBoard::revealIdentity(Link& link) {
     string linkType = (link.getType() == LinkType::virus) ? "Virus" : "Data";
-    string out = "A " + linkType + " of strength " + to_string(link.getStrength()) + ".";
+    string out = link.getDisplayName() + " is a " + linkType + " of strength " + to_string(link.getStrength()) + ".";
     link.setIdentityRevealed(true);
-    return out;
+    cout << out << endl;
 }
 
 // interaction commands
@@ -249,7 +249,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                     downloadLink(l, &(*players[currPlayerIndex]));
                 } else {
                     cout << "Identity revealed for " << l.getDisplayName() << ":" << endl;
-                    cout << revealIdentity(l) << endl;
+                    revealIdentity(l);
                 }
             }
         }
@@ -449,7 +449,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
         } else if (c == 'S') {
             string displayName = "Scan";
             allAbilityCards.emplace_back(
-                make_shared<Scan>(id, *player, displayName));
+                make_shared<Scan>(id, *player, displayName, this));
         } else if (c == 'W') {
             string displayName = "Wall";
             allAbilityCards.emplace_back(
