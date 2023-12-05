@@ -24,6 +24,7 @@ class GraphicsDisplay : public Observer {
     void notify(GameBoard &gb) override;
     void init(GameBoard &gb);
     void notify(Player &p);
+    void notify(Firewall &firewall);
 };
 
 #endif

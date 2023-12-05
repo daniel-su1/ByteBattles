@@ -24,7 +24,13 @@ void TextDisplay::notify(GameBoard &gb) {
     myGb = &gb;
 }
 
-void TextDisplay::init(GameBoard& gb) {
+void TextDisplay::notify(FireWall& firewall) {
+  int x = firewall.getCoords().getX();
+  int y = firewall.getCoords().getY();
+  theDisplay[y][x] = 'm';
+}
+
+void TextDisplay::init(GameBoard &gb) {
     myGb = &gb;
     vector<ServerPort> sp = gb.getServerPort();
     for (size_t i = 0; i < sp.size(); i++) {

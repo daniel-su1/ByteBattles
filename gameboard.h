@@ -54,8 +54,9 @@ class GameBoard: public Subject {
         ~GameBoard();
         friend ostream &operator<<(ostream &out, const GameBoard &gb);
         void notifyObservers() override;
+        void notifyObservers(FireWall firewall);
 
-        void init();
+            void init();
         // void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO: same as movePiece for useAbility()
         void movePiece(shared_ptr<Link> link, Direction dir); // TODO: possibly move to private or delete bc of moveLink() below
         void battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2);

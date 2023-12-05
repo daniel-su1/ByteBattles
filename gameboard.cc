@@ -44,6 +44,11 @@ void GameBoard::notifyObservers() {
     if (graphicsEnabled) gd->notify(*this);
 }
 
+void GameBoard::notifyObservers(FireWall firewall) {
+    td->notify(firewall);
+    // if (graphicsEnabled) gd->notify(firewall);
+}
+
 void GameBoard::init() {
     // reset
     td = nullptr;
@@ -436,13 +441,16 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
 
 bool GameBoard::checkSquareOccupancy(int x, int y){
     for (auto i : allLinks) {
-        if(i->getCurrCoords().getX() == card.get)
+        if(i->getCurrCoords().getX() == x && i->getCurrCoords().getY() == y){
+            throw std::logic_error("Error: please place on empty square");
+        }
     }
 }
 
 void GameBoard::addFireWall(FireWall firewall) {
+    checkSquareOccupancy(firewall.getCoords().getX(), firewall.getCoords().getY());
     activeFirewalls.emplace_back(firewall);
-    notifyObservers();
+    notifyObservers(firewall);
 }
 
 // getters:

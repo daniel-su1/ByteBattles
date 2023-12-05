@@ -71,6 +71,8 @@ void GraphicsDisplay::notify(Player &p) {
     }
 }
 
+
+
 void GraphicsDisplay::renderPlayerInfo(Player p) {
     std::cout <<"renderplayerinfo" << std::endl;
     bool player = false;
@@ -124,23 +126,21 @@ void GraphicsDisplay::renderPlayerInfo(Player p) {
 }
 
 void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
-    std::cout << "rendersquare" << std::endl;
     const int BUFFER_SIZE = 23;
     int text_x = SQUARE_SIZE * x + BUFFER_SIZE;
     int text_y = SQUARE_SIZE * y + SQUARE_SIZE / 2 + BUFFER_SIZE;
     theDisplay->setLargerFont("courier34r");
     string displayName = gp.getDisplayName();
-    std::cout << "dis" << displayName << endl;
     if(gb == nullptr){
         std::cout << "null" << endl;
     }
-    std::cout << "sp" << gb->SP_DISPLAY_STR << endl;
     if (displayName == gb->SP_DISPLAY_STR) {  // server ports
         theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
                                   SQUARE_SIZE, SQUARE_SIZE, Xwindow::Yellow);
         theDisplay->drawString(text_x, text_y + 140, displayName,
                                Xwindow::Black);
-    } else {
+    } 
+    else {
         drawBoardSquare(x, y);
         theDisplay->fillCircle(SQUARE_SIZE * x + (SQUARE_SIZE / 2),
                                SQUARE_SIZE * y + 150 + (SQUARE_SIZE / 2),
@@ -148,6 +148,11 @@ void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
         theDisplay->drawString(text_x, text_y + 140, displayName);
     }
 }
+
+void GraphicsDisplay::notify(Firewall &firewall) {
+    
+}
+
 
 void GraphicsDisplay::notify(Link &link) {
     std::cout << "notify link" << std::endl;
