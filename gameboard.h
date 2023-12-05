@@ -34,6 +34,7 @@ class GameBoard: public Subject {
     vector<EdgeCoord> edgeCoords;
     vector<ServerPort> serverPorts;
     vector<FireWall> activeFirewalls;
+    vector<HazeOfWar> activeHazes;
     
     public:
         const int PLAYER_COUNT = 2;

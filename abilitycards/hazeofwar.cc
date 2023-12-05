@@ -6,5 +6,10 @@ void HazeOfWar::activate(int x, int y) {
     cout << "HAZEOFWAR!!" << endl; 
 }
 
-HazeOfWar::HazeOfWar(int abilityID, Player &owner, string displayName):
-    AbilityCard(abilityID, owner, displayName, AbilityType::HAZEOFWAR, nullptr) {}
+Coords HazeOfWar::getCoords() {
+    return coords;
+}
+
+HazeOfWar::HazeOfWar(int abilityID, Player &owner, string displayName, GameBoard* gb):
+    AbilityCard(abilityID, owner, displayName, AbilityType::HAZEOFWAR, gb),
+    coords{Coords(-100,-100)} {}
