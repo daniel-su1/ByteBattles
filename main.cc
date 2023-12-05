@@ -128,7 +128,10 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb,
                 }
             } else if (cmd == "board") {
                 cout << *gb;
-                if(bonusEnabled) gb->redrawPlayerInfo(gb->getCurrPlayerIndex());
+                if(bonusEnabled){
+                    gb->redrawPlayerInfo(gb->getCurrPlayerIndex());
+                    
+                }
             } else if (cmd == "sequence") {
                 // next input should be a file name containing commands
                 string fileName;

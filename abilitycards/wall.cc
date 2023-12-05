@@ -6,9 +6,9 @@ using namespace std;
 void Wall::activate(int x, int y) {
     coords.setX(x);
     coords.setY(y);
+    gb->addWall(*this);
     usedAbility = true;
     owner->abilityUsed();  // decrease abilityCount for displays
-    gb->addWall(*this);
 }
 
 Coords Wall::getCoords() { return coords; }
