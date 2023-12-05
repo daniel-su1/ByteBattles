@@ -6,9 +6,9 @@ using namespace std;
 void FireWall::activate(int x, int y) {
     coords.setX(x);
     coords.setY(y);
-    usedAbility = true;
-    owner->abilityUsed(); // decrease abilityCount for displays
     gb->addFireWall(*this);
+    usedAbility = true;
+    owner->abilityUsed();  // decrease abilityCount for displays
 }
 
 Coords FireWall::getCoords() {

@@ -4,11 +4,10 @@
 #include <iostream>
 #include <vector>
 #include "player.h"
-#include "subject.h"
 
 class AbilityCard;
 using namespace std;
-class GamePiece: public Subject {
+class GamePiece {
     protected:
         // pointer to the player that owns the piece
         Player *owner;
@@ -24,7 +23,6 @@ class GamePiece: public Subject {
         string getDisplayName();
         // returns the avaliable ability cards
         vector<AbilityCard*>& getAppliedAbilities();
-        void notifyObservers() override;
 };
 
 #endif

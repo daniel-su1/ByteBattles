@@ -23,7 +23,7 @@ class GraphicsDisplay;
 class Wall;
 class FireWall;
 
-class GameBoard : public Subject {
+class GameBoard {
     TextDisplay* td;
     GraphicsDisplay* gd;
     vector<shared_ptr<Player>> players;
@@ -69,7 +69,7 @@ class GameBoard : public Subject {
     GameBoard();
     ~GameBoard();
     friend ostream& operator<<(ostream& out, const GameBoard& gb);
-    void notifyObservers() override;
+    void notifyObservers();
     void notifyObservers(FireWall firewall);
     void notifyObservers(Wall wall);    
     void notifyObservers(Link& link);
@@ -87,9 +87,10 @@ class GameBoard : public Subject {
     // text command interactions
     void moveLink(string linkName, string direction);
     string playerAbilities(Player& player);
+    void useAbility(int abilityId); // for moveTwice
     void useAbility(int abilityId, int xCoord,
                     int yCoord);  // for firewall and wall
-    void useAbility(int abilityID, string linkName = "");  // for remaining abilities
+    void useAbility(int abilityID, string linkName);  // for remaining abilities
     // default to empty for skip turn ability
 
     // setters
