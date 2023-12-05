@@ -16,8 +16,10 @@
 #include "window.h"
 
 using namespace std;
+
 class TextDisplay;
 class GraphicsDisplay;
+
 class GameBoard : public Subject {
     TextDisplay* td;
     GraphicsDisplay* gd;
@@ -58,23 +60,17 @@ class GameBoard : public Subject {
     void notifyObservers(FireWall firewall);
 
     void init();
-    // void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO:
-    // same as movePiece for useAbility()
-    void movePiece(shared_ptr<Link> link,
-                   Direction dir);  // TODO: possibly move to private or delete
-                                    // bc of moveLink() below
+    // void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO: same as movePiece for useAbility()
+    void movePiece(shared_ptr<Link> link, Direction dir); // TODO: possibly move to private or delete bc of moveLink() below
     void battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2);
     void startNewTurn();
-    void downloadIdentity(shared_ptr<Link> link1, Player* player);
+    void downloadIdentity(shared_ptr<Link> link1, Player *player = nullptr);
     void updateIdentity(Link& link);
     void revealLink(Link& link);
 
     // text command interactions
-    // all methods other than playerAbilities() return a string with the error
-    // message if the method fails
     void moveLink(string linkName, string direction);
-    string playerAbilities(
-        Player& player);  // unlikely to fail since there is no user input
+    string playerAbilities(Player& player);
     void useAbility(int abilityId, int xCoord,
                     int yCoord);  // for firewall, wall, haze
     void useAbility(int abilityID, string linkName);  // for remaining abilities
@@ -103,8 +99,7 @@ class GameBoard : public Subject {
     void enableGraphics();
 
    private:
-    unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(
-        Player& player);  // possibly deletable
+    unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);
     void checkSquareOccupancy(int x, int y);
     shared_ptr<Link> findLink(string linkName, vector<shared_ptr<Link>> links);
