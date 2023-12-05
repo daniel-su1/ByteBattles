@@ -56,7 +56,7 @@ class GameBoard : public Subject {
     const string VIRUS_DISPLAY_STR = "V";
     const string FIREWALL_P1_STR = "m";
     const string FIREWALL_P2_STR = "w";
-    
+
     const string BORDER_DISPLAY_STR = "=";
 
     GameBoard();
@@ -68,9 +68,9 @@ class GameBoard : public Subject {
     void init();
     void battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2);
     void startNewTurn();
-    void downloadIdentity(shared_ptr<Link> link1, Player *player = nullptr);
+    void downloadLink(shared_ptr<Link> link1, Player *player = nullptr);
     void updateIdentity(Link& link);
-    void revealLink(Link& link);
+    string revealIdentity(Link& link);
 
     // text command interactions
     void moveLink(string linkName, string direction);

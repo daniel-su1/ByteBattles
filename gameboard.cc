@@ -114,18 +114,15 @@ void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
 }
 
 // player downloads link1 (becomes the new owner)
-void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player* player) {
+void GameBoard::downloadLink(shared_ptr<Link> link1, Player* player) {
     cout << player->getPlayerName() << " has downloaded "
          << link1->getDisplayName() << ":" << endl;
-    string linkType = (link1->getType() == LinkType::virus) ? "Virus" : "Data";
-    cout << "A " << linkType << " of strength " << link1->getStrength() << "."
-         << endl;
+    cout << revealIdentity(*link1) << endl;
     link1->setDownloaded(true);
     link1->downloadLink();
-    link1->setIdentityRevealed(true);
-    if (linkType == "Data") {
+    if (link1->getType() == LinkType::data) {
         player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
-    } else if (linkType == "Virus") {
+    } else { // must be virus
         player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
     }
     if (player->getNumDataDownloads() == 4) {
@@ -164,15 +161,20 @@ void GameBoard::battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2) {
     cout << "Link " << linkp2->getDisplayName()
          << " Strength:" << linkp2->getStrength() << endl;
     if (linkp2->getStrength() > linkp1->getStrength()) {
-        downloadIdentity(linkp1, &(linkp2->getOwner()));
+        downloadLink(linkp1, &(linkp2->getOwner()));
         linkp2->setIdentityRevealed(true);
     } else {
-        downloadIdentity(linkp2, &(linkp1->getOwner()));
+        downloadLink(linkp2, &(linkp1->getOwner()));
         linkp1->setIdentityRevealed(true);
     }
 }
 
-void revealLink(Link& l) {}
+string GameBoard::revealIdentity(Link& link) {
+    string linkType = (link.getType() == LinkType::virus) ? "Virus" : "Data";
+    string out = "A " + linkType + " of strength " + to_string(link.getStrength()) + ".";
+    link.setIdentityRevealed(true);
+    return out;
+}
 
 // interaction commands
 // ——————————————
@@ -224,7 +226,7 @@ void GameBoard::moveLink(string linkName, string direction) {
         if (newCoord == edgeCoord) {
             if (newOwner.getPlayerName() !=
                 edgeCoords[i].getOwner().getPlayerName()) {
-                downloadIdentity(l, &currPlayer);
+                downloadLink(l, &currPlayer);
                 if (graphicsEnabled) gd->notify(*this);
                 return;
             } else {
@@ -262,7 +264,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                     logic_error("Error: Illegal Move - cannot move piece onto "
                                 "your own server port\n"));
             } else {  // other player downloads link
-                downloadIdentity(l, &currPlayer);
+                downloadLink(l, &currPlayer);
                 startNewTurn();
                 if (graphicsEnabled) gd->notify(*this);
                 return;
