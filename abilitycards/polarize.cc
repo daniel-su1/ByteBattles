@@ -12,7 +12,7 @@ void Polarize::activate(Link& l) {
     int prevNumData = owner->getNumDataDownloads();
     int prevNumVirus = owner->getNumVirusDownloads();
     if (l.isDownloaded()) { // update counts for player
-        if (newType = LinkType::DATA) {
+        if (newType == LinkType::DATA) {
             owner->setNumDataDownloaded(prevNumData++);
             owner->setNumVirusDownloaded(prevNumVirus--);
         } else {
@@ -21,7 +21,7 @@ void Polarize::activate(Link& l) {
         }
     } else {
         for (FireWall fw : gb->getActiveFirewalls()) {
-            if (&fw.getCoords() == &l.getCurrCoords()) {
+            if ((fw.getCoords().getX() == l.getCurrCoords().getX()) && (fw.getCoords().getY() == l.getCurrCoords().getY())) {
                 // must be a data after the polarize
                 gb->downloadLink(l, owner);
             }
