@@ -30,6 +30,7 @@ class GameBoard : public Subject {
     int winnerIndex;
     bool isWon;
     bool graphicsEnabled;
+    bool bonusEnabled;
 
     vector<Coords> boardBoundaries;
     vector<EdgeCoord> edgeCoords;
@@ -83,9 +84,9 @@ class GameBoard : public Subject {
     void setLinks(unique_ptr<vector<string>> linkPlacements,
                   shared_ptr<Player> player);
     void setAbilities(string abilities, shared_ptr<Player> player);
+    void enableBonus();
     void setGraphicsDisplay(GraphicsDisplay* gd);
     void addFireWall(FireWall firewall);
-
     // getters
     vector<shared_ptr<Player>>& getPlayers();
     unique_ptr<vector<shared_ptr<Link>>> getPlayerLinks(Player& player);
@@ -101,10 +102,13 @@ class GameBoard : public Subject {
     vector<ServerPort>& getServerPort();
     vector<FireWall>& getActiveFirewalls();
     void enableGraphics();
-
-   private:
+    bool getGraphicsEnabled();
+    void drawAbilities();
+    void redrawPlayerInfo(int index);
     unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(
         Player& player);  // possibly deletable
+
+   private:
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);
     bool checkSquareOccupancy(int x, int y);
     shared_ptr<Link> findLink(string linkName, vector<shared_ptr<Link>> links);

@@ -113,6 +113,12 @@ void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
     if (graphicsEnabled) gd->notify(*link);
 }
 
+void GameBoard::redrawPlayerInfo(int index){
+    if(graphicsEnabled){
+        gd->renderPlayerInfo(*players.at(index).get());
+    }
+}
+
 // player downloads link1 (becomes the new owner)
 void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player* player) {
     cout << player->getPlayerName() << " has downloaded "
@@ -303,6 +309,13 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used at (" << to_string(xCoord) << "," << to_string(yCoord)
          << ")." << endl;
+    if (graphicsEnabled) {
+        gd->renderPlayerInfo(ac.get()->getOwner());
+    }
+}
+
+void GameBoard::drawAbilities(){
+    gd->renderAbilityCards(*players.at(getCurrPlayerIndex()));
 }
 
 // for remaining abilities
@@ -320,6 +333,9 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     ac->activate(link);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used on link " << linkName << "." << endl;
+    if (graphicsEnabled) {
+        gd->renderPlayerInfo(ac.get()->getOwner());
+    }
 }
 
 // setters
@@ -388,6 +404,10 @@ void GameBoard::setLinks(unique_ptr<vector<string>> linkPlacements,
     }
 }
 
+void GameBoard::enableBonus(){
+    bonusEnabled = true;
+}
+
 void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     int id = 1;
 
@@ -412,15 +432,15 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
             string displayName = "Scan";
             allAbilityCards.emplace_back(
                 make_shared<Scan>(id, *player, displayName));
-        } else if (c == 'W') {
+        } else if (c == 'W' && bonusEnabled) {
             string displayName = "Wall";
             allAbilityCards.emplace_back(
                 make_shared<Wall>(id, *player, displayName));
-        } else if (c == 'B') {
+        } else if (c == 'B' && bonusEnabled) {
             string displayName = "Bomb";
             allAbilityCards.emplace_back(
                 make_shared<Bomb>(id, *player, displayName));
-        } else if (c == 'H') {
+        } else if (c == 'H' && bonusEnabled) {
             string displayName = "Haze";
             allAbilityCards.emplace_back(
                 make_shared<Haze>(id, *player, displayName));
@@ -498,6 +518,8 @@ AbilityType GameBoard::getAbilityType(int id) {
 //     }
 //     return result;
 // }
+
+bool GameBoard::getGraphicsEnabled() {return graphicsEnabled;}
 
 int GameBoard::getCurrPlayerIndex() { return currPlayerIndex; }
 

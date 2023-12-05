@@ -11,12 +11,14 @@
 class GraphicsDisplay : public Observer {
     Xwindow *theDisplay;
     GameBoard *gb;
+    bool justOnAbilities = false;
     void renderSquare(int x, int y, string displayName, Xwindow::color color = Xwindow::color::Black);
-    void renderPlayerInfo(Player &p);
     void drawBoardSquare(int x, int y);
     void drawPlayerInfoCircle(int x, int y, string info, bool isRevealed, bool virus);
+    void drawAbilityCard(int x, int y, Xwindow::color color, int number, bool used);
+    public: 
     void renderAbilityCards(Player &p);
-   public:
+    void renderPlayerInfo(Player &p);
     const int BOARD_WINDOW_SIZE = 500;
     const int SQUARE_SIZE = BOARD_WINDOW_SIZE /8;
     GraphicsDisplay(Xwindow *w);
