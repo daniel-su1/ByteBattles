@@ -13,7 +13,7 @@ Coords BoardPiece::getCurrCoords() { return currCoords; }
 
 void BoardPiece::backupStep() {
     if (prevCoords.getX() == -1 || prevCoords.getX() == -1) {
-        return;
+        throw (logic_error("Error: link cannot back up"));
     }
     Coords temp = currCoords;
     currCoords = prevCoords;

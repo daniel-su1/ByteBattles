@@ -5,7 +5,7 @@
 class Link;
 class GameBoard;
 
-enum AbilityType {LINKBOOST, FIREWALL, DOWNLOAD, POLARIZE, SCAN, WALL, BACKUP, NEXTTURN};
+enum AbilityType {LINKBOOST, FIREWALL, DOWNLOAD, POLARIZE, SCAN, WALL, BACKUP, MOVETWICE};
 
 class AbilityCard: public GamePiece {
     int abilityID;
@@ -18,6 +18,7 @@ class AbilityCard: public GamePiece {
         AbilityType getType();
         bool isUsed();
         int getAbilityId();
+        virtual void activate(); // for movetwice
         virtual void activate(int x, int y); // for firewall and wall
         virtual void activate(Link& l); // for others
 };

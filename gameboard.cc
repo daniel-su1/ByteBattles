@@ -2,7 +2,7 @@
 #include "gameboard.h"
 #include "abilitycards/backup.h"
 #include "abilitycards/download.h"
-#include "abilitycards/nextturn.h"
+#include "abilitycards/movetwice.h"
 #include "abilitycards/linkboost.h"
 #include "abilitycards/polarize.h"
 #include "abilitycards/scan.h"
@@ -153,18 +153,6 @@ void GameBoard::downloadLink(Link& link1, Player* player) {
     notifyObservers(link1);
 }
 
-void GameBoard::startNewTurn() {
-    for (size_t i = 0; i < players.size(); i++) {
-        if (players[i]->isWon()) {
-            isWon = true;
-        }
-    }
-    currPlayerIndex = getNextPlayerIndex();
-    currPlayerAbilityPlayed = false;
-    if (graphicsEnabled) gd->notify(*players[getNextPlayerIndex()]);
-    if (graphicsEnabled) gd->notify(*players[getCurrPlayerIndex()]);
-}
-
 void GameBoard::battlePieces(Link& link1, Link& link2) {
     cout << "BATTLE:" << endl;
     cout << "——————" << endl;
@@ -269,6 +257,7 @@ void GameBoard::moveLink(string linkName, string direction) {
         }
     }
 
+    // walls
     for (size_t i = 0; i < activeWalls.size(); i++) {
         Wall currWall = activeWalls[i];
         Coords wallCoords = currWall.getCoords();
@@ -289,8 +278,7 @@ void GameBoard::moveLink(string linkName, string direction) {
             } else {
                 battlePieces(l, *allLinks[i]);
                 movePiece(l, dir);
-                if (graphicsEnabled) gd->notify(*this);
-                startNewTurn();
+                endTurn();
                 return;
             }
         }
@@ -306,15 +294,14 @@ void GameBoard::moveLink(string linkName, string direction) {
                                 "your own server port\n"));
             } else {  // other player downloads link
                 downloadLink(l, &currPlayer);
-                startNewTurn();
-                if (graphicsEnabled) gd->notify(*this);
+                endTurn();
                 return;
             }
         }
     }
 
     movePiece(l, dir);
-    startNewTurn();
+    endTurn();
 }
 
 string GameBoard::playerAbilities(Player& player) {
@@ -382,21 +369,26 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     // download must be applied to an opponent's link
     std::vector<std::shared_ptr<Link>> links = allLinks;
     switch (getAbilityType(abilityID)) {
+        case AbilityType::MOVETWICE: {
+            ac->activate();
+            cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
+            cout << " was used." << endl;
+            break;
+        }
         case AbilityType::LINKBOOST: {
             links = *getPlayerLinks(*players[currPlayerIndex]);
-            break;
-        }
+        } // no breaks in linkboost and download to activate() in default clause
         case AbilityType::DOWNLOAD: {
             links = *getPlayerLinks(*players[getNextPlayerIndex()]);
-            break;
         }
         default:
-            break; // already initialized to allLinks
+            Link& link = *findLink(linkName, links);
+            ac->activate(link);
+            cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
+            cout << " was used on Link " << linkName << "." << endl;
+            break; // links are either found in above clauses or default to links
     }
-    Link& link = *findLink(linkName, links);
-    ac->activate(link);
-    cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
-    cout << " was used on Link " << linkName << "." << endl;
+
     if((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
         gd->notify(*players[getNextPlayerIndex()]);
     }
@@ -475,6 +467,10 @@ void GameBoard::enableBonus(){
     bonusEnabled = true;
 }
 
+void GameBoard::enableMoveTwice() {
+    canMoveTwice = true;
+}
+
 void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     int id = 1;
     map <char, int> abilitiesCount;
@@ -509,15 +505,15 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
             allAbilityCards.emplace_back(
                 make_shared<BackUp>(id, *player, displayName, this));
         } else if (c == 'N') {
-            string displayName = "NextTurn";
+            string displayName = "MoveTwice";
             allAbilityCards.emplace_back(
-                make_shared<NextTurn>(id, *player, displayName, this));
+                make_shared<MoveTwice>(id, *player, displayName, this));
         } else {
             string errorMsg = "Incorrect ability type: please use one of:\n";
             errorMsg +=
                 "\tL (LinkBoost)\n\tF (FireWall)\n\tD (Download)\n\tP "
                 "(Polarize)\n";
-            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (BackUp)\n\tN (NextTurn)";
+            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (BackUp)\n\tN (MoveTwice)";
             throw(logic_error(errorMsg));
         }
         id++;
@@ -643,5 +639,26 @@ shared_ptr<Link> GameBoard::findLink(string linkName,
             return link;
         }
     }
-    throw(logic_error("Link not found"));
+    throw(logic_error("Error: Link not found"));
+}
+
+void GameBoard::startNewTurn() {
+    for (size_t i = 0; i < players.size(); i++) {
+        if (players[i]->isWon()) {
+            isWon = true;
+        }
+    }
+    currPlayerIndex = getNextPlayerIndex();
+    currPlayerAbilityPlayed = false;
+    if (graphicsEnabled) gd->notify(*players[getNextPlayerIndex()]);
+    if (graphicsEnabled) gd->notify(*players[getCurrPlayerIndex()]);
+}
+
+void GameBoard::endTurn() {
+    if (graphicsEnabled) gd->notify(*this);
+    if (canMoveTwice) {
+        canMoveTwice = false;
+    } else {
+        startNewTurn();
+    }
 }
