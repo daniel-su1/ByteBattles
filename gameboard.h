@@ -62,6 +62,7 @@ class GameBoard: public Subject {
         void startNewTurn();
         void downloadIdentity(shared_ptr<Link> link1, Player *player);
         void updateIdentity(Link& link);
+        void revealLink(Link& link);
 
         // text command interactions
         // all methods other than playerAbilities() return a string with the error message if the method fails

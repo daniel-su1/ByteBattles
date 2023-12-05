@@ -157,6 +157,10 @@ void GameBoard::battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2) {
     }
 }
 
+void revealLink(Link& l) {
+
+}
+
 // interaction commands
 // ——————————————
 
@@ -209,6 +213,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                 edgeCoords[i].getOwner().getPlayerName()) {
                 downloadIdentity(l, &newOwner);
                 if (graphicsEnabled) gd->notify(*this);
+                return;
             } else {
                 throw(
                     logic_error("Error: Illegal Move - you cannot move your "
@@ -234,6 +239,7 @@ void GameBoard::moveLink(string linkName, string direction) {
             }
         }
     }
+
     // checking if moved onto one's own server ports / into opponents
     for (size_t i = 0; i < serverPorts.size(); i++) {
         Coords serverPortCoord = serverPorts[i].getCoords();
@@ -247,6 +253,17 @@ void GameBoard::moveLink(string linkName, string direction) {
                 startNewTurn();
                 if (graphicsEnabled) gd->notify(*this);
                 return;
+            }
+        }
+    }
+
+    // check if moved onto firewall
+    for (size_t i = 0; i < activeFirewalls.size(); i++) {
+        FireWall currFireWall = activeFirewalls[i];
+        Coords fireWallCoords = currFireWall.getCoords();
+        if (newCoord == fireWallCoords) {
+            if (&currFireWall.getOwner() != &l->getOwner()) {
+                // if firewall isn't owned by the link's owner, reveal the link and download if virus
             }
         }
     }
