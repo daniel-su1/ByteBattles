@@ -133,7 +133,7 @@ void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player* player) {
     if (player->getNumVirusDownloads() == 4) {
         for (size_t i = 0; i < players.size(); i++) {
             if (players[i]->getPlayerName() != player->getPlayerName()) {
-                player->setIsWon(true);
+                players[i]->setIsWon(true);
             }
         }
     }
@@ -452,7 +452,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     player->setAbilitiesSet(true);
 }
 
-bool GameBoard::checkSquareOccupancy(int x, int y) {
+void GameBoard::checkSquareOccupancy(int x, int y) {
     for (auto i : allLinks) {
         if (i->getCurrCoords().getX() == x && i->getCurrCoords().getY() == y) {
             throw std::logic_error("Error: please place on empty square");
