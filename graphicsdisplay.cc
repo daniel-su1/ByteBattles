@@ -6,8 +6,6 @@ GraphicsDisplay::GraphicsDisplay(Xwindow *w) : theDisplay{w} {
     if (w)
         theDisplay->fillRectangle(0, 0, BOARD_WINDOW_SIZE, 800,
                                   Xwindow::color::Black);
-
-    std::cout << "ctor" << std::endl;
 }
 
 GraphicsDisplay::GraphicsDisplay() {}
