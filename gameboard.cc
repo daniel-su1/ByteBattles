@@ -299,7 +299,7 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     Link& link = *findLink(linkName, allLinks);
     ac->activate(link);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
-    cout << " was used at on link " << linkName << "." << endl;
+    cout << " was used on link " << linkName << "." << endl;
 }
 
 // setters
