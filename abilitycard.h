@@ -2,6 +2,7 @@
 #define ABILITYCARD_H
 #include "gamepiece.h"
 
+class Link;
 class GameBoard;
 
 enum AbilityType {LINKBOOST, FIREWALL, DOWNLOAD, POLARIZE, SCAN, WALLWALL, BOMB, HAZEOFWAR};
@@ -17,9 +18,8 @@ class AbilityCard: public GamePiece {
         AbilityType getType();
         bool isUsed();
         int getAbilityId();
-        virtual void activate() = 0;
-        virtual void setCoords(int x, int y); // for firewall, wallwall, and hazeofwar
-        virtual void attachToPlayer(Player& p); // for others
+        virtual void activate(int x, int y); // for firewall, wallwall, and hazeofwar
+        virtual void activate(Link& l); // for others
 };
 
 #endif

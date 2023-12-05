@@ -3,7 +3,7 @@
 #include "../abilitycard.h"
 class Polarize: public AbilityCard {
     public:
-        void activate() override;
+        void activate(Link& l) override;
         Polarize(int abilityID, Player &owner, string displayName);
 };
 

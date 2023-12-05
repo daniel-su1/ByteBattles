@@ -169,26 +169,11 @@ void GameBoard::battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2) {
 void GameBoard::moveLink(string linkName, string direction) {
     shared_ptr<Link> l;
     Direction dir = Direction::Up;
-    bool notFound = true;
     Player& p = *players[currPlayerIndex];
 
     // find the link with name linkName owned by current player
     vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(p));
-    for (shared_ptr<Link> link : playerLinks) {
-        if (linkName == link->getDisplayName()) {
-            l = link;
-            if (l->isDownloaded()) {
-                throw(logic_error("This piece has already been downloaded!"));
-            }
-            notFound = false;
-        }
-    }
-
-    if (notFound) {
-        string errorMsg = "Error: " + linkName + " is not owned by " +
-                          p.getPlayerName() + ".\n";
-        throw(logic_error(errorMsg));
-    }
+    l = findLink(linkName, playerLinks);
 
     int newX = l->getCurrCoords().getX();
     int newY = l->getCurrCoords().getY();
@@ -301,8 +286,7 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     currPlayerAbilityPlayed = true;
 
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
-    ac->setCoords(xCoord, yCoord);
-    ac->activate();
+    ac->activate(xCoord, yCoord);
 }
 
 // for remaining abilities
@@ -316,7 +300,8 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     currPlayerAbilityPlayed = true;
 
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
-    ac->activate();
+    Link& link = *findLink(linkName, allLinks);
+    ac->activate(link);
 }
 
 // setters
@@ -523,4 +508,16 @@ shared_ptr<AbilityCard> GameBoard::getAbilityCard(int abilityID) {
     string errorMsg = "Error, unable to find ability card with id " + to_string(abilityID) 
         + " owned by " + currPlayer->getPlayerName() + ".\nSee all abilities with the \"abilities\" command.";
     throw (logic_error(errorMsg));
+}
+
+shared_ptr<Link> GameBoard::findLink(string linkName, vector<shared_ptr<Link>> links) {
+    for (shared_ptr<Link> link : links) {
+        if (linkName == link->getDisplayName()) {
+            if (link->isDownloaded()) {
+                throw(logic_error("This piece has already been downloaded!"));
+            }
+            return link;
+        }
+    }
+    throw(logic_error("Link not found"));
 }

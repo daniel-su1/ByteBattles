@@ -3,15 +3,12 @@
 
 using namespace std;
 
-void FireWall::activate() {
+void FireWall::activate(int x, int y) {
+    coords.setX(x);
+    coords.setY(y);
     usedAbility = true;
     owner->abilityUsed(); // decrease abilityCount for displays
     gb->addFireWall(*this);
-}
-
-void FireWall::setCoords(int x, int y) {
-    coords.setX(x);
-    coords.setY(y);
 }
 
 Coords FireWall::getCoords() {

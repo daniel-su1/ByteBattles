@@ -3,7 +3,7 @@
 #include "../abilitycard.h"
 class LinkBoost: public AbilityCard {
     public:
-        void activate() override;
+        void activate(Link& l) override;
         LinkBoost(int abilityID, Player &owner, string displayName);
 };
 

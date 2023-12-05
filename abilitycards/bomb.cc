@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void Bomb::activate() {
+void Bomb::activate(Link& l) {
     cout << "BOOOMB!!" << endl; 
 }
 

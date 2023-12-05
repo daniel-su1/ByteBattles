@@ -16,11 +16,11 @@ int AbilityCard::getAbilityId() {
 }
 
 // default impl for non-firewall, wallwall, or hazeofwar
-void AbilityCard::setCoords(int x, int y) {
-    cerr << "AC setCoords error: this should not run" << endl;
+void AbilityCard::activate(int x, int y) {
+    throw (logic_error("AC activate on x and y error: this should not run"));
 }
 
 // for others
-void AbilityCard::attachToPlayer(Player& p) {
-    cerr << "AC attachToPlayer error: this should not run" << endl;
+void AbilityCard::activate(Link& l) {
+    throw (logic_error("AC active on link error: this should not run"));
 }

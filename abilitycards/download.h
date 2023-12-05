@@ -4,7 +4,7 @@
 #include "../abilitycard.h"
 class Download: public AbilityCard {
     public:
-    void activate() override;
+    void activate(Link& l) override;
     Download(int abilityID, Player &owner, string displayName);
 };
 

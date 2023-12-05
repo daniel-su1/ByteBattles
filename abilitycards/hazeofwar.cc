@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void HazeOfWar::activate() {
+void HazeOfWar::activate(int x, int y) {
     cout << "HAZEOFWAR!!" << endl; 
 }
 

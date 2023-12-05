@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void WallWall::activate() {
+void WallWall::activate(Link& l) {
     cout << "WALL WALL!!" << endl; 
 }
 

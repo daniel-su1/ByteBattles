@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void Polarize::activate() {
+void Polarize::activate(Link& l) {
     cout << "Polarized beep!!" << endl; 
 }
 
