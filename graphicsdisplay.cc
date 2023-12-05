@@ -12,7 +12,9 @@ GraphicsDisplay::GraphicsDisplay(){
 
 }
 
-GraphicsDisplay::~GraphicsDisplay() { delete theDisplay; }
+GraphicsDisplay::~GraphicsDisplay() {
+    //  delete theDisplay; 
+     }
 
 void GraphicsDisplay::drawBoardSquare(int x, int y) {
     int color = (y % 2) ? ((x % 2) ? Xwindow::color::SkyBlue : Xwindow::color::RoyalBlue)
@@ -180,7 +182,6 @@ void GraphicsDisplay::notify(FireWall &firewall) {
 
 
 void GraphicsDisplay::notify(Link &link) {
-    std::cout << "notify link" << std::endl;
     int x = link.getCurrCoords().getX();
     int y = link.getCurrCoords().getY();
     drawBoardSquare(link.getPreviousCoords().getX(),

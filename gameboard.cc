@@ -27,8 +27,8 @@ GameBoard::GameBoard()
       activeFirewalls() {}
 
 GameBoard::~GameBoard() {
-    delete td;
-    if (graphicsEnabled) delete gd;
+    // delete td;
+    // if (graphicsEnabled) delete gd;
 }
 
 ostream& operator<<(ostream& out, const GameBoard& gb) {
@@ -122,20 +122,32 @@ void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player* player) {
          << endl;
     link1->setDownloaded(true);
     link1->downloadLink();
+    link1->setIdentityRevealed(true);
     if (linkType == "Data") {
         player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
     } else if (linkType == "Virus") {
         player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
     }
-    link1->setIdentityRevealed(true);
+    if (player->getNumDataDownloads() == 4) {
+        player->setIsWon(true);
+    } 
+    if (player->getNumVirusDownloads() == 4) {
+        for (size_t i = 0; i < players.size(); i++) {
+            if (players[i]->getPlayerName() != player->getPlayerName()) {
+                players[i]->setIsWon(true);
+            }
+        }
+    }
+
     td->notify(*link1);
     if (graphicsEnabled) gd->notify(*link1);
 }
 
 void GameBoard::startNewTurn() {
-    if (winnerIndex != INVALID_PLAYER) {
-        isWon = true;  // where do we check this lol TODO: check if christina
-                       // did this already
+    for (size_t i = 0; i < players.size(); i++) {
+        if (players[i]->isWon()) {
+            isWon = true;
+        }
     }
     currPlayerIndex = getNextPlayerIndex();
     currPlayerAbilityPlayed = false;
@@ -203,7 +215,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                             "off this edge!\n"));
         }
     }
-
+    Player& currPlayer = *players[getCurrPlayerIndex()];
     Player& newOwner = *players[getNextPlayerIndex()];
 
     // checking if moved into winning edge pieces
@@ -212,7 +224,7 @@ void GameBoard::moveLink(string linkName, string direction) {
         if (newCoord == edgeCoord) {
             if (newOwner.getPlayerName() !=
                 edgeCoords[i].getOwner().getPlayerName()) {
-                downloadIdentity(l, &newOwner);
+                downloadIdentity(l, &currPlayer);
                 if (graphicsEnabled) gd->notify(*this);
                 return;
             } else {
@@ -250,7 +262,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                     logic_error("Error: Illegal Move - cannot move piece onto "
                                 "your own server port\n"));
             } else {  // other player downloads link
-                downloadIdentity(l, &newOwner);
+                downloadIdentity(l, &currPlayer);
                 startNewTurn();
                 if (graphicsEnabled) gd->notify(*this);
                 return;
@@ -441,7 +453,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     player->setAbilitiesSet(true);
 }
 
-bool GameBoard::checkSquareOccupancy(int x, int y) {
+void GameBoard::checkSquareOccupancy(int x, int y) {
     for (auto i : allLinks) {
         if (i->getCurrCoords().getX() == x && i->getCurrCoords().getY() == y) {
             throw std::logic_error("Error: please place on empty square");

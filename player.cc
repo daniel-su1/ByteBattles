@@ -49,3 +49,8 @@ void Player::setLinksSet(bool isSet) {
 void Player::abilityUsed() {
     abilityCount--;
 }
+
+void Player::setIsWon(bool w) {
+    won = w;
+}
+
