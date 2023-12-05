@@ -3,7 +3,7 @@
 #include "../abilitycard.h"
 class HazeOfWar: public AbilityCard {
     public:
-        void activate() override;
+        void activate(int x, int y) override;
         HazeOfWar(int abilityID, Player &owner, string displayName);
 };
 

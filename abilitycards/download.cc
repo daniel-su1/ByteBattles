@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void Download::activate() {
+void Download::activate(Link& l) {
     cout << "DOWNLOADED!!" << endl;
 }
 

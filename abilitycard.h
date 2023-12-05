@@ -18,9 +18,8 @@ class AbilityCard: public GamePiece {
         AbilityType getType();
         bool isUsed();
         int getAbilityId();
-        virtual void activate() = 0;
-        virtual void setCoords(int x, int y); // for firewall, wallwall, and hazeofwar
-        virtual void attachToLink(Link& l); // for others
+        virtual void activate(int x, int y); // for firewall, wallwall, and hazeofwar
+        virtual void activate(Link& l); // for others
 };
 
 #endif

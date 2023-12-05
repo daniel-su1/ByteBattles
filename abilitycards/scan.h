@@ -3,7 +3,7 @@
 #include "../abilitycard.h"
 class Scan: public AbilityCard {
     public:
-        void activate() override;
+        void activate(Link& l) override;
         Scan(int abilityID, Player &owner, string displayName);
 };
 

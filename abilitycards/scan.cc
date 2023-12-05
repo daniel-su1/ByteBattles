@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void Scan::activate() {
+void Scan::activate(Link& l) {
     cout << "scaaaan!!" << endl; 
 }
 

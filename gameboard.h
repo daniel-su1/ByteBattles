@@ -94,5 +94,6 @@ class GameBoard: public Subject {
     private:
         unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player); // possibly deletable
         shared_ptr<AbilityCard> getAbilityCard(int abilityID);
+        shared_ptr<Link> findLink(string linkName, vector<shared_ptr<Link>> links);
 };
 #endif
