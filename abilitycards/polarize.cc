@@ -7,10 +7,28 @@
 using namespace std;
 
 void Polarize::activate(Link& l) {
+    l.polarize(gb->VIRUS_DISPLAY_STR, gb->DATA_DISPLAY_STR);
+    LinkType newType = l.getType();
+    int prevNumData = owner->getNumDataDownloads();
+    int prevNumVirus = owner->getNumVirusDownloads();
+    if (l.isDownloaded()) { // update counts for player
+        if (newType = LinkType::DATA) {
+            owner->setNumDataDownloaded(prevNumData++);
+            owner->setNumVirusDownloaded(prevNumVirus--);
+        } else {
+            owner->setNumDataDownloaded(prevNumData--);
+            owner->setNumVirusDownloaded(prevNumVirus++);
+        }
+    } else {
+        for (FireWall fw : gb->getActiveFirewalls()) {
+            if (&fw.getCoords() == &l.getCurrCoords()) {
+                // must be a data after the polarize
+                gb->downloadLink(l, owner);
+            }
+        }
+    }
     usedAbility = true;
     owner->abilityUsed(); // decrease abilityCount for displays
-    l.polarize(gb->VIRUS_DISPLAY_STR, gb->DATA_DISPLAY_STR);
-    gb->notifyObservers(); // TODO: fix notify
 }
 
 Polarize::Polarize(int abilityID, Player &owner, string displayName, GameBoard* gb):
