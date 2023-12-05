@@ -103,7 +103,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb,
                 in >> abilityId;
                 AbilityType type = gb->getAbilityType(abilityId);
                 switch (type) {
-                    case AbilityType::FIREWALL: 
+                    case AbilityType::FIREWALL:
                     case AbilityType::WALL: {
                         int xCoord, yCoord;
                         if (in >> xCoord && in >> yCoord) {

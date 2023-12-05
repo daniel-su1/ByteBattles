@@ -98,6 +98,10 @@ void GraphicsDisplay::drawAbilityCard(int x, int y, Xwindow::color color, int nu
             theDisplay->drawString(x, y + 30, "Firewall",
                                    Xwindow::color::White);
             break;
+        case Xwindow::color::Wall:
+            theDisplay->drawString(x + 21, y + 30, "Wall",
+                                   Xwindow::color::White);
+            break;
         case Xwindow::color::Download:
             theDisplay->drawString(x, y + 30, "Download",
                                    Xwindow::color::White);
@@ -155,7 +159,7 @@ void GraphicsDisplay::renderAbilityCards(Player &p) {
                                 i + 1, a.at(i)->isUsed());
                 break;
             case AbilityType::WALL:
-                drawAbilityCard(x, player ? 18 : 668, Xwindow::color::Scan,
+                drawAbilityCard(x, player ? 18 : 668, Xwindow::color::Wall,
                                 i + 1, a.at(i)->isUsed());
                 break;
             case AbilityType::BOMB:
@@ -252,6 +256,12 @@ void GraphicsDisplay::renderSquare(int x, int y, string displayName,
                                   Xwindow::color::Yellow);
         theDisplay->drawString(text_x, text_y + 140, displayName,
                                Xwindow::color::Black);
+    } else if (displayName == "X") {  // wall
+        theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
+                                  SQUARE_SIZE, SQUARE_SIZE,
+                                  Xwindow::color::Wall);
+        theDisplay->drawString(text_x, text_y + 140, displayName,
+                               Xwindow::color::White);
     } else {
         theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
                                   SQUARE_SIZE, SQUARE_SIZE, color);
@@ -268,12 +278,21 @@ void GraphicsDisplay::notify(FireWall &firewall) {
                  Xwindow::color::Firewall);
 }
 
+void GraphicsDisplay::notify(Wall &wall) {
+    renderSquare(wall.getCoords().getX(), wall.getCoords().getY(),
+                 (wall.getOwner().getPlayerName() == gb->P1_NAME)
+                     ? gb->WALL_STR
+                     : gb->WALL_STR,
+                 Xwindow::color::Wall);
+}
+
 void GraphicsDisplay::notify(Link &link) {
     int x = link.getCurrCoords().getX();
     int y = link.getCurrCoords().getY();
     int prevX = link.getPreviousCoords().getX();
     int prevY = link.getPreviousCoords().getY();
     bool firewall = false;
+    bool wall = false;
     string owner = "";
     for(auto i:gb->getActiveFirewalls()){
         if (i.getCoords().getX() == prevX && i.getCoords().getY() == prevY){
@@ -281,10 +300,19 @@ void GraphicsDisplay::notify(Link &link) {
                 owner = i.getOwner().getPlayerName();
             }
     }
-    
+    for (auto i : gb->getActiveWalls()) {
+        if (i.getCoords().getX() == prevX && i.getCoords().getY() == prevY) {
+            wall = true;
+            owner = i.getOwner().getPlayerName();
+        }
+    }
 
     if(firewall){
         renderSquare(prevX, prevY, owner == "Player 1" ? "m" : "w", Xwindow::color::Firewall);
+    }
+    if(wall){
+        renderSquare(prevX, prevY, "X",
+                     Xwindow::color::Wall);
     }
     else{
         drawBoardSquare(link.getPreviousCoords().getX(),

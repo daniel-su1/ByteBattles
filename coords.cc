@@ -1,5 +1,6 @@
 #include "coords.h"
 Coords::Coords(int x, int y): x{x}, y{y} {}
+Coords::Coords(){}
 
 int Coords::getX() {
     return x;

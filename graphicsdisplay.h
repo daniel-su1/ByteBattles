@@ -4,9 +4,12 @@
 #include <vector>
 
 #include "abilitycards/firewall.h"
+#include "abilitycards/wall.h"
 #include "gameboard.h"
 #include "observer.h"
 #include "window.h"
+class GameBoard;
+class Wall;
 
 class GraphicsDisplay : public Observer {
     Xwindow *theDisplay;
@@ -29,6 +32,7 @@ class GraphicsDisplay : public Observer {
     void init(GameBoard &gb);
     void notify(Player &p);
     void notify(FireWall &firewall);
+    void notify(Wall &wall);
 };
 
 #endif

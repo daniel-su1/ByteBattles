@@ -10,7 +10,7 @@ class Xwindow {
     Window w;
     int s;
     GC gc;
-    unsigned long colours[20];
+    unsigned long colours[23];
 
    public:
     Xwindow(int width = 500,
@@ -37,7 +37,8 @@ class Xwindow {
         Download,
         Polarize,
         Scan,
-        Grey
+        Grey,
+        Wall
     };  // Available colours.
 
     // Draws a rectangle

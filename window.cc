@@ -150,12 +150,13 @@ Xwindow::Xwindow(int width, int height) {
     // Set up colours.
     XColor xcolour;
     Colormap cmap = DefaultColormap(d, DefaultScreen(d));
-    static const int NumColors = 20;
+    static const int NumColors = 23;
     char color_vals[NumColors][20] = {
         "white",       "black",   "red",       "green",    "blue",
         "#FFD800",     "cyan",    "magenta",   "SkyBlue1", "RoyalBlue1",
         "chartreuse1", "DarkRed", "DarkGreen", "#000C2F",  "#00CAC3",
-        "#E87B2B",     "#32B000", "#3C005B",   "#AC0000",   "#B0B0B0"};
+        "#E87B2B",     "#32B000", "#3C005B",   "#AC0000",  "#B0B0B0",
+        "#001260"};
 
     cmap = DefaultColormap(d, DefaultScreen(d));
     for (int i = 0; i < NumColors; ++i) {
