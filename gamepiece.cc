@@ -12,10 +12,3 @@ Player& GamePiece::getOwner() {
 }
 
 void GamePiece::attachPlayer(Player* p) { owner = p; }
-
-void GamePiece::notifyObservers() {
-    std::cout << "called notify." << std::endl;
-    for (Observer* ob: observers) {
-        std::cout << "calling observers" << std::endl;
-    }
-}

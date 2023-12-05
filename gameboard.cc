@@ -65,10 +65,8 @@ void GameBoard::init() {
     serverPorts.clear();
     activeFirewalls.clear();
     activeWalls.clear();
-    observers.clear();
-
+    
     td = new TextDisplay;
-    observers = std::vector<Observer*>();
 
     // intialize players
     for (int i = 1; i <= PLAYER_COUNT; i++) {
@@ -318,6 +316,14 @@ string GameBoard::playerAbilities(Player& player) {
     return (message + "\n");
 }
 
+// movetwice
+void GameBoard::useAbility(int abilityId) {
+    shared_ptr<AbilityCard> ac = getAbilityCard(abilityId);
+    ac->activate();
+    cout << "Ability #" << to_string(abilityId) << ". " << ac->getDisplayName();
+    cout << "was used." << endl;
+}
+
 // for firewall, wall
 void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     // max one ability per turn
@@ -369,27 +375,24 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     // download must be applied to an opponent's link
     std::vector<std::shared_ptr<Link>> links = allLinks;
     switch (getAbilityType(abilityID)) {
-        case AbilityType::MOVETWICE: {
-            ac->activate();
-            cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
-            cout << " was used." << endl;
-            break;
-        }
         case AbilityType::LINKBOOST: {
             links = *getPlayerLinks(*players[currPlayerIndex]);
+            break;
         } // no breaks in linkboost and download to activate() in default clause
         case AbilityType::DOWNLOAD: {
             links = *getPlayerLinks(*players[getNextPlayerIndex()]);
+            break;
         }
         default:
-            Link& link = *findLink(linkName, links);
-            ac->activate(link);
-            cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
-            cout << " was used on Link " << linkName << "." << endl;
-            break; // links are either found in above clauses or default to links
+            break; 
     }
+    // links are either found in above clauses or default to allLinks
+    Link& link = *findLink(linkName, links);
+    ac->activate(link);
+    cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
+    cout << " was used on Link " << linkName << "." << endl;
 
-    if((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
+    if ((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
         gd->notify(*players[getNextPlayerIndex()]);
     }
     if (graphicsEnabled) {
