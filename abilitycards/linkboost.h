@@ -5,6 +5,7 @@ class LinkBoost: public AbilityCard {
     public:
         void activate() override;
         LinkBoost(int abilityID, Player &owner, string displayName);
+        void attachToLink(Link& l) override; // for others
 };
 
 #endif

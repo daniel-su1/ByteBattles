@@ -15,6 +15,10 @@ void Link::setDownloaded(bool d) {
     downloaded = d;
 }
 
+void Link::setStepSize(int stepSize) {
+    stepSize = stepSize;
+}
+
 bool Link::isIdentityRevealed() { return identityRevealed; }
 
 LinkType Link::getType() { return type; }
