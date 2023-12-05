@@ -22,8 +22,6 @@ using namespace std;
 
 class QuitProgram : public exception {};
 
-class Won: public exception {};
-
 void parseArgs(int argc, char* argv[], vector<string>& abilities, vector<vector<string>>& links, bool& graphicsEnabled) {
     const string ARG_ERROR_MSG = "Error, please use the argument options: -ability1 <order>, -ability2 <order>, -link1 <placement-file>, link2 <file> -graphics\n";
     for (int i = 1; i < argc; i++) {
@@ -231,9 +229,6 @@ int main(int argc, char* argv[]) {
     } catch (invalid_argument& e) { // if the text commands are incorrect
         cerr << e.what();
     } catch (QuitProgram& q) {
-        gd = nullptr;
         return 0; // exit program on quit command
-    } catch (Won &w) {
-        return 0;
     }
 }

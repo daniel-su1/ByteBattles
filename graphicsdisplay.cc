@@ -182,7 +182,6 @@ void GraphicsDisplay::notify(FireWall &firewall) {
 
 
 void GraphicsDisplay::notify(Link &link) {
-    std::cout << "notify link" << std::endl;
     int x = link.getCurrCoords().getX();
     int y = link.getCurrCoords().getY();
     drawBoardSquare(link.getPreviousCoords().getX(),
