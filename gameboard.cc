@@ -1,8 +1,8 @@
 #include "gameboard.h"
 
-#include "abilitycards/bomb.h"
+#include "abilitycards/backup.h"
 #include "abilitycards/download.h"
-#include "abilitycards/skip.h"
+#include "abilitycards/nextturn.h"
 #include "abilitycards/linkboost.h"
 #include "abilitycards/polarize.h"
 #include "abilitycards/scan.h"
@@ -466,19 +466,19 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
             allAbilityCards.emplace_back(
                 make_shared<Wall>(id, *player, displayName));
         } else if (c == 'B') {
-            string displayName = "Bomb";
+            string displayName = "BackUp";
             allAbilityCards.emplace_back(
-                make_shared<Bomb>(id, *player, displayName));
-        } else if (c == 'T') {
-            string displayName = "SkipTurn";
+                make_shared<BackUp>(id, *player, displayName));
+        } else if (c == 'N') {
+            string displayName = "NextTurn";
             allAbilityCards.emplace_back(
-                make_shared<Skip>(id, *player, displayName, this));
+                make_shared<NextTurn>(id, *player, displayName, this));
         } else {
             string errorMsg = "Incorrect ability type: please use one of:\n";
             errorMsg +=
                 "\tL (LinkBoost)\n\tF (FireWall)\n\tD (Download)\n\tP "
                 "(Polarize)\n";
-            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (Bomb)\n\tT (SkipTurn)";
+            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (BackUp)\n\tN (NextTurn)";
             throw(logic_error(errorMsg));
         }
         id++;
