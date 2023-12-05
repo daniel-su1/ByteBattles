@@ -122,6 +122,7 @@ void GameBoard::downloadIdentity(shared_ptr<Link> link1, Player* player) {
          << endl;
     link1->setDownloaded(true);
     link1->downloadLink();
+    link1->setIdentityRevealed(true);
     if (linkType == "Data") {
         player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
     } else if (linkType == "Virus") {
