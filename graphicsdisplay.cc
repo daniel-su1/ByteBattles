@@ -12,7 +12,9 @@ GraphicsDisplay::GraphicsDisplay(Xwindow *w) : theDisplay{w} {
 
 GraphicsDisplay::GraphicsDisplay() {}
 
-GraphicsDisplay::~GraphicsDisplay() { delete theDisplay; }
+GraphicsDisplay::~GraphicsDisplay() {
+    //  delete theDisplay; 
+     }
 
 void GraphicsDisplay::drawBoardSquare(int x, int y) {
     int color =

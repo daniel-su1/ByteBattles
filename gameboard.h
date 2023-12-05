@@ -16,8 +16,10 @@
 #include "window.h"
 
 using namespace std;
+
 class TextDisplay;
 class GraphicsDisplay;
+
 class GameBoard : public Subject {
     TextDisplay* td;
     GraphicsDisplay* gd;
@@ -59,23 +61,15 @@ class GameBoard : public Subject {
     void notifyObservers(FireWall firewall);
 
     void init();
-    // void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO:
-    // same as movePiece for useAbility()
-    void movePiece(shared_ptr<Link> link,
-                   Direction dir);  // TODO: possibly move to private or delete
-                                    // bc of moveLink() below
     void battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2);
     void startNewTurn();
-    void downloadIdentity(shared_ptr<Link> link1, Player* player);
+    void downloadIdentity(shared_ptr<Link> link1, Player *player = nullptr);
     void updateIdentity(Link& link);
     void revealLink(Link& link);
 
     // text command interactions
-    // all methods other than playerAbilities() return a string with the error
-    // message if the method fails
     void moveLink(string linkName, string direction);
-    string playerAbilities(
-        Player& player);  // unlikely to fail since there is no user input
+    string playerAbilities(Player& player);
     void useAbility(int abilityId, int xCoord,
                     int yCoord);  // for firewall, wall, haze
     void useAbility(int abilityID, string linkName);  // for remaining abilities
@@ -90,8 +84,6 @@ class GameBoard : public Subject {
     // getters
     vector<shared_ptr<Player>>& getPlayers();
     unique_ptr<vector<shared_ptr<Link>>> getPlayerLinks(Player& player);
-    // vector<std::shared_ptr<Link>> getAllLinks();
-    // vector<AbilityCard>& getAllAbilityCards();
     AbilityType getAbilityType(int id);
     int getCurrPlayerIndex();
     int getNextPlayerIndex();
@@ -105,12 +97,12 @@ class GameBoard : public Subject {
     bool getGraphicsEnabled();
     void drawAbilities();
     void redrawPlayerInfo(int index);
-    unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(
-        Player& player);  // possibly deletable
+    void movePiece(shared_ptr<Link> link, Direction dir);
+    unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
 
    private:
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);
-    bool checkSquareOccupancy(int x, int y);
+    void checkSquareOccupancy(int x, int y);
     shared_ptr<Link> findLink(string linkName, vector<shared_ptr<Link>> links);
 };
 #endif
