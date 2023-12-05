@@ -5,7 +5,7 @@
 class BackUp: public AbilityCard {
     public:
         void activate(Link& l) override;
-        BackUp(int abilityID, Player &owner, string displayName);
+        BackUp(int abilityID, Player &owner, string displayName, GameBoard* gb);
 };
 
 #endif

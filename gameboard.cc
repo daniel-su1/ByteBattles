@@ -43,6 +43,11 @@ void GameBoard::notifyObservers(FireWall firewall) {
     if (graphicsEnabled) gd->notify(firewall);
 }
 
+void GameBoard::notifyObservers(Link& link) {
+    td->notify(link);
+    if (graphicsEnabled) gd->notify(link);
+}
+
 void GameBoard::init() {
     // reset
     td = nullptr;
@@ -105,8 +110,7 @@ void GameBoard::init() {
 
 void GameBoard::movePiece(Link& link, Direction dir) {
     link.movePiece(dir);
-    td->notify(link);
-    if (graphicsEnabled) gd->notify(link);
+    notifyObservers(link);
 }
 
 // player downloads link1 (becomes the new owner)
@@ -135,8 +139,7 @@ void GameBoard::downloadLink(Link& link1, Player* player) {
         }
     }
 
-    td->notify(link1);
-    if (graphicsEnabled) gd->notify(link1);
+    notifyObservers(link1);
 }
 
 void GameBoard::startNewTurn() {
@@ -404,15 +407,13 @@ void GameBoard::setLinks(unique_ptr<vector<string>> linkPlacements,
             Virus curLink = Virus(strength, Coords(xCoord, yCoord), displayName,
                                   *player, typeAndStrength);
             curLinkPtr = make_shared<Virus>(curLink);
-            td->notify(*curLinkPtr);
-            if (graphicsEnabled) gd->notify(*curLinkPtr);
+            notifyObservers(*curLinkPtr);
         } else if (link[0] == DATA_DISPLAY_STR[0]) {
             string typeAndStrength = DATA_DISPLAY_STR + to_string(strength);
             Data curLink = Data(strength, Coords(xCoord, yCoord), displayName,
                                 *player, typeAndStrength);
             curLinkPtr = make_shared<Data>(curLink);
-            td->notify(*curLinkPtr);
-            if (graphicsEnabled) gd->notify(*curLinkPtr);
+            notifyObservers(*curLinkPtr);
         } else {  // not V or D
             throw(
                 logic_error("Error, incorrect link placements: please follow "
@@ -468,7 +469,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
         } else if (c == 'B') {
             string displayName = "BackUp";
             allAbilityCards.emplace_back(
-                make_shared<BackUp>(id, *player, displayName));
+                make_shared<BackUp>(id, *player, displayName, this));
         } else if (c == 'N') {
             string displayName = "NextTurn";
             allAbilityCards.emplace_back(

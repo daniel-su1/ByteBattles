@@ -64,10 +64,13 @@ class GameBoard : public Subject {
     friend ostream& operator<<(ostream& out, const GameBoard& gb);
     void notifyObservers() override;
     void notifyObservers(FireWall firewall);
+    void notifyObservers(Link& link);
 
     void init();
-    void battlePieces(Link& linkp1, Link& linkp2);
+    void enableGraphics();
+
     void startNewTurn();
+    void battlePieces(Link& linkp1, Link& linkp2);
     void downloadLink(Link& link1, Player *player = nullptr);
     void updateIdentity(Link& link);
     void revealIdentity(Link& link);
@@ -99,7 +102,6 @@ class GameBoard : public Subject {
     vector<EdgeCoord>& getEdgeCoords();
     vector<ServerPort>& getServerPort();
     vector<FireWall>& getActiveFirewalls();
-    void enableGraphics();
 
    private:
     void movePiece(Link& link, Direction dir);

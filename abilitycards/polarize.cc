@@ -7,6 +7,8 @@
 using namespace std;
 
 void Polarize::activate(Link& l) {
+    usedAbility = true;
+    owner->abilityUsed(); // decrease abilityCount for displays
     l.polarize(gb->VIRUS_DISPLAY_STR, gb->DATA_DISPLAY_STR);
     gb->notifyObservers(); // TODO: fix notify
 }
