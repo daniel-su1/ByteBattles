@@ -5,7 +5,7 @@
 class Link;
 class GameBoard;
 
-enum AbilityType {LINKBOOST, FIREWALL, DOWNLOAD, POLARIZE, SCAN, WALL, BOMB, SKIP};
+enum AbilityType {LINKBOOST, FIREWALL, DOWNLOAD, POLARIZE, SCAN, WALL, BACKUP, NEXTTURN};
 
 class AbilityCard: public GamePiece {
     int abilityID;

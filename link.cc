@@ -19,6 +19,16 @@ void Link::setStepSize(int stepSize) {
     this->stepSize = stepSize;
 }
 
+void Link::polarize(string virusStr, string dataStr) {
+    if (type == LinkType::DATA) {
+        type = LinkType::VIRUS;
+        typeAndStrength[0] = virusStr[0];
+    } else { // must be a data type
+        type = LinkType::DATA;
+        typeAndStrength[0] = dataStr[0];
+    }
+}
+
 bool Link::isIdentityRevealed() { return identityRevealed; }
 
 LinkType Link::getType() { return type; }

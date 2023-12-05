@@ -1,8 +1,8 @@
+#include <map>
 #include "gameboard.h"
-
-#include "abilitycards/bomb.h"
+#include "abilitycards/backup.h"
 #include "abilitycards/download.h"
-#include "abilitycards/skip.h"
+#include "abilitycards/nextturn.h"
 #include "abilitycards/linkboost.h"
 #include "abilitycards/polarize.h"
 #include "abilitycards/scan.h"
@@ -41,6 +41,11 @@ void GameBoard::notifyObservers() {
 void GameBoard::notifyObservers(FireWall firewall) {
     td->notify(firewall);
     if (graphicsEnabled) gd->notify(firewall);
+}
+
+void GameBoard::notifyObservers(Link& link) {
+    td->notify(link);
+    if (graphicsEnabled) gd->notify(link);
 }
 void GameBoard::notifyObservers(Wall wall) {
     td->notify(wall);
@@ -110,8 +115,7 @@ void GameBoard::init() {
 
 void GameBoard::movePiece(Link& link, Direction dir) {
     link.movePiece(dir);
-    td->notify(link);
-    if (graphicsEnabled) gd->notify(link);
+    notifyObservers(link);
 }
 
 void GameBoard::redrawPlayerInfo(int index){
@@ -130,7 +134,7 @@ void GameBoard::downloadLink(Link& link1, Player* player) {
     revealIdentity(link1);
     link1.setDownloaded(true);
     link1.downloadLink();
-    if (link1.getType() == LinkType::data) {
+    if (link1.getType() == LinkType::DATA) {
         player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
     } else { // must be virus
         player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
@@ -146,8 +150,7 @@ void GameBoard::downloadLink(Link& link1, Player* player) {
         }
     }
 
-    td->notify(link1);
-    if (graphicsEnabled) gd->notify(link1);
+    notifyObservers(link1);
 }
 
 void GameBoard::startNewTurn() {
@@ -180,7 +183,7 @@ void GameBoard::battlePieces(Link& link1, Link& link2) {
 }
 
 void GameBoard::revealIdentity(Link& link) {
-    string linkType = (link.getType() == LinkType::virus) ? "Virus" : "Data";
+    string linkType = (link.getType() == LinkType::VIRUS) ? "Virus" : "Data";
     string out = link.getDisplayName() + " is a " + linkType + " of strength " + to_string(link.getStrength()) + ".";
     link.setIdentityRevealed(true);
     cout << out << endl;
@@ -256,7 +259,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                 // if firewall isn't owned by the link's owner, reveal the link
                 // and download if virus
                 cout << "Firewall passed!" << endl;
-                if (l.getType() == LinkType::virus) {
+                if (l.getType() == LinkType::VIRUS) {
                     downloadLink(l, &(*players[currPlayerIndex]));
                 } else {
                     cout << "Identity revealed for " << l.getDisplayName() << ":" << endl;
@@ -393,7 +396,7 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     Link& link = *findLink(linkName, links);
     ac->activate(link);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
-    cout << " was used on link " << linkName << "." << endl;
+    cout << " was used on Link " << linkName << "." << endl;
     if((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
         gd->notify(*players[getNextPlayerIndex()]);
     }
@@ -437,15 +440,13 @@ void GameBoard::setLinks(unique_ptr<vector<string>> linkPlacements,
             Virus curLink = Virus(strength, Coords(xCoord, yCoord), displayName,
                                   *player, typeAndStrength);
             curLinkPtr = make_shared<Virus>(curLink);
-            td->notify(*curLinkPtr);
-            if (graphicsEnabled) gd->notify(*curLinkPtr);
+            notifyObservers(*curLinkPtr);
         } else if (link[0] == DATA_DISPLAY_STR[0]) {
             string typeAndStrength = DATA_DISPLAY_STR + to_string(strength);
             Data curLink = Data(strength, Coords(xCoord, yCoord), displayName,
                                 *player, typeAndStrength);
             curLinkPtr = make_shared<Data>(curLink);
-            td->notify(*curLinkPtr);
-            if (graphicsEnabled) gd->notify(*curLinkPtr);
+            notifyObservers(*curLinkPtr);
         } else {  // not V or D
             throw(
                 logic_error("Error, incorrect link placements: please follow "
@@ -476,6 +477,7 @@ void GameBoard::enableBonus(){
 
 void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     int id = 1;
+    map <char, int> abilitiesCount;
 
     for (char c : abilities) {
         if (c == 'L') {
@@ -493,32 +495,36 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
         } else if (c == 'P') {
             string displayName = "Polarize";
             allAbilityCards.emplace_back(
-                make_shared<Polarize>(id, *player, displayName));
+                make_shared<Polarize>(id, *player, displayName, this));
         } else if (c == 'S') {
             string displayName = "Scan";
             allAbilityCards.emplace_back(
                 make_shared<Scan>(id, *player, displayName, this));
-        } else if (c == 'W' && bonusEnabled) {
+        } else if (c == 'W') {
             string displayName = "Wall";
             allAbilityCards.emplace_back(
                 make_shared<Wall>(id, *player, displayName, this));
-        } else if (c == 'B' && bonusEnabled) {
-            string displayName = "Bomb";
+        } else if (c == 'B') {
+            string displayName = "BackUp";
             allAbilityCards.emplace_back(
-                make_shared<Bomb>(id, *player, displayName));
-        } else if (c == 'T') {
-            string displayName = "SkipTurn";
+                make_shared<BackUp>(id, *player, displayName, this));
+        } else if (c == 'N') {
+            string displayName = "NextTurn";
             allAbilityCards.emplace_back(
-                make_shared<Skip>(id, *player, displayName, this));
+                make_shared<NextTurn>(id, *player, displayName, this));
         } else {
             string errorMsg = "Incorrect ability type: please use one of:\n";
             errorMsg +=
                 "\tL (LinkBoost)\n\tF (FireWall)\n\tD (Download)\n\tP "
                 "(Polarize)\n";
-            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (Bomb)\n\tT (SkipTurn)";
+            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (BackUp)\n\tN (NextTurn)";
             throw(logic_error(errorMsg));
         }
         id++;
+        abilitiesCount[c]++;
+        if (abilitiesCount[c] > 2) {
+            throw (logic_error("Error: maximum 2 abilities per type."));
+        }
     }
     if (id != ABILITY_COUNT + 1) {
         throw(logic_error("Error: please give " + to_string(ABILITY_COUNT) +

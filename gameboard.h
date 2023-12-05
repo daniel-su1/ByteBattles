@@ -70,10 +70,16 @@ class GameBoard : public Subject {
     friend ostream& operator<<(ostream& out, const GameBoard& gb);
     void notifyObservers() override;
     void notifyObservers(FireWall firewall);
-    void notifyObservers(Wall wall);
+    void notifyObservers(Wall wall);    
+    void notifyObservers(Link& link);
+
     void init();
-    void battlePieces(Link& linkp1, Link& linkp2);
+    void enableGraphics();
+    void drawAbilities();
+    void redrawPlayerInfo(int index);
+
     void startNewTurn();
+    void battlePieces(Link& linkp1, Link& linkp2);
     void downloadLink(Link& link1, Player *player = nullptr);
     void updateIdentity(Link& link);
     void revealIdentity(Link& link);
@@ -109,11 +115,7 @@ class GameBoard : public Subject {
     vector<Wall>& getActiveWalls();
     unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(
         Player& player);
-    
-    void enableGraphics();
     bool getGraphicsEnabled();
-    void drawAbilities();
-    void redrawPlayerInfo(int index);
    private:
     void movePiece(Link& link, Direction dir);
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);

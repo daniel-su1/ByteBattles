@@ -4,16 +4,24 @@ BoardPiece::BoardPiece(int stepSize, Coords currCoords, Player& owner,
                        string displayName)
     : GamePiece(owner, displayName),
       stepSize{1},
-      prevCords(Coords(-1, -1)),
+      prevCoords(Coords(-1, -1)),
       currCoords(currCoords) {}
 
-Coords BoardPiece::getPreviousCoords() { return prevCords; }
+Coords BoardPiece::getPreviousCoords() { return prevCoords; }
 
 Coords BoardPiece::getCurrCoords() { return currCoords; }
 
+void BoardPiece::backupStep() {
+    if (prevCoords.getX() == -1 || prevCoords.getX() == -1) {
+        return;
+    }
+    Coords temp = currCoords;
+    currCoords = prevCoords;
+    prevCoords = temp;
+}
 
 void BoardPiece::movePiece(Direction direction) {    
-    prevCords = currCoords;
+    prevCoords = currCoords;
     if (direction == Left) { 
         int newX = currCoords.getX() - stepSize;
         currCoords.setX(newX);
@@ -30,7 +38,7 @@ void BoardPiece::movePiece(Direction direction) {
 }
 
 void BoardPiece::downloadLink() {
-    prevCords = currCoords;
+    prevCoords = currCoords;
     currCoords.setX(-1);
     currCoords.setY(-1);
 }
