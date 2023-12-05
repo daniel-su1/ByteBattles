@@ -199,7 +199,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                             "off this edge!\n"));
         }
     }
-
+    Player& currPlayer = *players[getCurrPlayerIndex()];
     Player& newOwner = *players[getNextPlayerIndex()];
 
     // checking if moved into winning edge pieces
@@ -208,7 +208,7 @@ void GameBoard::moveLink(string linkName, string direction) {
         if (newCoord == edgeCoord) {
             if (newOwner.getPlayerName() !=
                 edgeCoords[i].getOwner().getPlayerName()) {
-                downloadIdentity(l, &newOwner);
+                downloadIdentity(l, &currPlayer);
                 if (graphicsEnabled) gd->notify(*this);
             } else {
                 throw(
@@ -244,7 +244,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                     logic_error("Error: Illegal Move - cannot move piece onto "
                                 "your own server port\n"));
             } else {  // other player downloads link
-                downloadIdentity(l, &newOwner);
+                downloadIdentity(l, &currPlayer);
                 startNewTurn();
                 if (graphicsEnabled) gd->notify(*this);
                 return;
