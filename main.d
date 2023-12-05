@@ -1,5 +1,5 @@
 main.o: main.cc link.h boardpiece.h gamepiece.h player.h subject.h \
- coords.h data.h virus.h abilitycard.h gameboard.h edgecoord.h \
- specialcoord.h serverport.h abilitycards/firewall.h \
- abilitycards/../abilitycard.h abilitycards/../coords.h textdisplay.h \
- observer.h graphicsdisplay.h window.h
+ coords.h data.h virus.h abilitycard.h gameboard.h \
+ abilitycards/firewall.h abilitycards/../abilitycard.h \
+ abilitycards/../coords.h edgecoord.h specialcoord.h graphicsdisplay.h \
+ observer.h window.h serverport.h textdisplay.h

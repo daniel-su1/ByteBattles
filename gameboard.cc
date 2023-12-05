@@ -1,16 +1,14 @@
 #include "gameboard.h"
+
 #include "abilitycards/bomb.h"
 #include "abilitycards/download.h"
-#include "abilitycards/hazeofwar.h"
+#include "abilitycards/haze.h"
 #include "abilitycards/linkboost.h"
 #include "abilitycards/polarize.h"
 #include "abilitycards/scan.h"
-#include "abilitycards/wallwall.h"
+#include "abilitycards/wall.h"
 #include "data.h"
 #include "virus.h"
-#include "abilitycards/bomb.h"
-#include "abilitycards/hazeofwar.h"
-#include "abilitycards/wallwall.h"
 
 GameBoard::GameBoard()
     : td(nullptr),
@@ -45,7 +43,7 @@ void GameBoard::notifyObservers() {
 
 void GameBoard::notifyObservers(FireWall firewall) {
     td->notify(firewall);
-    // if (graphicsEnabled) gd->notify(firewall);
+    if (graphicsEnabled) gd->notify(firewall);
 }
 
 void GameBoard::init() {
@@ -162,9 +160,7 @@ void GameBoard::battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2) {
     }
 }
 
-void revealLink(Link& l) {
-
-}
+void revealLink(Link& l) {}
 
 // interaction commands
 // ——————————————
@@ -268,7 +264,8 @@ void GameBoard::moveLink(string linkName, string direction) {
         Coords fireWallCoords = currFireWall.getCoords();
         if (newCoord == fireWallCoords) {
             if (&currFireWall.getOwner() != &l->getOwner()) {
-                // if firewall isn't owned by the link's owner, reveal the link and download if virus
+                // if firewall isn't owned by the link's owner, reveal the link
+                // and download if virus
             }
         }
     }
@@ -291,7 +288,7 @@ string GameBoard::playerAbilities(Player& player) {
     return (message + "\n");
 }
 
-// for firewall, wallwall, hazeofwar
+// for firewall, wall, haze
 void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     // max one ability per turn
     if (currPlayerAbilityPlayed) {
@@ -304,7 +301,8 @@ void GameBoard::useAbility(int abilityID, int xCoord, int yCoord) {
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
     ac->activate(xCoord, yCoord);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
-    cout << " was used at (" << to_string(xCoord) << "," << to_string(yCoord) << ")." << endl;
+    cout << " was used at (" << to_string(xCoord) << "," << to_string(yCoord)
+         << ")." << endl;
 }
 
 // for remaining abilities
@@ -415,24 +413,23 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
             allAbilityCards.emplace_back(
                 make_shared<Scan>(id, *player, displayName));
         } else if (c == 'W') {
-            string displayName = "WallWall";
+            string displayName = "Wall";
             allAbilityCards.emplace_back(
-                make_shared<WallWall>(id, *player, displayName));
+                make_shared<Wall>(id, *player, displayName));
         } else if (c == 'B') {
             string displayName = "Bomb";
             allAbilityCards.emplace_back(
                 make_shared<Bomb>(id, *player, displayName));
         } else if (c == 'H') {
-            string displayName = "HazeOfWar";
+            string displayName = "Haze";
             allAbilityCards.emplace_back(
-                make_shared<HazeOfWar>(id, *player, displayName));
+                make_shared<Haze>(id, *player, displayName));
         } else {
             string errorMsg = "Incorrect ability type: please use one of:\n";
             errorMsg +=
                 "\tL (LinkBoost)\n\tF (FireWall)\n\tD (Download)\n\tP "
                 "(Polarize)\n";
-            errorMsg +=
-                "\tS (Scan)\n\tW (WallWall)\n\tB (Bomb)\n\tH (HazeOfWar)";
+            errorMsg += "\tS (Scan)\n\tW (Wall)\n\tB (Bomb)\n\tH (Haze)";
             throw(logic_error(errorMsg));
         }
         id++;
@@ -444,16 +441,17 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
     player->setAbilitiesSet(true);
 }
 
-bool GameBoard::checkSquareOccupancy(int x, int y){
+bool GameBoard::checkSquareOccupancy(int x, int y) {
     for (auto i : allLinks) {
-        if(i->getCurrCoords().getX() == x && i->getCurrCoords().getY() == y){
+        if (i->getCurrCoords().getX() == x && i->getCurrCoords().getY() == y) {
             throw std::logic_error("Error: please place on empty square");
         }
     }
 }
 
 void GameBoard::addFireWall(FireWall firewall) {
-    checkSquareOccupancy(firewall.getCoords().getX(), firewall.getCoords().getY());
+    checkSquareOccupancy(firewall.getCoords().getX(),
+                         firewall.getCoords().getY());
     activeFirewalls.emplace_back(firewall);
     notifyObservers(firewall);
 }
@@ -525,12 +523,15 @@ shared_ptr<AbilityCard> GameBoard::getAbilityCard(int abilityID) {
             return ac;
         }
     }
-    string errorMsg = "Error, unable to find ability card with id " + to_string(abilityID) 
-        + " owned by " + currPlayer->getPlayerName() + ".\nSee all abilities with the \"abilities\" command.";
-    throw (logic_error(errorMsg));
+    string errorMsg = "Error, unable to find ability card with id " +
+                      to_string(abilityID) + " owned by " +
+                      currPlayer->getPlayerName() +
+                      ".\nSee all abilities with the \"abilities\" command.";
+    throw(logic_error(errorMsg));
 }
 
-shared_ptr<Link> GameBoard::findLink(string linkName, vector<shared_ptr<Link>> links) {
+shared_ptr<Link> GameBoard::findLink(string linkName,
+                                     vector<shared_ptr<Link>> links) {
     for (shared_ptr<Link> link : links) {
         if (linkName == link->getDisplayName()) {
             if (link->isDownloaded()) {

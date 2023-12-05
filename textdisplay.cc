@@ -27,7 +27,7 @@ void TextDisplay::notify(GameBoard &gb) {
 void TextDisplay::notify(FireWall& firewall) {
   int x = firewall.getCoords().getX();
   int y = firewall.getCoords().getY();
-  theDisplay[y][x] = 'm';
+  theDisplay[y][x] = firewall.getOwner().getPlayerName() == "Player 1" ? 'm' : 'n';
 }
 
 void TextDisplay::init(GameBoard &gb) {

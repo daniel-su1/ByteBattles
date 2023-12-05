@@ -1,5 +1,7 @@
 #include "graphicsdisplay.h"
 
+#include "abilitycards/firewall.h"
+
 GraphicsDisplay::GraphicsDisplay(Xwindow *w): theDisplay{w} {
     if(w) theDisplay->fillRectangle(0, 0, BOARD_WINDOW_SIZE, 800, Xwindow::color::Black);
 
@@ -142,33 +144,38 @@ void GraphicsDisplay::renderPlayerInfo(Player &p) {
     // renderAbilityCards(p);
 }
 
-void GraphicsDisplay::renderSquare(int x, int y, GamePiece &gp) {
+void GraphicsDisplay::renderSquare(int x, int y, string displayName, Xwindow::color color) {
     const int BUFFER_SIZE = 23;
     int text_x = SQUARE_SIZE * x + BUFFER_SIZE;
     int text_y = SQUARE_SIZE * y + SQUARE_SIZE / 2 + BUFFER_SIZE;
     theDisplay->setLargerFont("courier34r");
-    string displayName = gp.getDisplayName();
-    if(gb == nullptr){
-        std::cout << "null" << endl;
-    }
-    if (displayName == gb->SP_DISPLAY_STR) {  // server ports
-        theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
-                                  SQUARE_SIZE, SQUARE_SIZE, Xwindow::color::Yellow);
-        theDisplay->drawString(text_x, text_y + 140, displayName,
-                               Xwindow::color::Black);
-    } 
-    else {
+    if (displayName == "a" || displayName == "b" || displayName == "c" ||
+        displayName == "d" || displayName == "e" || displayName == "f" ||
+        displayName == "g" || displayName == "h" || displayName == "A" ||
+        displayName == "B" || displayName == "C" || displayName == "D" ||
+        displayName == "E" || displayName == "F" || displayName == "G" ||
+        displayName == "H") {
         drawBoardSquare(x, y);
         theDisplay->fillCircle(SQUARE_SIZE * x + (SQUARE_SIZE / 2),
                                SQUARE_SIZE * y + 150 + (SQUARE_SIZE / 2),
                                SQUARE_SIZE / 2 - 5, Xwindow::color::Black);
-                               
+
         theDisplay->drawString(text_x, text_y + 140, displayName);
+    } else if (displayName == gb->SP_DISPLAY_STR) {  // server ports
+        theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
+                                  SQUARE_SIZE, SQUARE_SIZE, Xwindow::color::Yellow);
+        theDisplay->drawString(text_x, text_y + 140, displayName,
+                               Xwindow::color::Black);
+    } else {
+        theDisplay->fillRectangle(SQUARE_SIZE * x, SQUARE_SIZE * y + 150,
+                                  SQUARE_SIZE, SQUARE_SIZE, color);
+        theDisplay->drawString(text_x, text_y + 140, displayName,
+                               Xwindow::color::Black);
     }
 }
 
-void GraphicsDisplay::notify(Firewall &firewall) {
-    
+void GraphicsDisplay::notify(FireWall &firewall) {
+    renderSquare(firewall.getCoords().getX(), firewall.getCoords().getY(), firewall.getOwner().getPlayerName() == "Player 1" ? "m" : "w", Xwindow::color::Firewall);
 }
 
 
@@ -181,7 +188,7 @@ void GraphicsDisplay::notify(Link &link) {
     if (x == -1 || y == -1) {
         return;
     }
-    renderSquare(x, y, link);
+    renderSquare(x, y, link.getDisplayName());
 }
 
 void GraphicsDisplay::init(GameBoard &gb) {
@@ -204,7 +211,7 @@ void GraphicsDisplay::init(GameBoard &gb) {
     for (size_t i = 0; i < sp.size(); i++) {
         int x = sp[i].getCoords().getX();
         int y = sp[i].getCoords().getY();
-        renderSquare(x, y, sp[i]);
+        renderSquare(x, y, sp[i].getDisplayName());
     }
 
     // Player &p1 = *(this->gb->getPlayers())[this->gb->getCurrPlayerIndex()];
