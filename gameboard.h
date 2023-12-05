@@ -60,8 +60,6 @@ class GameBoard : public Subject {
     void notifyObservers(FireWall firewall);
 
     void init();
-    // void applyAbility(AbilityCard& ac, Player *player = nullptr); // TODO: same as movePiece for useAbility()
-    void movePiece(shared_ptr<Link> link, Direction dir); // TODO: possibly move to private or delete bc of moveLink() below
     void battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2);
     void startNewTurn();
     void downloadIdentity(shared_ptr<Link> link1, Player *player = nullptr);
@@ -85,8 +83,6 @@ class GameBoard : public Subject {
     // getters
     vector<shared_ptr<Player>>& getPlayers();
     unique_ptr<vector<shared_ptr<Link>>> getPlayerLinks(Player& player);
-    // vector<std::shared_ptr<Link>> getAllLinks();
-    // vector<AbilityCard>& getAllAbilityCards();
     AbilityType getAbilityType(int id);
     int getCurrPlayerIndex();
     int getNextPlayerIndex();
@@ -99,6 +95,7 @@ class GameBoard : public Subject {
     void enableGraphics();
 
    private:
+    void movePiece(shared_ptr<Link> link, Direction dir);
     unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);
     void checkSquareOccupancy(int x, int y);
