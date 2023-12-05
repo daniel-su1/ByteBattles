@@ -19,6 +19,7 @@ void Polarize::activate(Link& l) {
             owner->setNumDataDownloaded(prevNumData--);
             owner->setNumVirusDownloaded(prevNumVirus++);
         }
+        gb->notifyObservers(*owner);
     } else {
         for (FireWall fw : gb->getActiveFirewalls()) {
             if ((fw.getCoords().getX() == l.getCurrCoords().getX()) && (fw.getCoords().getY() == l.getCurrCoords().getY())) {

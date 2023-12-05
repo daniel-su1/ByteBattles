@@ -88,7 +88,7 @@ class GameBoard {
     void battlePieces(Link& linkp1, Link& linkp2);
     void downloadLink(Link& link1, Player *player = nullptr);
     void updateIdentity(Link& link);
-    void revealIdentity(Link& link);
+    void revealIdentity(Link& link, bool toggleLink = true);
 
     // text command interactions
     void moveLink(string linkName, string direction);
@@ -129,7 +129,7 @@ class GameBoard {
     void movePiece(Link& link, Direction dir);
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);
     void checkSquareOccupancy(int x, int y);
-    shared_ptr<Link> findLink(string linkName, vector<shared_ptr<Link>> links);
+    shared_ptr<Link> findLink(string linkName, vector<shared_ptr<Link>> links, bool checkDownloaded = true);
     void startNewTurn();
     void endTurn();
 };

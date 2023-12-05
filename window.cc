@@ -124,7 +124,7 @@ void Xwindow::setLargerFont(const std::string& inFont) {
     if (font) {
         XSetFont(d, gc, font->fid);  // 'gc' is a member of Xwindow
     } else {
-        cerr << "failed to load font: " << fontName << endl;
+        // cerr << "failed to load font: " << fontName << endl;
     }
 }
 
@@ -181,7 +181,7 @@ Xwindow::Xwindow(int width, int height) {
 
     XSynchronize(d, True);
 
-    usleep(1000);
+    usleep(20000);
 }
 
 

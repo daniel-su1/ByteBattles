@@ -278,12 +278,12 @@ void GraphicsDisplay::renderPlayerInfo(Player &p) {
             (*gb->getPlayers()[gb->getCurrPlayerIndex()]).getPlayerName()) {
             drawPlayerInfoCircle(pLinksX, pLinksY,
                                  curLink->getDisplayName() + ":" +
-                                     std::to_string(curLink->getStrength()),
+                                     curLink->typeAndStrength,
                                  true, curLink->getType() == LinkType::VIRUS);
         } else {
             drawPlayerInfoCircle(pLinksX, pLinksY,
                                  curLink->isIdentityRevealed() ? curLink->getDisplayName() + ":" +
-                                     std::to_string(curLink->getStrength()) : "?",
+                                     curLink->typeAndStrength : "?",
                                  curLink->isIdentityRevealed(),
                                  curLink->getType() == LinkType::VIRUS);
         }

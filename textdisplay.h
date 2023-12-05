@@ -23,7 +23,6 @@ class TextDisplay: public Observer {
     void notify(FireWall &firewall) override;
     void notify(Wall &wall) override;
     
-    void updateGrid(int x, int y, char c);
     friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);
 };
 

@@ -181,11 +181,11 @@ void GameBoard::battlePieces(Link& link1, Link& link2) {
     }
 }
 
-void GameBoard::revealIdentity(Link& link) {
+void GameBoard::revealIdentity(Link& link, bool toggleLink) {
     string linkType = (link.getType() == LinkType::VIRUS) ? "Virus" : "Data";
     string out = link.getDisplayName() + " is a " + linkType + " of strength " + to_string(link.getStrength()) + ".";
     // update link
-    link.setIdentityRevealed(true);
+    if (toggleLink) link.setIdentityRevealed(true);
     // update view
     notifyObservers(link.getOwner());
     // print reveal
@@ -202,121 +202,127 @@ void GameBoard::moveLink(string linkName, string direction) {
 
     // find the link with name linkName owned by current player
     vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(currPlayer));
-    Link& l = *findLink(linkName, playerLinks);
+    try {
+        Link& l = *findLink(linkName, playerLinks);
+    
 
-    // set new coords
-    int newX = l.getCurrCoords().getX();
-    int newY = l.getCurrCoords().getY();
-    int stepSize = l.getStepSize();
-    if (direction == "up") {
-        dir = Direction::Up;
-        newY = l.getCurrCoords().getY() - stepSize;
-    } else if (direction == "down") {
-        dir = Direction::Down;
-        newY = l.getCurrCoords().getY() + stepSize;
-    } else if (direction == "right") {
-        dir = Direction::Right;
-        newX = l.getCurrCoords().getX() + stepSize;
-    } else if (direction == "left") {
-        dir = Direction::Left;
-        newX = l.getCurrCoords().getX() - stepSize;
-    } else {
-        throw(logic_error("Error: Not a valid move direction!\n"));
-    }
-
-    // ———————— checking move legality ——————— //
-    Coords newCoord{newX, newY};
-
-    // checking if moved off edge
-    for (size_t i = 0; i < boardBoundaries.size(); i++) {
-        if (newCoord == boardBoundaries[i]) {
-            throw(
-                logic_error("Error: Illegal Move - you cannot move your piece "
-                            "off this edge!\n"));
+        // set new coords
+        int newX = l.getCurrCoords().getX();
+        int newY = l.getCurrCoords().getY();
+        int stepSize = l.getStepSize();
+        if (direction == "up") {
+            dir = Direction::Up;
+            newY = l.getCurrCoords().getY() - stepSize;
+        } else if (direction == "down") {
+            dir = Direction::Down;
+            newY = l.getCurrCoords().getY() + stepSize;
+        } else if (direction == "right") {
+            dir = Direction::Right;
+            newX = l.getCurrCoords().getX() + stepSize;
+        } else if (direction == "left") {
+            dir = Direction::Left;
+            newX = l.getCurrCoords().getX() - stepSize;
+        } else {
+            throw(logic_error("Error: Not a valid move direction!\n"));
         }
-    }
 
-    // checking if moved into winning edge pieces
-    for (size_t i = 0; i < edgeCoords.size(); i++) {
-        Coords edgeCoord = edgeCoords[i].getCoords();
-        if (newCoord == edgeCoord) {
-            if (nextPlayer.getPlayerName() !=
-                edgeCoords[i].getOwner().getPlayerName()) {
-                downloadLink(l, &currPlayer);
-                notifyObservers(currPlayer);
-                return;
-            } else {
+        // ———————— checking move legality ——————— //
+        Coords newCoord{newX, newY};
+
+        // checking if moved off edge
+        for (size_t i = 0; i < boardBoundaries.size(); i++) {
+            if (newCoord == boardBoundaries[i]) {
                 throw(
-                    logic_error("Error: Illegal Move - you cannot move your "
-                                "piece off this edge!\n"));
+                    logic_error("Error: Illegal Move - you cannot move your piece "
+                                "off this edge!\n"));
             }
         }
-    }
 
-    // check if moved onto firewall
-    for (size_t i = 0; i < activeFirewalls.size(); i++) {
-        FireWall currFireWall = activeFirewalls[i];
-        Coords fireWallCoords = currFireWall.getCoords();
-        if (newCoord == fireWallCoords) {
-            if (&currFireWall.getOwner() != &l.getOwner()) {
-                // if firewall isn't owned by the link's owner, reveal the link
-                // and download if virus
-                cout << "Firewall passed!" << endl;
-                if (l.getType() == LinkType::VIRUS) {
-                    downloadLink(l, &(*players[currPlayerIndex]));
+        // checking if moved into winning edge pieces
+        for (size_t i = 0; i < edgeCoords.size(); i++) {
+            Coords edgeCoord = edgeCoords[i].getCoords();
+            if (newCoord == edgeCoord) {
+                if (nextPlayer.getPlayerName() !=
+                    edgeCoords[i].getOwner().getPlayerName()) {
+                    downloadLink(l, &currPlayer);
+                    notifyObservers(currPlayer);
+                    return;
                 } else {
-                    cout << "Identity revealed for " << l.getDisplayName() << ":" << endl;
-                    revealIdentity(l);
+                    throw(
+                        logic_error("Error: Illegal Move - you cannot move your "
+                                    "piece off this edge!\n"));
                 }
             }
         }
-    }
 
-    // walls
-    for (size_t i = 0; i < activeWalls.size(); i++) {
-        Wall currWall = activeWalls[i];
-        Coords wallCoords = currWall.getCoords();
-        if (newCoord == wallCoords) {
-                throw(
-                    logic_error("Error: Illegal Move - Cannot move onto a wall\n"));
-        }
-    }
-
-    // checking if moved on top of another piece
-    for (size_t i = 0; i < allLinks.size(); i++) {
-        Coords pieceCoords = allLinks[i]->getCurrCoords();
-        if (newCoord == pieceCoords) {
-            if (&allLinks[i]->getOwner() == &l.getOwner()) {
-                throw(
-                    logic_error("Error: Illegal Move — one of your pieces "
-                                "occupies this space!\n"));
-            } else {
-                battlePieces(l, *allLinks[i]);
-                movePiece(l, dir);
-                endTurn();
-                return;
+        // check if moved onto firewall
+        for (size_t i = 0; i < activeFirewalls.size(); i++) {
+            FireWall currFireWall = activeFirewalls[i];
+            Coords fireWallCoords = currFireWall.getCoords();
+            if (newCoord == fireWallCoords) {
+                if (&currFireWall.getOwner() != &l.getOwner()) {
+                    // if firewall isn't owned by the link's owner, reveal the link
+                    // and download if virus
+                    cout << "Firewall passed!" << endl;
+                    if (l.getType() == LinkType::VIRUS) {
+                        downloadLink(l, &(*players[currPlayerIndex]));
+                    } else {
+                        cout << "Identity revealed for " << l.getDisplayName() << ":" << endl;
+                        revealIdentity(l);
+                    }
+                }
             }
         }
-    }
 
-    // checking if moved onto one's own server ports / into opponents
-    for (size_t i = 0; i < serverPorts.size(); i++) {
-        Coords serverPortCoord = serverPorts[i].getCoords();
-        if (newCoord == serverPortCoord) {
-            if (&(serverPorts[i].getOwner()) == &l.getOwner()) {
-                throw(
-                    logic_error("Error: Illegal Move - cannot move piece onto "
-                                "your own server port\n"));
-            } else {  // other player downloads link
-                downloadLink(l, &currPlayer);
-                endTurn();
-                return;
+        // walls
+        for (size_t i = 0; i < activeWalls.size(); i++) {
+            Wall currWall = activeWalls[i];
+            Coords wallCoords = currWall.getCoords();
+            if (newCoord == wallCoords) {
+                    throw(
+                        logic_error("Error: Illegal Move - Cannot move onto a wall\n"));
             }
         }
-    }
 
-    movePiece(l, dir);
-    endTurn();
+        // checking if moved on top of another piece
+        for (size_t i = 0; i < allLinks.size(); i++) {
+            Coords pieceCoords = allLinks[i]->getCurrCoords();
+            if (newCoord == pieceCoords) {
+                if (&allLinks[i]->getOwner() == &l.getOwner()) {
+                    throw(
+                        logic_error("Error: Illegal Move — one of your pieces "
+                                    "occupies this space!\n"));
+                } else {
+                    battlePieces(l, *allLinks[i]);
+                    movePiece(l, dir);
+                    endTurn();
+                    return;
+                }
+            }
+        }
+
+        // checking if moved onto one's own server ports / into opponents
+        for (size_t i = 0; i < serverPorts.size(); i++) {
+            Coords serverPortCoord = serverPorts[i].getCoords();
+            if (newCoord == serverPortCoord) {
+                if (&(serverPorts[i].getOwner()) == &l.getOwner()) {
+                    throw(
+                        logic_error("Error: Illegal Move - cannot move piece onto "
+                                    "your own server port\n"));
+                } else {  // other player downloads link
+                    downloadLink(l, &currPlayer);
+                    endTurn();
+                    return;
+                }
+            }
+        }
+
+        movePiece(l, dir);
+        endTurn();
+
+    } catch (logic_error& e) {
+        throw;
+    }
 }
 
 string GameBoard::playerAbilities(Player& player) {
@@ -374,52 +380,62 @@ void GameBoard::drawAbilities(){
 
 // for remaining abilities
 void GameBoard::useAbility(int abilityID, string linkName) {
-    // max one ability per turn
-    if (currPlayerAbilityPlayed) {
-        throw(
-            logic_error("Error: an ability has already been used this turn. "
-                        "Please move a link to proceed."));
-    }
-
-    shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
-
-    // ability already used
-    if (ac->isUsed()) {
-        throw (logic_error("Error: ability has already been used."));
-    }
-    
-    // check link type:
-    // link boost must be applied to a link that is owned by currPlayer
-    // download must be applied to an opponent's link
-    std::vector<std::shared_ptr<Link>> links = allLinks;
-    switch (getAbilityType(abilityID)) {
-        case AbilityType::LINKBOOST: {
-            links = *getPlayerLinks(*players[currPlayerIndex]);
-            break;
-        } // no breaks in linkboost and download to activate() in default clause
-        case AbilityType::DOWNLOAD: {
-            links = *getPlayerLinks(*players[getNextPlayerIndex()]);
-            break;
+    try {
+        // max one ability per turn
+        if (currPlayerAbilityPlayed) {
+            throw(
+                logic_error("Error: an ability has already been used this turn. "
+                            "Please move a link to proceed."));
         }
-        default:
-            break; 
-    }
-    // links are either found in above clauses or default to allLinks
-    Link& link = *findLink(linkName, links);
-    ac->activate(link);
-    if (graphicsEnabled) {
-        //gd->redrawBoard(ac.get()->getOwner());
-        gd->renderPlayerInfo(ac.get()->getOwner());
-    }
-    cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
-    cout << " was used on Link " << linkName << "." << endl;
 
+        shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
+
+        // ability already used
+        if (ac->isUsed()) {
+            throw (logic_error("Error: ability has already been used."));
+        }
+        
+        // check link type:
+        // link boost must be applied to a link that is owned by currPlayer
+        // download must be applied to an opponent's link
+        vector<shared_ptr<Link>> links = allLinks;
+        shared_ptr<Link> link;
+        AbilityType type = getAbilityType(abilityID);
+        switch (type) {
+            case AbilityType::LINKBOOST: {
+                link = findLink(linkName, *getPlayerLinks(*players[currPlayerIndex]));
+                break;
+            }
+            case AbilityType::DOWNLOAD: {
+                link = findLink(linkName, *getPlayerLinks(*players[getNextPlayerIndex()]));
+                break;
+            }
+            case AbilityType::POLARIZE: {
+                // polarize can be used on all links
+                link = findLink(linkName, allLinks, false);
+                break;
+            }
+            default: {
+                link = findLink(linkName, allLinks);
+                break;
+            }
+        }
+
+        ac->activate(*link);
+        if (graphicsEnabled) {
+            //gd->redrawBoard(ac.get()->getOwner());
+            gd->renderPlayerInfo(ac.get()->getOwner());
+        }
+        cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
+        cout << " was used on Link " << linkName << "." << endl;
+
+        currPlayerAbilityPlayed = true;
+    } catch (logic_error& e) {
+        throw;
+    }
     //if ((getAbilityType(abilityID) == AbilityType::DOWNLOAD ||  (getAbilityType(abilityID) == AbilityType::SCAN) )&& graphicsEnabled){
      //   gd->notify(*players[getNextPlayerIndex()]);
    // }
-    
-    
-    currPlayerAbilityPlayed = true;
 }
 
 // setters
@@ -668,11 +684,12 @@ shared_ptr<AbilityCard> GameBoard::getAbilityCard(int abilityID) {
 }
 
 shared_ptr<Link> GameBoard::findLink(string linkName,
-                                     vector<shared_ptr<Link>> links) {
+                                     vector<shared_ptr<Link>> links,
+                                     bool checkDownloaded) {
     for (shared_ptr<Link> link : links) {
         if (linkName == link->getDisplayName()) {
-            if (link->isDownloaded()) {
-                throw(logic_error("This piece has already been downloaded!"));
+            if (checkDownloaded && link->isDownloaded()) {
+                throw (logic_error("This piece has already been downloaded!"));
             }
             return link;
         }
