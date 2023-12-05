@@ -26,10 +26,7 @@ GameBoard::GameBoard()
       serverPorts(),
       activeFirewalls() {}
 
-GameBoard::~GameBoard() {
-    // delete td;
-    // if (graphicsEnabled) delete gd;
-}
+GameBoard::~GameBoard() {}
 
 ostream& operator<<(ostream& out, const GameBoard& gb) {
     cout << *gb.td;
@@ -61,7 +58,6 @@ void GameBoard::init() {
     observers.clear();
 
     td = new TextDisplay;
-    // if (graphicsEnabled) gd = new GraphicsDisplay;
     observers = std::vector<Observer*>();
 
     // intialize players
@@ -107,20 +103,23 @@ void GameBoard::init() {
     td->init(*this);
 }
 
-void GameBoard::movePiece(shared_ptr<Link> link, Direction dir) {
-    link->movePiece(dir);
-    td->notify(*link);
-    if (graphicsEnabled) gd->notify(*link);
+void GameBoard::movePiece(Link& link, Direction dir) {
+    link.movePiece(dir);
+    td->notify(link);
+    if (graphicsEnabled) gd->notify(link);
 }
 
 // player downloads link1 (becomes the new owner)
-void GameBoard::downloadLink(shared_ptr<Link> link1, Player* player) {
+void GameBoard::downloadLink(Link& link1, Player* player) {
+    if (player == nullptr) { // called from download's activate function
+        player = &(*players[currPlayerIndex]);
+    }
     cout << player->getPlayerName() << " has downloaded "
-         << link1->getDisplayName() << ":" << endl;
-    cout << revealIdentity(*link1) << endl;
-    link1->setDownloaded(true);
-    link1->downloadLink();
-    if (link1->getType() == LinkType::data) {
+         << link1.getDisplayName() << ":" << endl;
+    cout << revealIdentity(link1) << endl;
+    link1.setDownloaded(true);
+    link1.downloadLink();
+    if (link1.getType() == LinkType::data) {
         player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
     } else { // must be virus
         player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
@@ -136,8 +135,8 @@ void GameBoard::downloadLink(shared_ptr<Link> link1, Player* player) {
         }
     }
 
-    td->notify(*link1);
-    if (graphicsEnabled) gd->notify(*link1);
+    td->notify(link1);
+    if (graphicsEnabled) gd->notify(link1);
 }
 
 void GameBoard::startNewTurn() {
@@ -152,20 +151,20 @@ void GameBoard::startNewTurn() {
     if (graphicsEnabled) gd->notify(*players[getCurrPlayerIndex()]);
 }
 
-void GameBoard::battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2) {
+void GameBoard::battlePieces(Link& link1, Link& link2) {
     cout << "BATTLE:" << endl;
     cout << "——————" << endl;
-    cout << "Initiated by: " << linkp1->getDisplayName() << endl;
-    cout << "Link " << linkp1->getDisplayName()
-         << " Strength:" << linkp1->getStrength() << endl;
-    cout << "Link " << linkp2->getDisplayName()
-         << " Strength:" << linkp2->getStrength() << endl;
-    if (linkp2->getStrength() > linkp1->getStrength()) {
-        downloadLink(linkp1, &(linkp2->getOwner()));
-        linkp2->setIdentityRevealed(true);
+    cout << "Initiated by: " << link1.getDisplayName() << endl;
+    cout << "Link " << link1.getDisplayName()
+         << " Strength:" << link1.getStrength() << endl;
+    cout << "Link " << link2.getDisplayName()
+         << " Strength:" << link2.getStrength() << endl;
+    if (link2.getStrength() > link1.getStrength()) {
+        downloadLink(link1, &(link2.getOwner()));
+        link2.setIdentityRevealed(true);
     } else {
-        downloadLink(linkp2, &(linkp1->getOwner()));
-        linkp1->setIdentityRevealed(true);
+        downloadLink(link2, &(link1.getOwner()));
+        link1.setIdentityRevealed(true);
     }
 }
 
@@ -180,31 +179,30 @@ string GameBoard::revealIdentity(Link& link) {
 // ——————————————
 
 void GameBoard::moveLink(string linkName, string direction) {
-    shared_ptr<Link> l;
-    Direction dir = Direction::Up;
+    Direction dir;
     Player& currPlayer = *players[getCurrPlayerIndex()];
     Player& nextPlayer = *players[getNextPlayerIndex()];
 
     // find the link with name linkName owned by current player
     vector<shared_ptr<Link>> playerLinks = *(getPlayerLinks(currPlayer));
-    l = findLink(linkName, playerLinks);
+    Link& l = *findLink(linkName, playerLinks);
 
     // set new coords
-    int newX = l->getCurrCoords().getX();
-    int newY = l->getCurrCoords().getY();
-    int stepSize = l->getStepSize();
+    int newX = l.getCurrCoords().getX();
+    int newY = l.getCurrCoords().getY();
+    int stepSize = l.getStepSize();
     if (direction == "up") {
         dir = Direction::Up;
-        newY = l->getCurrCoords().getY() - stepSize;
+        newY = l.getCurrCoords().getY() - stepSize;
     } else if (direction == "down") {
         dir = Direction::Down;
-        newY = l->getCurrCoords().getY() + stepSize;
+        newY = l.getCurrCoords().getY() + stepSize;
     } else if (direction == "right") {
         dir = Direction::Right;
-        newX = l->getCurrCoords().getX() + stepSize;
+        newX = l.getCurrCoords().getX() + stepSize;
     } else if (direction == "left") {
         dir = Direction::Left;
-        newX = l->getCurrCoords().getX() - stepSize;
+        newX = l.getCurrCoords().getX() - stepSize;
     } else {
         throw(logic_error("Error: Not a valid move direction!\n"));
     }
@@ -243,15 +241,15 @@ void GameBoard::moveLink(string linkName, string direction) {
         FireWall currFireWall = activeFirewalls[i];
         Coords fireWallCoords = currFireWall.getCoords();
         if (newCoord == fireWallCoords) {
-            if (&currFireWall.getOwner() != &l->getOwner()) {
+            if (&currFireWall.getOwner() != &l.getOwner()) {
                 // if firewall isn't owned by the link's owner, reveal the link
                 // and download if virus
                 cout << "Firewall passed!" << endl;
-                if (l->getType() == LinkType::virus) {
+                if (l.getType() == LinkType::virus) {
                     downloadLink(l, &(*players[currPlayerIndex]));
                 } else {
-                    cout << "Identity revealed for " << l->getDisplayName() << ":" << endl;
-                    cout << revealIdentity(*l) << endl;
+                    cout << "Identity revealed for " << l.getDisplayName() << ":" << endl;
+                    cout << revealIdentity(l) << endl;
                 }
             }
         }
@@ -261,12 +259,12 @@ void GameBoard::moveLink(string linkName, string direction) {
     for (size_t i = 0; i < allLinks.size(); i++) {
         Coords pieceCoords = allLinks[i]->getCurrCoords();
         if (newCoord == pieceCoords) {
-            if (&allLinks[i]->getOwner() == &l->getOwner()) {
+            if (&allLinks[i]->getOwner() == &l.getOwner()) {
                 throw(
                     logic_error("Error: Illegal Move — one of your pieces "
                                 "occupies this space!\n"));
             } else {
-                battlePieces(l, allLinks[i]);
+                battlePieces(l, *allLinks[i]);
                 movePiece(l, dir);
                 if (graphicsEnabled) gd->notify(*this);
                 startNewTurn();
@@ -279,7 +277,7 @@ void GameBoard::moveLink(string linkName, string direction) {
     for (size_t i = 0; i < serverPorts.size(); i++) {
         Coords serverPortCoord = serverPorts[i].getCoords();
         if (newCoord == serverPortCoord) {
-            if (&(serverPorts[i].getOwner()) == &l->getOwner()) {
+            if (&(serverPorts[i].getOwner()) == &l.getOwner()) {
                 throw(
                     logic_error("Error: Illegal Move - cannot move piece onto "
                                 "your own server port\n"));
@@ -337,7 +335,24 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     }
 
     shared_ptr<AbilityCard> ac = getAbilityCard(abilityID);
-    Link& link = *findLink(linkName, allLinks);
+
+    // check link type:
+    // link boost must be applied to a link that is owned by currPlayer
+    // download must be applied to an opponent's link
+    std::vector<std::shared_ptr<Link>> links = allLinks;
+    switch (getAbilityType(abilityID)) {
+        case AbilityType::LINKBOOST: {
+            links = *getPlayerLinks(*players[currPlayerIndex]);
+            break;
+        }
+        case AbilityType::DOWNLOAD: {
+            links = *getPlayerLinks(*players[getNextPlayerIndex()]);
+            break;
+        }
+        default:
+            break; // already initialized to allLinks
+    }
+    Link& link = *findLink(linkName, links);
     ac->activate(link);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
     cout << " was used on link " << linkName << "." << endl;
@@ -426,7 +441,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
         } else if (c == 'D') {
             string displayName = "Download";
             allAbilityCards.emplace_back(
-                make_shared<Download>(id, *player, displayName));
+                make_shared<Download>(id, *player, displayName, this));
         } else if (c == 'P') {
             string displayName = "Polarize";
             allAbilityCards.emplace_back(

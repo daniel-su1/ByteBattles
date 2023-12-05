@@ -66,9 +66,9 @@ class GameBoard : public Subject {
     void notifyObservers(FireWall firewall);
 
     void init();
-    void battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2);
+    void battlePieces(Link& linkp1, Link& linkp2);
     void startNewTurn();
-    void downloadLink(shared_ptr<Link> link1, Player *player = nullptr);
+    void downloadLink(Link& link1, Player *player = nullptr);
     void updateIdentity(Link& link);
     string revealIdentity(Link& link);
 
@@ -101,7 +101,7 @@ class GameBoard : public Subject {
     void enableGraphics();
 
    private:
-    void movePiece(shared_ptr<Link> link, Direction dir);
+    void movePiece(Link& link, Direction dir);
     unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);
     void checkSquareOccupancy(int x, int y);
