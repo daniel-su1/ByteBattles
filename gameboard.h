@@ -40,6 +40,8 @@ class GameBoard : public Subject {
 
    public:
     const int PLAYER_COUNT = 2;
+    const string P1_NAME = "Player 1";
+    const string P2_NAME = "Player 2";
     const int INVALID_PLAYER = -1;
     const int ABILITY_COUNT = 5;
 
@@ -48,9 +50,13 @@ class GameBoard : public Subject {
     const int BOARD_SIZE = 8;
     const int SP_X_COORD_1 = 3;
     const int SP_X_COORD_2 = 4;
+
     const string SP_DISPLAY_STR = "S";
     const string DATA_DISPLAY_STR = "D";
     const string VIRUS_DISPLAY_STR = "V";
+    const string FIREWALL_P1_STR = "m";
+    const string FIREWALL_P2_STR = "w";
+
     const string BORDER_DISPLAY_STR = "=";
 
     GameBoard();
@@ -60,18 +66,19 @@ class GameBoard : public Subject {
     void notifyObservers(FireWall firewall);
 
     void init();
-    void battlePieces(shared_ptr<Link> linkp1, shared_ptr<Link> linkp2);
+    void battlePieces(Link& linkp1, Link& linkp2);
     void startNewTurn();
-    void downloadIdentity(shared_ptr<Link> link1, Player *player = nullptr);
+    void downloadLink(Link& link1, Player *player = nullptr);
     void updateIdentity(Link& link);
-    void revealLink(Link& link);
+    void revealIdentity(Link& link);
 
     // text command interactions
     void moveLink(string linkName, string direction);
     string playerAbilities(Player& player);
     void useAbility(int abilityId, int xCoord,
-                    int yCoord);  // for firewall, wall, haze
-    void useAbility(int abilityID, string linkName);  // for remaining abilities
+                    int yCoord);  // for firewall and wall
+    void useAbility(int abilityID, string linkName = "");  // for remaining abilities
+    // default to empty for skip turn ability
 
     // setters
     void setLinks(unique_ptr<vector<string>> linkPlacements,
@@ -95,7 +102,7 @@ class GameBoard : public Subject {
     void enableGraphics();
 
    private:
-    void movePiece(shared_ptr<Link> link, Direction dir);
+    void movePiece(Link& link, Direction dir);
     unique_ptr<vector<shared_ptr<AbilityCard>>> getPlayerAbilities(Player& player);
     shared_ptr<AbilityCard> getAbilityCard(int abilityID);
     void checkSquareOccupancy(int x, int y);

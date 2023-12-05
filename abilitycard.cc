@@ -15,7 +15,7 @@ int AbilityCard::getAbilityId() {
     return abilityID;
 }
 
-// default impl for non-firewall, wall, or haze
+// default impl for non-firewall or wall
 void AbilityCard::activate(int x, int y) {
     throw (logic_error("AC activate on x and y error: this should not run"));
 }
