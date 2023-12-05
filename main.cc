@@ -148,7 +148,7 @@ unique_ptr<GameBoard> parseCmds(istream& in, unique_ptr<GameBoard> gb, bool isSe
             }
           if (gb->getIsWon()) {
             std::vector<std::shared_ptr<Player>> players = gb->getPlayers();
-            cout << "WINNER";
+            cout << "WINNER ";
             for (size_t i = 0; i < players.size(); i++) {
                 if (players[i]->isWon()) {
                     cout << players[i]->getPlayerName() << endl;
