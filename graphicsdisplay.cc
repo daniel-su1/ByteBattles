@@ -59,7 +59,7 @@ void GraphicsDisplay::notify(Player &p) {
             drawPlayerInfoCircle(pLinksX, pLinksY,
                                  curLink->getDisplayName() + ":" +
                                      std::to_string(curLink->getStrength()),
-                                 true, curLink->getType() == LinkType::virus);
+                                 true, curLink->getType() == LinkType::VIRUS);
         } else {
             drawPlayerInfoCircle(
                 pLinksX, pLinksY,
@@ -68,7 +68,7 @@ void GraphicsDisplay::notify(Player &p) {
                           std::to_string(curLink->getStrength())
                     : "?",
                 curLink->isIdentityRevealed(),
-                curLink->getType() == LinkType::virus);
+                curLink->getType() == LinkType::VIRUS);
         }
 
         pLinksX += 55;
@@ -132,13 +132,13 @@ void GraphicsDisplay::renderPlayerInfo(Player &p) {
             drawPlayerInfoCircle(pLinksX, pLinksY,
                                  curLink->getDisplayName() + ":" +
                                      std::to_string(curLink->getStrength()),
-                                 true, curLink->getType() == LinkType::virus);
+                                 true, curLink->getType() == LinkType::VIRUS);
         } else {
             drawPlayerInfoCircle(pLinksX, pLinksY,
                                  curLink->isIdentityRevealed() ? curLink->getDisplayName() + ":" +
                                      std::to_string(curLink->getStrength()) : "?",
                                  curLink->isIdentityRevealed(),
-                                 curLink->getType() == LinkType::virus);
+                                 curLink->getType() == LinkType::VIRUS);
         }
 
         pLinksX += 55;

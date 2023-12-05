@@ -119,7 +119,7 @@ void GameBoard::downloadLink(Link& link1, Player* player) {
     revealIdentity(link1);
     link1.setDownloaded(true);
     link1.downloadLink();
-    if (link1.getType() == LinkType::data) {
+    if (link1.getType() == LinkType::DATA) {
         player->setNumDataDownloaded(player->getNumDataDownloads() + 1);
     } else { // must be virus
         player->setNumVirusDownloaded(player->getNumVirusDownloads() + 1);
@@ -169,7 +169,7 @@ void GameBoard::battlePieces(Link& link1, Link& link2) {
 }
 
 void GameBoard::revealIdentity(Link& link) {
-    string linkType = (link.getType() == LinkType::virus) ? "Virus" : "Data";
+    string linkType = (link.getType() == LinkType::VIRUS) ? "Virus" : "Data";
     string out = link.getDisplayName() + " is a " + linkType + " of strength " + to_string(link.getStrength()) + ".";
     link.setIdentityRevealed(true);
     cout << out << endl;
@@ -245,7 +245,7 @@ void GameBoard::moveLink(string linkName, string direction) {
                 // if firewall isn't owned by the link's owner, reveal the link
                 // and download if virus
                 cout << "Firewall passed!" << endl;
-                if (l.getType() == LinkType::virus) {
+                if (l.getType() == LinkType::VIRUS) {
                     downloadLink(l, &(*players[currPlayerIndex]));
                 } else {
                     cout << "Identity revealed for " << l.getDisplayName() << ":" << endl;
@@ -366,7 +366,7 @@ void GameBoard::useAbility(int abilityID, string linkName) {
     Link& link = *findLink(linkName, links);
     ac->activate(link);
     cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
-    cout << " was used on link " << linkName << "." << endl;
+    cout << " was used on Link " << linkName << "." << endl;
     
     currPlayerAbilityPlayed = true;
 }
@@ -456,7 +456,7 @@ void GameBoard::setAbilities(string abilities, shared_ptr<Player> player) {
         } else if (c == 'P') {
             string displayName = "Polarize";
             allAbilityCards.emplace_back(
-                make_shared<Polarize>(id, *player, displayName));
+                make_shared<Polarize>(id, *player, displayName, this));
         } else if (c == 'S') {
             string displayName = "Scan";
             allAbilityCards.emplace_back(

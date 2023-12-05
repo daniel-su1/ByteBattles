@@ -2,7 +2,7 @@
 #define LINK_H
 
 #include "boardpiece.h"
-enum LinkType {data, virus};
+enum LinkType {DATA, VIRUS};
 
 class Link: public BoardPiece{
     protected:
@@ -15,6 +15,7 @@ class Link: public BoardPiece{
         bool isDownloaded();
         void setDownloaded(bool d);
         void setStepSize(int stepSize);
+        void polarize(string virusStr, string dataStr);
         string typeAndStrength;
         // returns the strength of the link
         int getStrength();
