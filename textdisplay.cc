@@ -32,6 +32,14 @@ void TextDisplay::notify(FireWall& firewall) {
     : myGb->FIREWALL_P2_STR[0];
 }
 
+void TextDisplay::notify(Wall &wall) {
+    int x = wall.getCoords().getX();
+    int y = wall.getCoords().getY();
+    theDisplay[y][x] = wall.getOwner().getPlayerName() == myGb->P1_NAME
+                           ? myGb->FIREWALL_P1_STR[0]
+                           : myGb->FIREWALL_P2_STR[0];
+}
+
 void TextDisplay::init(GameBoard &gb) {
     myGb = &gb;
     vector<ServerPort> sp = gb.getServerPort();
