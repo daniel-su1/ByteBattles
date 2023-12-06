@@ -37,10 +37,6 @@ void GraphicsDisplay::notify(Player &p) {
     if (p.getPlayerName() == gb->P1_NAME) {
         player = true;
     }
-    if(justOnAbilities){
-        renderPlayerInfo(p);
-        justOnAbilities = false;
-    }
     else{
         theDisplay->drawRoundedRectangle(
             11, player ? 8 : 661, 478, 128, 15,
@@ -382,6 +378,11 @@ void GraphicsDisplay::notify(Link &link) {
         return;
     }
     renderSquare(x, y, link.getDisplayName());
+    
+    if(justOnAbilities){
+        redrawBoard(link.getOwner());
+        justOnAbilities = false;
+    }
 }
 
 void GraphicsDisplay::init(GameBoard &gb) {

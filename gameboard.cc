@@ -423,10 +423,6 @@ void GameBoard::useAbility(int abilityID, string linkName) {
         }
 
         ac->activate(*link);
-        if (graphicsEnabled) {
-            //gd->redrawBoard(ac.get()->getOwner());
-            gd->renderPlayerInfo(ac.get()->getOwner());
-        }
         cout << "Ability #" << to_string(abilityID) << ". " << ac->getDisplayName();
         cout << " was used on Link " << linkName << "." << endl;
 

@@ -36,6 +36,8 @@ class GraphicsDisplay : public Observer {
         void renderAbilityCards(Player &p);
         void renderPlayerInfo(Player &p);
         void redrawBoard(Player &p);
+    private:
+        void checkAbilitiesDrawn();
 };
 
 #endif
