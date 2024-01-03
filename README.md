@@ -10,8 +10,6 @@ RAIInet is a two-player strategy game where players assume the roles of computer
 - [How to Play](#how-to-play)
 - [Commands](#commands)
 - [Command Line Arguments](#command-line-arguments)
-- [Contributors](#contributors)
-- [Acknowledgments](#acknowledgments)
 - [License](#license)
 
 ## Installation
