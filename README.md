@@ -3,6 +3,7 @@
 RAIInet is a two-player strategy game where players assume the roles of computer hackers, controlling a set of links which are either viruses or data. The objective is to either download four pieces of data or make the opponent download four viruses.
 
 ## Table of Contents
+- [Technical Details](#technical-details)
 - [Installation](#installation)
 - [Gameplay](#gameplay)
 - [Features](#features)
@@ -11,6 +12,24 @@ RAIInet is a two-player strategy game where players assume the roles of computer
 - [Commands](#commands)
 - [Command Line Arguments](#command-line-arguments)
 - [License](#license)
+
+## Technical Details
+### Programming Language and Libraries
+- **C++**: The game is primarily developed in C++, leveraging its object-oriented capabilities for structured and efficient game design.
+- **Graphics Library**: For the graphical interface, X11 is used, providing a robust platform for rendering the game elements and managing user interactions.
+
+### Design Patterns and Architecture
+- **Observer Pattern**: Used for updating the graphical and text-based displays in response to changes in the game state.
+- **Factory Method**: This pattern is utilized for creating different types of links (viruses and data) and abilities, allowing for easy extension and management.
+- **Model-View-Controller (MVC)**: MVC architecture separates the game logic (model) from the user interface (view), controlled by the game controller.
+
+### Game Mechanics Implementation
+- **Board Management**: The game board is represented as a 2D grid, managing the placement and movement of links.
+- **Turn-Based System**: We implemented a turn-based mechanism where each player has a set of actions they can perform per turn, including moving links and using abilities.
+- **Ability System**: Abilities are modular and can be easily extended. Each ability class inherits from a common base, defining specific effects on the game state.
+
+### Graphical User Interface
+- **Beautifully Crafted Game Assets**: Our front-end was custom built and wireframed in **Photoshop** before being implemented.
 
 ## Installation
 
