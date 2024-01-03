@@ -31,6 +31,14 @@ RAIInet is a two-player strategy game where players assume the roles of computer
 ### Graphical User Interface
 - **Beautifully Crafted Game Assets**: Our front-end was custom built and wireframed in **Photoshop** before being implemented.
 
+For a more detailed understanding of RAIInet's architecture and design considerations, please see the following documents:
+
+- [Design Document](https://github.com/daniel-su1/RAIInet/blob/master/design.pdf): A comprehensive guide detailing the design decisions, architecture, and the overall structure of the RAIInet project.
+- [UML Diagram](https://github.com/daniel-su1/RAIInet/blob/master/uml-final.pdf): The final UML diagram providing a visual overview of the system's classes, relationships, and design patterns.
+
+These documents offer in-depth insights into our technical structure and development process of RAIInet.
+
+
 ## Installation
 
 To install the game, follow these steps:
