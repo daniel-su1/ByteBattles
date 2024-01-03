@@ -62,7 +62,7 @@ RAIInet is played on an 8x8 board, with each player starting with 8 links - a mi
 
 ## Screenshots
 
-<img src="https://raw.githubusercontent.com/daniel-su1/RAIInet/master/screenshots/2.png" alt="RAIInet Gameplay Screenshot 2" width="50%"> <img src="https://raw.githubusercontent.com/daniel-su1/RAIInet/master/screenshots/1.png" alt="RAIInet Gameplay Screenshot 1" width="50%"> 
+<img src="https://raw.githubusercontent.com/daniel-su1/RAIInet/master/screenshots/2.png" alt="RAIInet Gameplay Screenshot 2" width="47%"> <img src="https://raw.githubusercontent.com/daniel-su1/RAIInet/master/screenshots/1.png" alt="RAIInet Gameplay Screenshot 1" width="47%"> 
 
 
 ## How to Play
