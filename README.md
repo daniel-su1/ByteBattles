@@ -33,7 +33,6 @@ RAIInet is played on an 8x8 board, with each player starting with 8 links - a mi
 - **Turn-Based Strategy**: Engage in a strategic battle of wits with turn-based gameplay.
 - **Graphical & Text-Based UI**: Play the game with a sleek graphical interface or a classic text-based view.
 - **Multiple Abilities**: Utilize various abilities like Firewall, Download, and Polarize to gain an edge.
-- **AI Opponent**: Practice your skills against a computer-controlled opponent.
 - **Extensible Design**: Easily add new abilities and features to the game.
 
 ## Screenshots
