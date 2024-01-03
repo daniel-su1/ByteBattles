@@ -108,9 +108,6 @@ The game ends when either:
 - **Abilities**: Use abilities wisely. They are limited and can turn the tide of the game.
 - **Positioning**: Be strategic about the positioning of your links, especially when it comes to protecting your server ports and planning attacks.
 
-For more detailed rules and strategies, refer to the [Game Manual](./GAME_MANUAL.md).
-
-
 ## Commands
 
 Players can interact with the game using the following command line commands:
