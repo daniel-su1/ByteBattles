@@ -1,6 +1,6 @@
-# RAIInet - The Strategy Game
+# ByteBattles - The Strategy Game
 
-RAIInet is a two-player strategy game where players assume the roles of computer hackers, controlling a set of links which are either viruses or data. The objective is to either download four pieces of data or make the opponent download four viruses.
+ByteBattles is a two-player strategy game where players assume the roles of computer hackers, controlling a set of links which are either viruses or data. The objective is to either download four pieces of data or make the opponent download four viruses.
 
 ## Table of Contents
 - [Technical Details](#technical-details)
@@ -31,12 +31,12 @@ RAIInet is a two-player strategy game where players assume the roles of computer
 ### Graphical User Interface
 - **Beautifully Crafted Game Assets**: Our front-end was custom built and wireframed in **Photoshop** before being implemented.
 
-For a more detailed understanding of RAIInet's architecture and design considerations, please see the following documents:
+For a more detailed understanding of ByteBattles's architecture and design considerations, please see the following documents:
 
-- [Design Document](https://github.com/daniel-su1/RAIInet/blob/master/design.pdf): A comprehensive guide detailing the design decisions, architecture, and the overall structure of the RAIInet project.
-- [UML Diagram](https://github.com/daniel-su1/RAIInet/blob/master/uml-final.pdf): The final UML diagram providing a visual overview of the system's classes, relationships, and design patterns.
+- [Design Document](https://github.com/daniel-su1/ByteBattles/blob/master/design.pdf): A comprehensive guide detailing the design decisions, architecture, and the overall structure of the ByteBattles project.
+- [UML Diagram](https://github.com/daniel-su1/ByteBattles/blob/master/uml-final.pdf): The final UML diagram providing a visual overview of the system's classes, relationships, and design patterns.
 
-These documents offer in-depth insights into our technical structure and development process of RAIInet.
+These documents offer in-depth insights into our technical structure and development process of ByteBattles.
 
 
 ## Installation
@@ -44,14 +44,14 @@ These documents offer in-depth insights into our technical structure and develop
 To install the game, follow these steps:
 
 ```bash
-git clone https://github.com/yourgithubusername/RAIInet.git
-cd RAIInet
+git clone https://github.com/yourgithubusername/ByteBattles.git
+cd ByteBattles
 # Follow platform-specific instructions to compile and run the game
 ```
 
 ## Gameplay
 
-RAIInet is played on an 8x8 board, with each player starting with 8 links - a mix of viruses and data. Players take turns to move their links and use special abilities, aiming to either download data or make their opponent download viruses. The game ends when a player achieves one of these objectives.
+ByteBattles is played on an 8x8 board, with each player starting with 8 links - a mix of viruses and data. Players take turns to move their links and use special abilities, aiming to either download data or make their opponent download viruses. The game ends when a player achieves one of these objectives.
 
 ## Features
 
@@ -62,12 +62,12 @@ RAIInet is played on an 8x8 board, with each player starting with 8 links - a mi
 
 ## Screenshots
 
-<img src="https://raw.githubusercontent.com/daniel-su1/RAIInet/master/screenshots/2.png" alt="RAIInet Gameplay Screenshot 2" width="47%"> <img src="https://raw.githubusercontent.com/daniel-su1/RAIInet/master/screenshots/1.png" alt="RAIInet Gameplay Screenshot 1" width="47%"> 
+<img src="https://raw.githubusercontent.com/daniel-su1/ByteBattles/master/screenshots/2.png" alt="ByteBattles Gameplay Screenshot 2" width="47%"> <img src="https://raw.githubusercontent.com/daniel-su1/ByteBattles/master/screenshots/1.png" alt="ByteBattles Gameplay Screenshot 1" width="47%"> 
 
 
 ## How to Play
 
-RAIInet is a strategy game that involves careful planning, strategic movement, and the use of special abilities. The game is played on an 8x8 grid, resembling a chessboard, with two players each controlling eight links. Here's a detailed guide on how to play the game:
+ByteBattles is a strategy game that involves careful planning, strategic movement, and the use of special abilities. The game is played on an 8x8 grid, resembling a chessboard, with two players each controlling eight links. Here's a detailed guide on how to play the game:
 
 ### Setup
 
@@ -79,10 +79,10 @@ RAIInet is a strategy game that involves careful planning, strategic movement, a
 
 The game proceeds in turns, with each player taking one turn at a time.
 
-1. **Move a Link**: On your turn, move one of your links one space in a cardinal direction (north, south, east, or west). You cannot move a link onto one of your own links or server ports.
+1. **Move a Link**: On your turn, move one of your links one space in a cardinal direction (north, south, east, or west). You cannot move a link onto one of your own links or server ports. Moving a link will end your turn.
 2. **Battle**: If you move your link onto a space occupied by an opponent's link, a battle ensues. The link with the higher strength wins, and the loser's link is downloaded by the winner. In a tie, the attacking player wins.
 3. **Download**: Moving a link off the opponent's side of the board or into their server ports results in downloading that link.
-4. **Use an Ability**: You may use one of your abilities per turn, either before or after moving a link. Abilities can change the game state significantly, like revealing link types or changing a link's allegiance.
+4. **Use an Ability**: You may use one of your abilities per turn, before moving a link. Abilities can change the game state significantly, like revealing link types or changing a link's allegiance.
 
 ### Abilities Explained
 
@@ -113,15 +113,20 @@ Each ability adds a unique strategic element to the game. Here’s a breakdown:
 - **Usage**: Target an unrevealed link.
 - **Strategic Tip**: Gain intelligence for strategy.
 
-#### Wall (Additional Ability)
+#### Wall
 - **Effect**: Creates an impassable square.
 - **Usage**: Activate to block paths or protect positions.
 - **Strategic Tip**: Funnel opponent movements or create safe zones.
 
-#### Backup (Additional Ability)
+#### Backup
 - **Effect**: Reverses a link's last move.
 - **Usage**: Activate after a link moves.
 - **Strategic Tip**: Correct mistakes or tactically retreat.
+
+#### MoveTwice
+- **Effect**: Allows two link moves to be made.
+- **Usage**: Activate at the start of the your turn before moving a link.
+- **Strategic Tip**: Make big moves, bigger compounded with link boost.
 
 ### Winning the Game
 
@@ -148,7 +153,7 @@ Players can interact with the game using the following command line commands:
 
 ## Command Line Arguments
 
-When launching RAIInet, you can customize your game setup using various command line arguments. Here’s a guide to using these options:
+When launching ByteBattles, you can customize your game setup using various command line arguments. Here’s a guide to using these options:
 
 - **`-ability1 <order>`**: Specifies the abilities for player 1. This is a list of the 5 abilities player 1 will use, given by a string consisting of the first letter of each ability. For example, `-ability1 LFDSP` for Link boost, Firewall, Download, Scan, Polarize in that order.
 
@@ -163,7 +168,7 @@ When launching RAIInet, you can customize your game setup using various command 
 
 Example usage:
 ```bash
-./RAIInet -ability1 LFDSP -ability2 DSPLF -link1 player1.txt -link2 player2.txt -graphics
+./ByteBattles -ability1 LFDSP -ability2 DSPLF -link1 player1.txt -link2 player2.txt -graphics
 ```
 This command launches the game with specified abilities and link placements for both players and enables the graphical interface.
 
