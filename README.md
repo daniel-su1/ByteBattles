@@ -44,7 +44,7 @@ These documents offer in-depth insights into our technical structure and develop
 To install the game, follow these steps:
 
 ```bash
-git clone https://github.com/yourgithubusername/ByteBattles.git
+git clone https://github.com/daniel-su1/ByteBattles.git
 cd ByteBattles
 # Follow platform-specific instructions to compile and run the game
 ```
